@@ -13,6 +13,7 @@
 - [ ] 10. Security checks and launch
 
 ## Decisions log
+- 2026-10-15: User authorized pushing to https://github.com/brentjoel/verselight. Destination is empty; use main as the primary branch and origin as the remote. First Vercel deployment remains pending.
 - 2026-10-14: User supplied Git author brentjoel <aguilabrentjoel@gmail.com>; configure this repository only and create the requested Initial setup commit.
 - 2026-10-14: Final verification passed: npx tsc --noEmit, npm run lint, npm run build. Confirmed .env.local ignored and .env.example tracked. npm reported vulnerabilities during installation; no audit fix was run. Step 2 remains untouched.
 - 2026-10-14: Local page responds HTTP 200 and includes all eight emotions and the daily verse placeholder. No connected browser is available, so mobile and theme visual checks remain manual.
