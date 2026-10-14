@@ -129,7 +129,7 @@
   }
 }
 
-/* Step 1 follows the device theme without client-side state. */
+/* Follow the device theme without client-side state. */
 :root {
   color-scheme: light;
   --background: #faf9f6;
@@ -144,6 +144,54 @@
   --muted-foreground: #5e6b63;
   --border: #dce2d8;
   --ring: #446653;
+}
+
+/* Each feeling has a soft accent; copy keeps the shared high-contrast colors. */
+[data-emotion="anxious"] { --emotion-hue: 155; }
+[data-emotion="sad"] { --emotion-hue: 240; }
+[data-emotion="angry"] { --emotion-hue: 30; }
+[data-emotion="tired"] { --emotion-hue: 290; }
+[data-emotion="guilty"] { --emotion-hue: 190; }
+[data-emotion="grateful"] { --emotion-hue: 85; }
+[data-emotion="hopeful"] { --emotion-hue: 60; }
+[data-emotion="doubtful"] { --emotion-hue: 330; }
+
+.emotion-link {
+  background: oklch(0.97 0.018 var(--emotion-hue));
+  border-color: oklch(0.85 0.035 var(--emotion-hue));
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.emotion-icon { background: oklch(0.91 0.045 var(--emotion-hue)); }
+.verse-card { border-top: 4px solid oklch(0.82 0.06 var(--emotion-hue)); }
+.emotion-link:hover { background: oklch(0.93 0.03 var(--emotion-hue)); }
+.emotion-link:focus-visible, .back-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+}
+.back-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  border-radius: 4px;
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  transition: text-decoration-color 180ms ease;
+}
+.back-link:hover { text-decoration-color: transparent; }
+
+@media (prefers-color-scheme: dark) {
+  .emotion-link { background: oklch(0.27 0.023 var(--emotion-hue)); border-color: oklch(0.43 0.045 var(--emotion-hue)); }
+  .emotion-link:hover { background: oklch(0.32 0.035 var(--emotion-hue)); }
+  .emotion-icon { background: oklch(0.36 0.045 var(--emotion-hue)); }
+  .verse-card { border-top-color: oklch(0.6 0.06 var(--emotion-hue)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .emotion-link, .back-link { transition: none; }
 }
 
 @media (prefers-color-scheme: dark) {
