@@ -1,6 +1,6 @@
 # Progress
 
-Steps 1 to 5 are implemented. Step 5 is on `step-5-mood-journal`, based on the unmerged Step 4 branch, for preview approval before merging. Step 6 has not started. Browser visual/keyboard review remains an explicit preview handoff because no browser is connected to this session.
+Steps 1 to 5 are merged on main. Step 6 is implemented on `step-6-share-daily`; its checkbox stays open until the required visual/keyboard preview review is completed. No browser is connected to this session. Step 7 has not started. Do not merge or deploy production without user approval.
 
 ## Checklist
 
@@ -48,7 +48,7 @@ Steps 1 to 5 are implemented. Step 5 is on `step-5-mood-journal`, based on the u
 
 **Goal:** Complete public sharing and daily inspiration with consistent accessible presentation.
 
-**Acceptance criteria (PLANNED):** ImageResponse cards with validated public inputs and no private records/notes; publisher terms rechecked before any licensed-text image use, no persistent NLT text; required attribution; deterministic daily verse by device-local day of year with leap-year coverage; replace the current placeholder; design checklist on every route; loading/empty/error recovery; mobile/desktop light/dark review; keyboard/focus, labels, contrast and reduced-motion checks; required checks pass.
+**Acceptance criteria:** ImageResponse cards with validated public inputs and no private records/notes; publisher terms rechecked before any licensed-text image use, no persistent NLT text; required attribution; deterministic daily verse by device-local day of year with leap-year coverage; replace the current placeholder; design checklist on every route; loading/empty/error recovery; mobile/desktop light/dark review; keyboard/focus, labels, contrast and reduced-motion checks; required checks pass. Implementation, source review and automated checks are done; rendered browser review is pending, so this step is not yet fully accepted.
 
 **Files likely touched:** Public share image route (proposed), `app/page.tsx`, daily verse helper, share controls, shared state components, `app/globals.css` where needed, tests, translation/design docs.
 
@@ -61,6 +61,14 @@ Steps 1 to 5 are implemented. Step 5 is on `step-5-mood-journal`, based on the u
 **Files likely touched:** `app/about/`, privacy copy, `app/licenses/`, `lib/bible-api.ts`, `lib/verse-passage.ts`, provider tests, operational configuration if needed, `README.md`, docs.
 
 ## Decisions log
+
+- 2026-10-15: User explicitly approved pushing to `https://github.com/brentjoel/verselight` after automatic approval review requested destination confirmation. Step 6 was pushed successfully to `origin/step-6-share-daily` with upstream tracking. The Vercel preview URL/deployment is not yet verified; browser review and main merge approval remain pending.
+
+- 2026-10-15: Step 6 only on `step-6-share-daily`, branched from main after its Step 5 merge. No new dependencies. Home displays a deterministic local-day WEB passage from a sorted 84-reference cycle, repeating during the year and resetting January 1. Leap day has its own ordinal. Local date is read after hydration and refreshed every 30 seconds and on focus/visibility changes, without date/timezone requests or personal storage writes. Comparison offers other translations.
+- 2026-10-15: Rechecked official WEB, Tyndale API and Tyndale permissions pages before sharing changes. WEB only for daily text and PNG cards; no downloadable NLT artwork grant is established and NLT text must not persist. Full rationale/sources are in TRANSLATION-LICENSES. GET `/share` accepts exactly one curated reference and `translation=web`; it rejects extra/duplicate fields and other translations, imports no licensed provider/personal store, returns no-store PNGs with exact text/reference/credits, and has 400/503 recovery copy. Download controls on Home/results/comparison omit credentials/referrers, time out safely and revoke object URLs. No analytics or personal-data service.
+- 2026-10-15: Step 6 checks passed: `npx.cmd tsc --noEmit`, `npm.cmd run lint`, `npm.cmd run build` (59 generated pages), 3 `test:daily-share` tests covering every date in five leap/ordinary/century years, four timezones, midnight/DST and strict share validation; existing 12 storage, 15 progress and 4 provider tests also passed. Development HTTP checks passed Home, Journal, My Verses, licenses, broad/results and valid comparison. All 84 WEB cards render at 1200px width; invalid requests return 400 and POST returns 405. Shortest/longest PNGs were visually inspected with complete text and credits. `.env.local` remains ignored and unread.
+- 2026-10-15: Step 6 route-wide source checklist is in DESIGN, including loading/empty/error/recovery, labels/headings, focus and reduced motion. Numeric text contrast is at least 7.44:1 dark and 5.17:1 light. Fixed potential header overflow below 381px. Browser inventory is empty; source and PNG checks do not substitute for mobile/desktop light/dark, keyboard/focus, save/download, file-picker and error-retry review. Step 6 remains unchecked pending that acceptance review; Step 7 is untouched.
+- 2026-10-15: Step 6 try-it path: existing `npm.cmd run dev` server is at http://localhost:3000 (a second dev instance correctly reports it). Open Home for the local daily WEB passage, Save it, Read in other translations, then Download WEB card or Open card. Choose Anxious > Worried about the future for per-passage cards. Block image requests to check failure guidance/retry. Review all routes at 320/390px and desktop widths, both themes, Tab/Shift+Tab and reduced motion before preview approval. Automated tests cover calendar boundaries without changing the OS date.
 
 - 2026-10-15: Step 5 final verification passed: `npx.cmd tsc --noEmit`, `npm.cmd run lint`, `npm.cmd run build` (content validation and 58 generated pages), 15 `test:progress` tests and 12 `test:storage` tests. `npm.cmd run dev` HTTP checks passed home, Journal, My Verses, Anxious and WEB results with the initial save-control loading label. Development reports existing instant-navigation warnings at the unchanged async params accesses in broad/results routes; production build passes. New journal/progress code has no fetch, beacon, upload or logging calls; `.env.local` remains ignored and unread. Browser inventory is empty, so visual/keyboard review remains required on the preview. Push requests a branch preview through the existing Git integration; hosting/preview URL must still be verified.
 
@@ -120,5 +128,5 @@ These records preserve completed work and past handoffs. Current decisions and s
 
 - Confirm the Vercel Git integration, first deployment status and branch preview URL; earlier implementation records only establish the deployment handoff.
 - Complete visual browser review of narrow/wide layouts, both themes, keyboard controls, cookie persistence and Step 4 save/collection/JSON file-picker interactions. Earlier records report no connected browser.
-- Before Step 6 licensed-text share cards, re-check current publisher and issued-key terms.
+- Step 6 uses WEB-only cards after publisher review. Any future licensed-text artwork needs a separate terms/issued-key review and permission before implementation.
 - Resolve deployment-wide NLT abuse/quota handling in Step 7 without personal-data storage or tracking; current timestamp guards are process-local only.

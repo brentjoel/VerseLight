@@ -96,6 +96,15 @@
 .featured-title { font-family: var(--font-lora), Georgia, serif; font-size: 27px; line-height: 1.5; font-weight: 400; margin-top: 15px; }
 .featured-content { display: flex; justify-content: space-between; align-items: end; gap: 20px; }
 .featured-content > p { font-size: 13px; color: var(--muted-foreground); line-height: 1.9; }
+.daily-verse { width: 100%; min-width: 0; }
+.daily-verse > .verse-text { margin-top: 20px; }
+.share-controls { margin-top: 16px; }
+.share-controls .local-actions { margin-top: 4px; }
+.share-controls .local-help { margin-bottom: 0; }
+@media (max-width: 380px) {
+  .site-header { flex-wrap: wrap; gap: 16px; padding-block: 20px; }
+  .header-controls { margin-left: auto; }
+}
 .status-pill { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; border: 1px solid var(--border); padding: 5px 12px; border-radius: 99px; font-size: 10px; color: var(--muted-foreground); }
 .featured-orbit { position: absolute; right: 7%; top: -95px; width: 310px; height: 310px; border: 1px solid color-mix(in srgb, var(--primary) 9%, transparent); border-radius: 50%; pointer-events: none; z-index: -1; }
 .featured-orbit::after { content: ""; position: absolute; inset: 35px; border: inherit; border-radius: inherit; }

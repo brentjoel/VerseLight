@@ -4,6 +4,8 @@ import { ArrowUpRight, Sparkles } from "lucide-react";
 import { SiteShell } from "@/components/site-shell";
 import { ContentNotice } from "@/components/content-notice";
 import { getAllEmotions } from "@/lib/emotions";
+import { DailyVerse } from "@/components/daily-verse";
+import web from "@/data/verses/web.json";
 
 export default function Home() {
   const emotions = getAllEmotions();
@@ -20,10 +22,7 @@ export default function Home() {
             <p className="eyebrow"><Sparkles size={15} strokeWidth={1.25} aria-hidden="true" /> A little light for your day</p>
             <h2 id="verse-heading" className="featured-title">Verse of the day</h2>
           </CardHeader>
-          <CardContent className="featured-content">
-            <p>Your daily verse will appear here.<br />This space is being prepared with care.</p>
-            <span className="status-pill"><span className="accent-dot" /> Coming soon</span>
-          </CardContent>
+          <CardContent className="featured-content"><DailyVerse verses={web} /></CardContent>
           <span className="featured-orbit" aria-hidden="true" />
         </Card>
       </section>

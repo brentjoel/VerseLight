@@ -10,6 +10,7 @@ import { PassageAttribution } from "@/components/passage-attribution";
 import { parseCompareTranslations, validResultsPath } from "@/lib/compare";
 import { PreferredTranslationSelector } from "@/components/preferred-translation-selector";
 import { TranslationSelector } from "@/components/translation-selector";
+import { ShareCardControls } from "@/components/share-card-controls";
 
 type Query = Record<string, string | string[] | undefined>;
 
@@ -42,6 +43,7 @@ async function Comparison({ searchParams }: { searchParams: Promise<Query> }) {
         </fieldset>
         <button type="submit" className="compare-link">Update comparison</button>
       </form>
+      <ShareCardControls reference={reference} />
       {error ? <ContentNotice>{error} <Link href={`/compare?${new URLSearchParams({ ref: reference, ...(from ? { from } : {}) })}`}>Reset comparison</Link></ContentNotice> : <section className="compare-grid" aria-label={`Translations of ${reference}`}>
         {ids.map((id, index) => {
           const translation = translations.find(item => item.id === id)!;
