@@ -4,6 +4,8 @@ Inspected 2026-10-15. **DONE** means present in the repository. **PLANNED** mean
 
 ## Overview
 
+**Step 8 implemented:** Home passes existing emotion data and the original server-rendered grid into a client WheelPicker. Eligible browsers dynamically load WheelScene/Three.js; labels and controls stay DOM-based. The scene has one instanced bar mesh, capped DPR, hidden-tab pause and explicit GPU cleanup. Reduced motion, low capability, WebGL failure and slow rendering retain the original grid. Inner selection reuses FeelingLink and existing browser-only recordMood behavior; routes and translation rendering stay unchanged. Intensity lives only in component state and scales the decorative waveform, never storage, URLs or requests. No schema/migration change. Steps 9 to 11 remain planned. See [wheel UI plan](wheel-ui-plan.md).
+
 **DONE decision:** Everyone is a guest and every feature is available without an identity requirement. Verselight is strictly noncommercial, with no ads, payments, subscriptions, donations, or paid features. No server persistence will hold personal data.
 
 ```text
