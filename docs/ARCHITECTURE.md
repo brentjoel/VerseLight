@@ -1,6 +1,6 @@
 # Verselight architecture
 
-Inspected 2026-10-15. **DONE** means present in the repository. **PLANNED** means an unbuilt design, even when its shape is specified below. Steps 1 to 5 are implemented. Step 5 awaits preview visual/keyboard review and approval before merge; Step 6 has not started. See [SPEC](SPEC.md), [progress](PROGRESS.md), and [design](DESIGN.md).
+Inspected 2026-10-15. **DONE** means present in the repository. **PLANNED** means an unbuilt design, even when its shape is specified below. Steps 1 to 5 are merged on main. Step 6 implementation is on its preview branch; visual/keyboard acceptance and merge approval remain pending. See [SPEC](SPEC.md), [progress](PROGRESS.md), and [design](DESIGN.md).
 
 ## Overview
 
@@ -29,7 +29,7 @@ Browser -> local mood journal, activity ledger -> pure streak/badge calculations
 No personal records flow to the Next.js server or any external service.
 ```
 
-**DONE:** Picker, four verses per feeling, prompts, translation preference, comparison and credits work. **DONE:** Reference-only saved verses, collections, My Verses and local backups. **DONE Step 5:** Journal, heatmap, streaks and badges. **PLANNED:** Share cards and a real verse of the day. The daily verse panel is currently a placeholder.
+**DONE:** Picker, four verses per feeling, prompts, translation preference, comparison and credits work. **DONE:** Reference-only saved verses, collections, My Verses and local backups. **DONE Step 5:** Journal, heatmap, streaks and badges. **IMPLEMENTED Step 6:** WEB share cards and a real local daily WEB passage, pending preview review.
 
 ## Folder map
 
@@ -64,7 +64,7 @@ No personal records flow to the Next.js server or any external service.
 | DONE | Results path proxy | Rejects unknown parent/feeling pairs before streaming to preserve HTTP 404 |
 | DONE | `/my-verses` | Static page shell; client reads browser storage after hydration, with loading/empty/error states |
 | DONE | Journal | Static shell and client-only personal history |
-| PLANNED | Share image route and daily verse | Public reference/translation inputs only, license review before including NLT; personal records never posted |
+| IMPLEMENTED Step 6 | `/share` and daily verse | WEB-only ImageResponse route with strict public inputs; client daily selection from public WEB data, no date or personal data requests |
 
 **DONE:** Next.js 16.4 enables Cache Components and Partial Prefetching. Server Components are the default. Small client controls handle theme and translation. Static pages read the preference cookie in the browser; results and compare use server cookie reads behind Suspense. **DONE:** Personal records are outside server rendering, requests and shared caches. Static data has no artificial loading delay; dynamic passages already show loading notices.
 
@@ -131,7 +131,13 @@ Everything here is **DONE** in Step 5. Keep functions pure in `lib/`; pass devic
 
 **DONE decision:** Never send personal records, notes, backups, activity, streaks or badges to any server. No analytics or tracking is present; ask before adding either. **DONE:** Personal data stays in this browser and origin; no cross-device synchronization. Clearing browser data, private browsing, device loss or eviction can lose it, so explain Export and Import. Backups are unencrypted local files; do not imply device-level secrecy.
 
-**DONE limitation:** The existing translation cookie goes to this site's server to select passages. Requests also expose normal network metadata; NLT requests send a curated passage reference and the server key, never personal records. This is the narrow documented preference exception to the local-only rule. Never put personal data in URLs, cookies, logs, share-image requests or monitoring reports. **PLANNED:** A share card can use public reference/translation data, with download/share happening in the browser; exclude private notes and mood history. Step 7's error monitoring must avoid personal payloads and tracking and require approval if adding analytics/tracking.
+**DONE limitation:** The existing translation cookie goes to this site's server to select passages. Requests also expose normal network metadata; NLT requests send a curated passage reference and the server key, never personal records. This is the narrow documented preference exception to the local-only rule. Never put personal data in URLs, cookies, logs, share-image requests or monitoring reports. **IMPLEMENTED Step 6:** Share cards use public WEB reference/translation data; browser download fetches omit cookies and referrers. Private notes and mood history are excluded. Step 7's error monitoring must avoid personal payloads and tracking and require approval if adding analytics/tracking.
+
+## Daily verse and sharing (Step 6)
+
+Home passes the existing public WEB reference/text map to a small client component. Sorted canonical references form a stable 84-passage cycle indexed by `(localDayOfYear - 1) % 84`, resetting each January 1. The pure helper calculates day of year from device-local calendar parts with UTC arithmetic solely to avoid DST day lengths. Leap day has its own ordinal; no reference is missing on day 366. The cycle repeats within the year, rather than claiming 366 unique passages. Hydration shows a loading message until the local date is available; a timer and focus/visibility events refresh across midnight or travel. Dates and timezone are never sent to a server. WEB is explicitly labeled, with comparison available for other preferred translations. No-JavaScript and missing-content states offer a public reading link.
+
+`GET /share?ref=<canonical reference>&translation=web` rejects unknown references, other translations, extra fields and repeated parameters. It imports WEB only, never the licensed provider or personal store. ImageResponse renders complete exact text, reference, translation and source credit at 1200px width with content-dependent height. The route consumes rendering before responding so errors return a useful 503; invalid requests return 400, unsupported POST returns 405. All responses are no-store. Controls on Home, results and comparison download PNGs via browser object URLs or open the public image in a new tab. Only an explicit click starts an image request. Downloads have timeout, loading, status and retry guidance; object URLs are revoked. This introduces no NLT endpoint, dependencies, analytics or personal data service.
 
 ## Environment and deployment
 
@@ -151,7 +157,8 @@ Everything here is **DONE** in Step 5. Keep functions pure in `lib/`; pass devic
 | DONE | Preserve current CSS, controls, routes and working features in this documentation change |
 | DONE | Typed localStorage layer, schema-1 validation, migration runner and validated local JSON backups in Step 4 |
 | DONE | Pure local-date streaks, explicit weekly grace ledger and badge calculations in Step 5 |
-| PLANNED | Share cards, daily verse, polish in Step 6; launch privacy, quota and operational checks in Step 7 |
+| IMPLEMENTED Step 6 | WEB share cards, daily verse and polish; rendered browser acceptance pending |
+| PLANNED Step 7 | Launch privacy, quota and operational checks |
 
 **DONE workflow:** Typecheck, lint and build are required before completion. Build includes data validation. Provider tests are available as `npm.cmd run test:bible-api`. **DONE:** `npm.cmd run test:storage` covers persistence, collection relationships, import validation, failure preservation, migrations, memory fallback and tab conflicts. **DONE:** `npm.cmd run test:progress` covers calendar/streak behavior, clock/timezone changes, DST, grace exhaustion, notes and progress imports. No new dependencies were added in Step 4. Visual browser review of both themes, responsive layouts and keyboard interaction is a preview handoff because the implementation session has no connected browser.
 
