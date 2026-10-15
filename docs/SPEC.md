@@ -5,7 +5,7 @@ Home shows the verse of the day and an emotion grid. A user picks a broad emotio
 
 ## Features
 - Two-step emotion picker.
-- NLT (default), KJV, WEB, ASV, and BSB with side-by-side comparison. NIV is disabled, pending a license and provider setup.
+- NLT (default), KJV, WEB, ASV, and BSB with side-by-side comparison. ESV is dropped. NIV is disabled, pending a license and provider setup.
 - Email and Google login.
 - Preferred translation stored in a validated translation cookie; sync to profiles in Step 4.
 - Saved verses and collections.
@@ -31,12 +31,12 @@ Home shows the verse of the day and an emotion grid. A user picks a broad emotio
 ## Content rules
 Store content selections by reference only, for example Psalm 34:18, and fetch text per translation. `data/emotions.json` holds emotions, sub-emotions, and about four verse references each. `data/prompts.json` holds a reflection question and prayer starter per reference. A verse can appear under several emotions. Never invent verse text.
 
-Verselight is a strictly noncommercial personal and portfolio project: no ads, subscriptions, donations, or paid features. NLT is the default through the official Tyndale API, server-side only. Keys belong in .env.local or hosting secrets. Do not persist licensed verse text in the repo, framework caches, databases, or files. Show required copyright notices and publisher links. KJV, WEB, ASV, and BSB remain static local files. If a licensed API fails, reaches quota, or is unconfigured, show WEB with an explicit note and WEB tag. Existing valid translation cookies retain the user's choice. NIV remains disabled as Coming soon until licensed provider access is configured; never scrape or copy it. Re-check licenses before monetization or new caching, display, or sharing behavior. See docs/TRANSLATION-LICENSES.md for source terms and setup.
+Verselight is a strictly noncommercial personal and portfolio project: no ads, subscriptions, donations, or paid features. NLT is the default through the official Tyndale API, server-side only, using NLT_API_KEY in .env.local or hosting secrets. Do not persist licensed verse text in the repo, framework caches, databases, or files. Show required copyright notices and publisher links. KJV, WEB, ASV, and BSB remain static public-domain files, with special UK rights applying to KJV. If the NLT API fails, reaches quota, or is unconfigured, show WEB with an explicit note and WEB tag. Existing valid translation cookies retain the user's choice. NIV remains disabled as Coming soon until licensed provider access is configured; never scrape or copy it. Re-check licenses before monetization or new caching, display, or sharing behavior. See docs/TRANSLATION-LICENSES.md for source terms and setup, and docs/ARCHITECTURE.md for DONE and PLANNED architecture.
 
 ## Data model
 | Table | Fields |
 | --- | --- |
-| profiles | id, display_name, preferred_translation, current_streak, longest_streak, last_active_date, grace_days_left |
+| profiles | id, display_name, preferred_translation, timezone, current_streak, longest_streak, last_active_date, grace_days_left |
 | saved_verses | id, user_id, reference, emotion_id, created_at |
 | collections | id, user_id, name, created_at |
 | collection_verses | collection_id, saved_verse_id |
@@ -47,7 +47,7 @@ Verselight is a strictly noncommercial personal and portfolio project: no ads, s
 Supabase Auth and Postgres arrive in Step 4. Every table requires RLS with ownership checks, including related collection rows.
 
 ## Streaks and badges
-A streak day counts when a logged-in user picks an emotion or saves a verse. One grace day per week preserves a streak after one missed day. Badges: 3, 7, 30, and 100 day streaks; first saved verse; 10 saved verses; first collection; first mood entry.
+PLANNED: A streak day counts when a logged-in user picks an emotion or saves a verse. Define calendar days in the user's profile timezone, defaulting to Asia/Manila. Count activity idempotently once per user and local date. One non-accumulating grace day per local Monday-through-Sunday week can preserve continuity after exactly one missed day; assign its use to the missed date's week without counting it as an active day. Keep the logic in pure lib/ functions and apply writes atomically. Badges: 3, 7, 30, and 100 day streaks; first saved verse; 10 saved verses; first collection; first mood entry. Full planned rules are in docs/ARCHITECTURE.md. No streak code is built yet.
 
 ## Delivery
 Use Next.js App Router, strict TypeScript, Tailwind CSS, shadcn/ui, and npm. Code lives in top-level `app/`, without `src/`. Deploy on Vercel. Work through the progress checklist one step at a time. Step 1 contains placeholders only, with no content selection, fetching, authentication, or persistence.

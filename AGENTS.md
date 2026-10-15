@@ -3,6 +3,7 @@
 Verselight is an emotion-based Bible verse app: people choose a feeling and receive verses in their preferred translation, a reflection question, and a prayer starter. Later steps add accounts, saved verses, collections, a mood journal, streaks with a grace day, badges, share cards, and a verse of the day. Stack: Next.js App Router, strict TypeScript, Tailwind CSS, shadcn/ui, npm, and later Supabase Auth, Postgres, and row-level security. Deploy to Vercel.
 
 Read `docs/SPEC.md` and `docs/PROGRESS.md` at the start of every task.
+Read docs/ARCHITECTURE.md before changing structure, data flow, or auth.
 
 ## Commands
 - `npm run dev`
@@ -42,7 +43,7 @@ Notifications or PWA reminders, memorize mode, AI free-text, and audio.
 - Verselight is strictly noncommercial: a personal and portfolio project with no ads, subscriptions, donations, or paid features.
 - NLT is the default. Use the official Tyndale noncommercial API server-side only. Keep NLT_API_KEY in .env.local and hosting secrets, never client code or logs.
 - KJV, WEB, ASV, and BSB remain static public-domain files (KJV has special UK rights). WEB is the labeled fallback for API failure or quota exhaustion.
-- NIV is pending a license and provider setup. Show it disabled as Coming soon. Never scrape or copy NIV text.
+- ESV is dropped. NIV is pending a license and provider setup. Keep its existing disabled Coming soon option. Never scrape or copy NIV text.
 - Do not persist NLT verse text to files, framework caches, databases, or the repository. Preserve source wording and required attribution. Re-check current publisher terms before changing usage, caching, display, or sharing.
 - Do not introduce ads, payments, or donation features without re-checking translation licenses.
 - Current terms and setup are documented in docs/TRANSLATION-LICENSES.md. Continue this Step 3 extension without starting Step 4.

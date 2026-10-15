@@ -15,8 +15,6 @@ Sources: [official API terms](https://api.nlt.to/), [API documentation](https://
 - Mark each quotation (NLT). Use the publisher's mixed-translation copyright notice. The exact notice, downloaded from the permissions page, is in `data/translation-notices.json` and displayed at `/licenses#nlt`; it is copyright metadata, not verse text.
 - The API returns HTML. Only source-delimited verses matching the requested reference/range are parsed. Verse labels and notes are excluded, HTML entities decoded, inline text preserved, and remote HTML is never injected into the app.
 
-ESV was removed at the user's request. No ESV key is needed.
-
 ## NIV
 
 [Biblica's official permissions page](https://www.biblica.com/permissions/) lists a legitimate express-license route for qualifying strictly noncommercial apps without AI/ML features, through [API.Bible](https://api.bible/) or [YouVersion Platform](https://platform.youversion.com/). Royalty-free licensing does not necessarily mean a provider has no usage fees. No NIV provider account, license, or credential has been configured for Verselight. NIV is disabled as Coming soon until that is done. No NIV text is scraped, copied, or stored. The application has no AI features; using a coding assistant to develop it does not add an AI feature to the app.
