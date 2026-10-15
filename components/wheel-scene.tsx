@@ -29,6 +29,15 @@ export default function WheelScene({ emotionId, inner, intensity, rotation, onUn
     scene.add(bars);
     const dummy = new THREE.Object3D();
     const color = new THREE.Color();
+    let barShade = 1;
+    const syncTheme = () => {
+      barShade = Number(getComputedStyle(element).getPropertyValue("--scene-bar-shade")) || 1;
+      const next = waveCharacters[target.current.emotionId] ?? defaultCharacter;
+      material.color.set(next.color).multiplyScalar(barShade);
+    };
+    syncTheme();
+    const theme = new MutationObserver(syncTheme);
+    theme.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     const current = { ...defaultCharacter };
     let radius = 1.44, rotationNow = 0, frame = 0, previous = 0, sampleStart = 0, samples = 0, sampled = false, time = 0;
     const resize = () => renderer.setSize(element.clientWidth, element.clientHeight);
@@ -48,7 +57,7 @@ export default function WheelScene({ emotionId, inner, intensity, rotation, onUn
       const strength = target.current.inner ? (target.current.intensity === "low" ? .6 : target.current.intensity === "high" ? 1.4 : 1) : 1;
       current.amplitude += (next.amplitude * strength - current.amplitude) * blend;
       current.smoothness += (next.smoothness - current.smoothness) * blend;
-      material.color.lerp(color.set(next.color), blend);
+      material.color.lerp(color.set(next.color).multiplyScalar(barShade), blend);
       radius += ((target.current.inner ? 1.06 : 1.44) - radius) * blend;
       rotationNow += (target.current.rotation - rotationNow) * blend;
       for (let i = 0; i < 128; i++) {
@@ -72,7 +81,7 @@ export default function WheelScene({ emotionId, inner, intensity, rotation, onUn
     renderer.domElement.addEventListener("webglcontextlost", lost);
     document.addEventListener("visibilitychange", visibility); visibility();
     return () => {
-      cancelAnimationFrame(frame); observer.disconnect();
+      cancelAnimationFrame(frame); observer.disconnect(); theme.disconnect();
       document.removeEventListener("visibilitychange", visibility);
       renderer.domElement.removeEventListener("webglcontextlost", lost);
       bars.dispose(); geometry.dispose(); material.dispose(); renderer.dispose(); renderer.forceContextLoss();

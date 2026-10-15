@@ -98,17 +98,36 @@ Emotion hover lifts 3px with 220ms ease transitions on transform, border and sha
 
 ## Step 8 Home wheel
 
-Home progressively replaces the original picker with a 540px maximum square dial in a 24px-radius dark panel. The scene remains dark in light mode, with explicit foreground `#EEEDF2`, supporting text `#B9BAC4`, control borders `#777780` and warm selected/focus accent `#D5BD8B` (selected text `#17141F`). Existing per-emotion colors tint decorative bars only. No new global theme tokens.
+Home progressively replaces the original picker with a 540px maximum square dial in a 24px-radius theme-aware panel. The shared scene tokens below preserve the original dark palette and provide a warm cream light palette. Existing per-emotion colors tint decorative bars in both themes; light-mode bars use a .28 linear-color multiplier to deepen the same hues.
 
 Panel padding is 24px/16px on mobile, 28px/32px from 640px. A thin orbit and 128 instanced bars frame a DOM center control. Broad labels sit on the outer ring; a semantic wrapping button list below provides full labels, 44px targets and pressed states at both levels. Inner selection contracts the orbit over 500ms; bar characters interpolate with time-based easing. Arrows and Enter work on the center; previous/next buttons support other input. Focus moves to the inner reading link after locking. Intensity uses native labeled radios and explicitly says it is not saved. Loading, scene failure, low capability, context loss and reduced motion preserve the original grid. Verse rendering remains immediate. Reduced motion skips the scene entirely; global reduced-motion CSS also disables transitions. Source checklist reviewed; rendered narrow/wide, dark/light, keyboard, touch, screen-reader and contrast-tool checks remain for preview review.
 
 ## Step 9 Dawn reveal
 
-Results retain their 700px column and both page themes. A 96px-high decorative dark horizon (`#0B0D10`, 16px radius, 24px bottom gap) echoes the dial with centered 72px/48px rings. Center light uses the existing wheel warm accent `#D5BD8B`, expanding once over 2.4 seconds. No new global tokens. A static 9% emotion wash sits behind the results, with a 4% wash over each card, using the existing `data-emotion` colors. Text remains on theme card surfaces.
+Results retain their 700px column and both page themes. A 96px-high decorative theme-aware horizon (16px radius, 24px bottom gap) echoes the dial with centered 72px/48px rings. Center light uses the shared scene palette below, expanding once over 2.4 seconds. A static 9% emotion wash sits behind the results, with a 4% wash over each card, using the existing `data-emotion` colors. Text remains on theme card surfaces.
 
 Only wheel navigation animates the first passage, beginning after 600ms at 260ms per word, with 600ms soft ink emphasis. Words remain fully selectable DOM text and readable at the existing muted/foreground colors throughout; nothing is hidden, blurred, injected later or duplicated for screen readers. Whitespace is preserved. Other passages are immediate. Skip animation has a 44px target and existing theme focus styling; its space is reserved to avoid layout shift, and focused Skip stays visible after completion. A brief line explains that the complete passage is ready to read. The decorative horizon is aria-hidden. Reduced motion omits it and shows instant words; simple picker, direct visits and no-JavaScript reading remain instant. Hidden tabs and live reduced-motion changes cancel effects. Cleanup cancels effects and timers. Loading, fallback labels, attribution and existing actions are unchanged.
 
 Source checklist: responsive wrapping controls, existing typography/spacing, dark/light variables, semantic passage text, keyboard Skip, no blocking overlay, preserved credits and source wording, no new loading/error gate. Rendered narrow/wide, both-theme contrast/focus, screen-reader continuity and Skip/live reduced-motion behavior still require preview review because no browser is connected.
+
+## Shared scene theme tokens
+
+All scene colors are defined once in the `:root` and `:root[data-theme="light"]` blocks in `app/globals.css`. CSS and transparent WebGL share these tokens; no separate JavaScript color palette. Both scenes follow the existing root `data-theme`. Before paint, a saved light/dark choice wins; without a choice, system preference applies. System changes update the same root attribute until the toggle makes an explicit choice. Browser preference adoption preserves that distinction without changing the personal-data schema. No-JavaScript remains dark.
+
+| Token role | Dark | Light |
+| --- | --- | --- |
+| `--scene-sky` / `--scene-sky-end` | `#0B0D10` / `#0B0D10` | `#FFFAF0` / `#F4EAD9` |
+| `--scene-text` / `--scene-muted` | `#EEEDF2` / `#B9BAC4` | `#302A24` / `#66594B` |
+| `--scene-accent` / `--scene-selected` | `#D5BD8B` / `#F0D9A9` | `#78541F` / `#78541F` |
+| `--scene-on-accent` | `#17141F` | `#FFFAF0` |
+| `--scene-control-border` | `#777780` | `#8A7964` |
+| `--scene-control` / `--scene-control-hover` | `#12151A` / `#12151A` | `#FFFAF0` / `#F4EAD9` |
+| `--scene-orbit` / `--scene-dawn-stroke` | warm gold at 19% / 30% | `#A1814B` / `#A1814B` |
+| `--scene-light` / `--scene-light-halo` | `#D5BD8B` / same at 22% | `#E4BD69` / same at 22% |
+| `--scene-word-glow` | gold shadow at 30% | soft gold shadow at 15% |
+| `--scene-bar-shade` | 1 | .28 |
+
+The renderer observes root theme changes and updates bar colors before its next frame, without recreating GPU resources; cleanup disconnects the observer. Dawn observes the same attribute and cancels captured-color animation on a switch, immediately restoring theme-driven ink. The center glow is confined to the decorative horizon and never overlays Scripture or controls. Emotion atmosphere remains a 4% card tint. Automated contrast checks sample both sky gradient endpoints and 101 intermediate colors, foreground/muted/accent text, selected controls, 3:1 control borders/focus, all eight emotion washes, 101 dawn ink stages, prayer surfaces and Journal heatmap text. All meet AA. Simple picker, results, Compare and Journal use the shared page theme tokens; source and HTTP/bootstrap checks cover both themes. No connected browser is available, so rendered/keyboard review remains pending.
 
 ## Copy tone
 

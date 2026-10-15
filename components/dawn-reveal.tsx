@@ -32,7 +32,7 @@ export function DawnReveal({ path, children }: { path: string; children: ReactNo
           // Both colors remain readable. Animation adds emphasis without hiding text.
           animations.push(word.animate([
             { color: style.getPropertyValue("--muted-foreground"), textShadow: "none" },
-            { color: style.getPropertyValue("--foreground"), textShadow: "0 0 12px rgb(213 189 139 / 30%)" },
+            { color: style.getPropertyValue("--foreground"), textShadow: style.getPropertyValue("--scene-word-glow") },
             { color: style.getPropertyValue("--foreground"), textShadow: "none" },
           ], { delay: wordDelay(index), duration: 600, fill: "backwards", easing: "ease-out" }));
         });
@@ -47,6 +47,9 @@ export function DawnReveal({ path, children }: { path: string; children: ReactNo
     });
     const visibility = () => { if (document.hidden) finish(); };
     const preference = () => { if (motion.matches) finish(); };
+    // Captured animation colors must never survive a theme switch.
+    const theme = new MutationObserver(finish);
+    theme.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     document.addEventListener("visibilitychange", visibility);
     motion.addEventListener("change", preference);
     return () => {
@@ -54,6 +57,7 @@ export function DawnReveal({ path, children }: { path: string; children: ReactNo
       finish();
       document.removeEventListener("visibilitychange", visibility);
       motion.removeEventListener("change", preference);
+      theme.disconnect();
     };
   }, [path]);
 
