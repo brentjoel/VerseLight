@@ -7,7 +7,7 @@ Home shows the verse of the day and an emotion grid. A user picks a broad emotio
 - Two-step emotion picker.
 - KJV, WEB, ASV, and BSB translations with side-by-side comparison.
 - Email and Google login.
-- Preferred translation stored on profiles; guests use localStorage.
+- Preferred translation stored in a validated translation cookie; sync to profiles in Step 4.
 - Saved verses and collections.
 - Mood journal with calendar heatmap.
 - Streaks with one grace day per week and badges.

@@ -3,7 +3,7 @@
 ## Checklist
 - [x] 1. Setup, home page placeholder, .env.example, first deploy (local setup complete; first Vercel deployment is a manual handoff)
 - [x] 2. Content files, two-step emotion picker, results page
-- [ ] 3. Translations, selector, compare view
+- [x] 3. Translations, selector, compare view
 - [ ] 4. Auth and profiles
 - [ ] 5. Saved verses and collections
 - [ ] 6. Mood journal and heatmap
@@ -13,6 +13,12 @@
 - [ ] 10. Security checks and launch
 
 ## Decisions log
+- 2026-10-15: Step 3 complete. npm run fetch:verses saved all 84 references in each of KJV, WEB, ASV, and BSB; a second offline run skipped all 336 saved entries. npm run validate:data, npx tsc --noEmit, npm run lint, and npm run build pass. Production HTTP checks passed all 32 results routes in all four translations, exact local text including ranges, default/invalid cookies, comparison defaults for every preference, all-four/repeated/comma-separated selections, back links, invalid references/translations/return URLs, and missing/empty-data rejection. A route-scoped proxy checks parent/feeling pairs before streaming to preserve styled HTTP 404s; home, licenses, and broad feelings still prerender statically. No dependencies added.
+- 2026-10-15: Step 3 manual handoff: browser inventory is empty, so visual appearance, keyboard dropdown interaction, cookie persistence across reloads, and mobile comparison stacking still need browser review. Try npm.cmd run dev, open http://localhost:3000, choose Anxious > Worried about the future, change the header translation, reload, then Compare and select two to four translations. The source uses singular Psalm; corrected the initial BSB importer assumption and successfully resumed without replacing saved text. Step 4 remains unchecked and unstarted.
+- 2026-10-15: Step 3 sources: KJV, WEB, and ASV from https://bible-api.com/ (free API, at most one request every 2.3 seconds); BSB from the publisher's https://bereanbible.com/bsb.txt. WEB and ASV are public domain per https://ebible.org/engwebp/copyright.htm and https://ebible.org/asv/copyright.htm. BSB was dedicated to the public domain April 30, 2023 per https://berean.bible/licensing.htm. KJV is public domain outside the UK; https://ebible.org/eng-kjv/copyright.htm documents special UK letters-patent rights. No replacement translation or new dependency was needed.
+- 2026-10-15: Step 3 uses committed, reference-keyed local JSON only at runtime. The resumable fetch script retries network/HTTP failures, respects Retry-After, saves after each reference, verifies every range member and the API translation/book/chapter/verse, and preserves source words and punctuation. Scripture punctuation takes precedence over the no-em-dash app-copy rule; no source verse text was authored or paraphrased.
+- 2026-10-15: WEB is the default; the validated translation cookie replaces the SPEC's older guest-localStorage plan as requested. Header preference reads happen in the browser on static pages. Results and comparison read cookies on the server behind Suspense, per the installed Next.js 16.4 guides. Removed the results page's ensureStatic="navigation" requirement because cookies require request-time rendering. Home, broad feelings, and licenses remain static. TODO marks profile synchronization for Step 4, which is not started.
+- 2026-10-15: Comparison is /compare?ref=...&from=... with optional repeated translations parameters (comma-separated values also work). It defaults to the preferred translation plus WEB, or BSB when WEB is preferred. A native GET form chooses two to four translations; unknown references, unknown translation ids, too few selections, and invalid return paths receive friendly messages. Return paths are allowlisted to existing results routes. Footer credits link to /licenses.
 - 2026-10-15: Redesign checks passed: npx tsc --noEmit, npm run lint, npm run build (including content validation), production HTTP checks for home, all 40 emotion/results pages with four complete prompt cards per results page, and three invalid paths returning the styled 404. Data, lookup logic, validation scripts, dependencies, and route paths match the checkpoint. Browser inventory is empty, so rendered appearance and interactive theme switching still need manual browser review. Try npm.cmd run dev, open http://localhost:3000, use the header theme button, then Anxious > Worried about the future. Step 3 remains unchecked.
 - 2026-10-15: UI redesign only, after checkpoint commit "Before UI redesign". Dark is the default; a small client theme toggle remembers light/dark locally, with a pre-paint script to prevent a theme flash. Routes, static params, lookups, data files, prompts, and verse placeholders are unchanged. Step 3 has not started.
 - 2026-10-15: Design tokens in app/globals.css: dark background #0B0D10, card #12151A, text #EEEDF2, muted #A2A5AF, lavender #B4ACD5, white 8% borders; light background #F7F7FA, card #FFFFFF, text #272833, muted #666875, lavender #6D5B96. Eight muted emotion accents tint small dots and subtle glows. Geist UI and Lora headings/verse placeholders are self-hosted through next/font. No dependencies added.
@@ -35,5 +41,4 @@
 - 2026-10-14: GitHub CLI is missing. No workaround, remote push, or deployment is performed; provide manual commands. Vercel first deployment remains a handoff item.
 
 ## Open questions
-- Choose the verse text provider and confirm translation availability in Step 3.
 - Define the user's timezone and weekly grace-day reset boundary in Step 7.

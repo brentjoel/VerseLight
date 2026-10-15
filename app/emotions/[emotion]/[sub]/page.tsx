@@ -1,11 +1,14 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { SiteShell } from "@/components/site-shell";
 import { ContentNotice } from "@/components/content-notice";
-import { getAllEmotions, getEmotionById, getPromptForReference, getSpecificEmotionByIds } from "@/lib/emotions";
-
-export const ensureStatic = "navigation";
+import { getAllEmotions, getEmotionById, getPromptForReference, getSpecificEmotionByIds, type Emotion, type SpecificEmotion } from "@/lib/emotions";
+import { getPreferredTranslation } from "@/lib/translation-preference";
+import { getVerseText } from "@/lib/verses";
+import { PreferredTranslationSelector } from "@/components/preferred-translation-selector";
+import { TranslationSelector } from "@/components/translation-selector";
 
 export function generateStaticParams() {
   return getAllEmotions().flatMap((emotion) => emotion.specifics.map((specific) => ({ emotion: emotion.id, sub: specific.id })));
@@ -16,9 +19,15 @@ export default async function ResultsPage({ params }: { params: Promise<{ emotio
   const emotion = getEmotionById(emotionId);
   const specific = getSpecificEmotionByIds(emotionId, sub);
   if (!emotion || !specific) notFound();
+  return <SiteShell translationControl={<Suspense fallback={<TranslationSelector />}><PreferredTranslationSelector /></Suspense>}><Suspense fallback={<ContentNotice>Finding your verses...</ContentNotice>}><ResultsContent emotion={emotion} specific={specific} /></Suspense></SiteShell>;
+}
+
+async function ResultsContent({ emotion, specific }: { emotion: Emotion; specific: SpecificEmotion }) {
+  const translation = await getPreferredTranslation();
+  const returnTo = `/emotions/${emotion.id}/${specific.id}`;
 
   return (
-    <SiteShell>
+    <>
       <Link href={`/emotions/${emotion.id}`} className="back-link">← {emotion.name} feelings</Link>
       <div data-emotion={emotion.id} className="results-wrap">
         <div className="results-heading">
@@ -35,8 +44,9 @@ export default async function ResultsPage({ params }: { params: Promise<{ emotio
                   <article className="h-full">
                     <Card className="verse-card">
                       <CardHeader className="verse-card-header">
-                        <h2 className="verse-reference">{reference}</h2>
-                        <p className="verse-placeholder">Verse text arrives in the next update.</p>
+                        <div className="verse-heading-row"><h2 className="verse-reference">{reference}</h2><span className="translation-tag">{translation.toUpperCase()}</span></div>
+                        <p className="verse-text">{getVerseText(reference, translation)}</p>
+                        <Link className="compare-link" href={`/compare?${new URLSearchParams({ ref: reference, from: returnTo })}`} aria-label={`Compare translations of ${reference}`}>Compare <span aria-hidden="true">↗</span></Link>
                       </CardHeader>
                       <CardContent className="verse-card-content">
                         {prompt ? (
@@ -55,6 +65,6 @@ export default async function ResultsPage({ params }: { params: Promise<{ emotio
           {specific.references.length === 0 && <ContentNotice>References for this feeling are being prepared with care. Please visit again soon.</ContentNotice>}
         </section>
       </div>
-    </SiteShell>
+    </>
   );
 }

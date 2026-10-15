@@ -7,7 +7,8 @@
     "build": "npm run validate:data && next build",
     "start": "next start",
     "lint": "eslint",
-    "validate:data": "node scripts/validate-data.mjs"
+    "validate:data": "node scripts/validate-data.mjs",
+    "fetch:verses": "node scripts/fetch-verses.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

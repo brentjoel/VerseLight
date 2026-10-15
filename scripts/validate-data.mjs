@@ -55,6 +55,21 @@ export function validateData(emotions, prompts) {
   return errors;
 }
 
+export function validateVerses(emotions, translations) {
+  const errors = [];
+  const references = new Set(emotions.flatMap(emotion => emotion.specifics.flatMap(specific => specific.references)));
+  for (const id of ["kjv", "web", "asv", "bsb"]) {
+    const verses = translations[id];
+    if (!isObject(verses)) { errors.push(`Missing translation file: ${id}.json`); continue; }
+    for (const reference of references) {
+      if (!Object.hasOwn(verses, reference) || typeof verses[reference] !== "string" || !verses[reference].trim()) {
+        errors.push(`Missing or empty verse text: ${id.toUpperCase()} ${reference}`);
+      }
+    }
+  }
+  return errors;
+}
+
 // Importing the validator for focused checks does not execute the CLI.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
@@ -62,12 +77,15 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       readFile(new URL("../data/emotions.json", import.meta.url), "utf8").then(JSON.parse),
       readFile(new URL("../data/prompts.json", import.meta.url), "utf8").then(JSON.parse),
     ]);
-    const errors = validateData(emotions, prompts);
+    const translations = Object.fromEntries(await Promise.all(["kjv", "web", "asv", "bsb"].map(async id => [id,
+      JSON.parse(await readFile(new URL(`../data/verses/${id}.json`, import.meta.url), "utf8")),
+    ])));
+    const errors = [...validateData(emotions, prompts), ...validateVerses(emotions, translations)];
     if (errors.length) {
       console.error(errors.join("\n"));
       process.exitCode = 1;
     } else {
-      console.log(`Validated ${emotions.length} emotions, 32 specific feelings, and ${Object.keys(prompts).length} verse prompts.`);
+      console.log(`Validated ${emotions.length} emotions, 32 specific feelings, ${Object.keys(prompts).length} verse prompts, and all references in KJV, WEB, ASV, BSB.`);
     }
   } catch (error) {
     console.error("Could not validate content:", error instanceof Error ? error.message : error);
