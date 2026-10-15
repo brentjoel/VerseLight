@@ -1,20 +1,20 @@
 # Verselight product specification
 
 ## Core flow
-Home shows the verse of the day and an emotion grid. A user picks a broad emotion, then a specific feeling, and receives 3 to 5 verses in their chosen translation. Each verse includes a reflection question and prayer starter. Users can save a verse, add it to a collection, or share an image card. Logged-in users also get a mood entry, streak, and badges. Guests can browse; saving, journal, and streaks require login.
 
-## Features
-- Two-step emotion picker.
-- NLT (default), KJV, WEB, ASV, and BSB with side-by-side comparison. ESV is dropped. NIV is disabled, pending a license and provider setup.
-- Email and Google login.
-- Preferred translation stored in a validated translation cookie; sync to profiles in Step 4.
-- Saved verses and collections.
-- Mood journal with calendar heatmap.
-- Streaks with one grace day per week and badges.
-- Reflect and pray prompts.
-- Share cards using Next.js ImageResponse.
-- Verse of the day chosen by day of year.
-- Mobile-first UI and dark mode.
+Everyone is a guest. Choose a broad emotion, then a specific feeling, and read four curated passages in a preferred translation, each with a reflection question and prayer starter. This flow, translation selection, comparison and credits are DONE. All eventual features work for every visitor. Personal records stay in the visitor's browser with local JSON Export and Import backups, with no server persistence.
+
+PLANNED: Save a verse by reference, organize collections on My Verses, record moods, view a calendar heatmap, grow streaks with a weekly grace day, earn badges and share image cards. Home will show a real verse of the day; its current panel is a placeholder. No personal data leaves the device. The existing non-sensitive translation preference cookie is the narrow exception used for server passage rendering.
+
+## Features and status
+
+- DONE: Two-step emotion picker, four passages per feeling, reflection and prayer prompts.
+- DONE: NLT default, KJV, WEB, ASV, BSB, and side-by-side comparison of two to four translations. Existing NIV stays disabled as Coming soon pending licensed access. Keep the provider list extensible.
+- DONE: Validated translation cookie and remembered theme. Dark default with working light mode and mobile-first UI.
+- PLANNED Step 4: Typed browser storage, saved verses, collections, My Verses, and validated JSON Export and Import.
+- PLANNED Step 5: Mood journal with calendar heatmap, local-date streaks with one grace day per week, and badges.
+- PLANNED Step 6: Share cards using Next.js ImageResponse, verse of the day by local day of year, polish and accessibility pass.
+- PLANNED Step 7: Privacy note, About page and translation credits, stronger NLT rate/quota handling, error monitoring basics and README launch checks.
 
 ## Emotions
 | Broad emotion | Specific feelings |
@@ -28,26 +28,39 @@ Home shows the verse of the day and an emotion grid. A user picks a broad emotio
 | Hopeful | Starting something new; Waiting on God; Facing a big decision; Need direction |
 | Doubtful | Questioning faith; Feeling far from God; Unanswered prayer; Seeking peace |
 
-## Content rules
-Store content selections by reference only, for example Psalm 34:18, and fetch text per translation. `data/emotions.json` holds emotions, sub-emotions, and about four verse references each. `data/prompts.json` holds a reflection question and prayer starter per reference. A verse can appear under several emotions. Never invent verse text.
 
-Verselight is a strictly noncommercial personal and portfolio project: no ads, subscriptions, donations, or paid features. NLT is the default through the official Tyndale API, server-side only, using NLT_API_KEY in .env.local or hosting secrets. Do not persist licensed verse text in the repo, framework caches, databases, or files. Show required copyright notices and publisher links. KJV, WEB, ASV, and BSB remain static public-domain files, with special UK rights applying to KJV. If the NLT API fails, reaches quota, or is unconfigured, show WEB with an explicit note and WEB tag. Existing valid translation cookies retain the user's choice. NIV remains disabled as Coming soon until licensed provider access is configured; never scrape or copy it. Re-check licenses before monetization or new caching, display, or sharing behavior. See docs/TRANSLATION-LICENSES.md for source terms and setup, and docs/ARCHITECTURE.md for DONE and PLANNED architecture.
+## Content and privacy rules
 
-## Data model
-| Table | Fields |
+`data/emotions.json` holds curated reference selections; `data/prompts.json` holds questions and prayer starters by reference. A verse can appear under several feelings. Never invent Scripture text. All personal records, including saved verses, contain references and metadata only, never NLT text. Never send notes, backups, activity, or other personal records to any server. No tracking or analytics without asking.
+
+Strictly noncommercial personal and portfolio project: no ads, payments, subscriptions, donations, or paid features. NLT uses the official Tyndale API, server-side only with `NLT_API_KEY` in ignored local environment or hosting secrets. No persistent NLT text in browser storage, backups, files, framework caches, or the repository. Preserve wording, required notices and publisher links. KJV, WEB, ASV and BSB use static public-domain files; KJV has special UK rights. Missing key, provider error or quota exhaustion shows WEB with a WEB tag and explicit note. Valid translation cookies retain the chosen preference. Do not scrape or copy NIV. Re-check publisher terms before changing display, sharing, caching, usage, or introducing ads, payments or donations. See [translation terms](TRANSLATION-LICENSES.md).
+
+## Local data model (PLANNED)
+
+All rows below are PLANNED. See [architecture](ARCHITECTURE.md) for validation, migrations, write behavior and backup format. Use a small typed localStorage layer in `lib/`, a versioned envelope and an in-memory fallback when storage is unavailable. No server data service is used.
+
+| Shape | Fields |
 | --- | --- |
-| profiles | id, display_name, preferred_translation, timezone, current_streak, longest_streak, last_active_date, grace_days_left |
-| saved_verses | id, user_id, reference, emotion_id, created_at |
-| collections | id, user_id, name, created_at |
-| collection_verses | collection_id, saved_verse_id |
-| mood_entries | id, user_id, emotion_id, sub_emotion_id, note, created_at |
-| activity_days | user_id, date |
-| badges | user_id, badge_key, earned_at |
+| Envelope | `schemaVersion: 1`, `revision`, `updatedAt`, `data: PersonalData` |
+| Preferences | `theme`, `preferredTranslation` |
+| SavedVerse | `id`, `reference`, `translationId`, optional valid pair `emotionId`/`specificEmotionId`, `createdAt` |
+| Collection | `id`, `name`, unique valid `savedVerseIds`, `createdAt`, `updatedAt` |
+| MoodEntry | `id`, `emotionId`, `specificEmotionId`, optional `note`, `localDate`, `createdAt` |
+| ActivityDay | unique `localDate`, `firstActivityAt`, `utcOffsetMinutes`, unique `sources` (emotion/save) |
+| StreakState | `currentStreak`, `longestStreak`, optional `lastActiveDate`, `graceDates`, optional `maxObservedLocalDate`/`maxObservedAt` |
+| Badge | unique supported `key`, `earnedAt` |
+| PersonalData | `preferences`, `savedVerses`, `collections`, `moodEntries`, `activityDays`, `streakState`, `badges` |
 
-Supabase Auth and Postgres arrive in Step 4. Every table requires RLS with ownership checks, including related collection rows.
+PLANNED: Stable browser-generated ids, validated canonical references/translation ids, local YYYY-MM-DD dates and ISO instants. Save uniqueness is reference plus translation. Collection membership points to saved ids. Deleting a save removes its memberships; deleting a collection keeps its verses. Backups have a format marker, schema version, export timestamp and validated personal data; import previews counts and requires confirmation before full replacement. Validate size, fields, relationships and migrations before writes; invalid files leave data intact. Existing theme storage and translation cookie remain working during planned preference adoption.
 
-## Streaks and badges
-PLANNED: A streak day counts when a logged-in user picks an emotion or saves a verse. Define calendar days in the user's profile timezone, defaulting to Asia/Manila. Count activity idempotently once per user and local date. One non-accumulating grace day per local Monday-through-Sunday week can preserve continuity after exactly one missed day; assign its use to the missed date's week without counting it as an active day. Keep the logic in pure lib/ functions and apply writes atomically. Badges: 3, 7, 30, and 100 day streaks; first saved verse; 10 saved verses; first collection; first mood entry. Full planned rules are in docs/ARCHITECTURE.md. No streak code is built yet.
+## Streaks and badges (PLANNED)
+
+Step 5 uses pure `lib/` functions. Selecting a specific feeling or saving a verse counts once per device local calendar date, regardless of repeated actions. Local dates use device year/month/day, not a fixed timezone or UTC day. Preserve historical dates across timezone changes. Backward clock/date changes freeze new accrual and show a notice until time catches up; forward changes use the real gap without inventing activity. Local-only clock checks cannot establish trusted time.
+
+One non-accumulating grace day per Monday-through-Sunday local week can bridge exactly one missed date. Assign grace to that missed date's week, including across week boundaries; retry never consumes it twice. It preserves continuity without adding an active day. Larger gaps or used grace start a new streak. The ledger is authoritative; derived totals are recomputed. Full rules and test cases are in architecture.
+
+Badge keys: streak-3, streak-7, streak-30, streak-100, first-save, saved-10, first-collection, first-mood. Award each once and retain earned milestones when ordinary content is removed. No streak or badge feature is built yet.
 
 ## Delivery
-Use Next.js App Router, strict TypeScript, Tailwind CSS, shadcn/ui, and npm. Code lives in top-level `app/`, without `src/`. Deploy on Vercel. Work through the progress checklist one step at a time. Step 1 contains placeholders only, with no content selection, fetching, authentication, or persistence.
+
+Next.js App Router, strict TypeScript, Tailwind CSS, shadcn/ui and npm, with top-level `app/`. Vercel target, one unchecked progress step per branch. Read [design](DESIGN.md) before UI work. Meet acceptance criteria, typecheck, lint and build, update progress, commit small, push a preview branch and wait for approval before merging to main. Notifications/PWA reminders, memorize mode, AI free-text and audio are out of scope.

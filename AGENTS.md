@@ -1,52 +1,30 @@
 # Verselight
 
-Verselight is an emotion-based Bible verse app: people choose a feeling and receive verses in their preferred translation, a reflection question, and a prayer starter. Later steps add accounts, saved verses, collections, a mood journal, streaks with a grace day, badges, share cards, and a verse of the day. Stack: Next.js App Router, strict TypeScript, Tailwind CSS, shadcn/ui, npm, and later Supabase Auth, Postgres, and row-level security. Deploy to Vercel.
+Emotion-based Scripture, reflection, and prayer. Stack: Next.js App Router, strict TypeScript, Tailwind CSS, shadcn/ui, npm, Vercel. Everyone uses the app as a guest. Personal data stays in the visitor's browser with JSON Export and Import backups. No server persistence for personal data.
 
 Read `docs/SPEC.md` and `docs/PROGRESS.md` at the start of every task.
-Read docs/ARCHITECTURE.md before changing structure, data flow, or auth.
-
-## Commands
-- `npm run dev`
-- `npm run lint`
-- `npx tsc --noEmit`
-- `npm run build`
-
-On Windows PowerShell with blocked script launchers, use `npm.cmd` and `npx.cmd`.
-
-## Definition of done
-Type checking, lint, and build all pass. The feature works locally and the summary explains how to try it. Update `docs/PROGRESS.md`. Summarize in under 10 lines, then stop.
+Read docs/ARCHITECTURE.md before changing structure or data flow. Read docs/DESIGN.md before any UI work and follow its checklist.
 
 ## Workflow
-- Work on ONE unchecked step at a time and never start the next.
-- Ask one short question if unclear; otherwise choose the simplest option and log it.
-- No new dependencies without a one-line reason. Do not touch files outside the task.
-- Never commit secrets: use `.env.local` and keep `.env.example` updated.
-- Never invent Bible verse text.
+- Create a branch named `step-N-short-name`. Do only the next unchecked step, meet every acceptance criterion, and never start the following step.
+- Ask one short question if unclear; otherwise choose the simplest option and log it. No new dependencies without a one-line reason. Touch only task files.
+- Update `docs/PROGRESS.md`. Run `npx tsc --noEmit`, `npm run lint`, and `npm run build`; all must pass. Use `npm.cmd` and `npx.cmd` when PowerShell blocks script launchers. Use `npm run dev` to try locally.
+- Commit small, push the branch so Vercel makes a preview, and wait for the user's approval before merging to main. Do not deploy production independently.
+- Explain checks and how to try the result. Summaries under 10 lines, then stop.
+- Never commit secrets. Keep values in ignored `.env.local` and hosting secrets; keep `.env.example` current.
 
-## Code conventions
-- TypeScript strict; no `any` without a comment.
-- Server Components by default; `"use client"` only when needed.
-- Use `app/`, `components/` (`ui/` is shadcn), `lib/`, `data/` (`emotions.json`, `prompts.json`), and `supabase/migrations/`.
-- Validate all external input. Every Supabase table has RLS so users only access their own rows.
-- Keep logic such as streaks in pure functions in `lib/`.
-
-## UI
-Calm, clean, mobile-first. Light and dark mode via CSS variables. Use semantic HTML, focus states, sufficient contrast, and input labels. Write warm plain copy with no em dashes. Every data view has loading, empty, and error states.
-
-## Git
-Small commits with clear messages. Do not push or deploy unless asked.
-
-## Out of scope
-Notifications or PWA reminders, memorize mode, AI free-text, and audio.
+## Code and UI
+- Strict TypeScript; no `any` without a comment. Server Components by default; `"use client"` only when needed.
+- Use `app/`, `components/` (`ui/` for shadcn), `lib/`, and `data/`. Validate external input and browser storage. Keep streak logic in pure `lib/` functions.
+- Calm, clean, mobile-first. Dark default with working light mode, semantic HTML, labels, contrast, visible focus, reduced-motion support, and loading, empty, and error states. Warm plain copy, no em dashes.
+- Never send user data to any server. The existing translation preference cookie is the sole documented preference exception; never put personal records in cookies, URLs, requests, or logs. Never add analytics or tracking without asking.
+- Out of scope: notifications or PWA reminders, memorize mode, AI free-text, and audio.
 
 ## Translation licensing
-- Verselight is strictly noncommercial: a personal and portfolio project with no ads, subscriptions, donations, or paid features.
-- NLT is the default. Use the official Tyndale noncommercial API server-side only. Keep NLT_API_KEY in .env.local and hosting secrets, never client code or logs.
-- KJV, WEB, ASV, and BSB remain static public-domain files (KJV has special UK rights). WEB is the labeled fallback for API failure or quota exhaustion.
-- ESV is dropped. NIV is pending a license and provider setup. Keep its existing disabled Coming soon option. Never scrape or copy NIV text.
-- Do not persist NLT verse text to files, framework caches, databases, or the repository. Preserve source wording and required attribution. Re-check current publisher terms before changing usage, caching, display, or sharing.
-- Do not introduce ads, payments, or donation features without re-checking translation licenses.
-- Current terms and setup are documented in docs/TRANSLATION-LICENSES.md. Continue this Step 3 extension without starting Step 4.
+- Strictly noncommercial: no ads, payments, subscriptions, donations, or paid features. Do not introduce ads, payments, or donations without re-checking translation licenses.
+- NLT default via official Tyndale API, server-side `NLT_API_KEY` only. Never log credentials or persist NLT verse text in browser storage, backups, files, framework caches, or the repository. Preserve wording and attribution; never invent Bible text.
+- KJV, WEB, ASV, BSB use static public-domain files; KJV has special UK rights. WEB is the labeled fallback. Keep providers extensible and the existing disabled NIV Coming soon option pending licensed access. Never scrape or copy NIV text.
+- Read `docs/TRANSLATION-LICENSES.md`; re-check publisher terms before changing usage, caching, display, or sharing.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
