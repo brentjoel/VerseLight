@@ -5,7 +5,7 @@ Home shows the verse of the day and an emotion grid. A user picks a broad emotio
 
 ## Features
 - Two-step emotion picker.
-- KJV, WEB, ASV, and BSB translations with side-by-side comparison.
+- NLT (default), ESV, KJV, WEB, ASV, and BSB with side-by-side comparison. NIV is disabled, pending a license and provider setup.
 - Email and Google login.
 - Preferred translation stored in a validated translation cookie; sync to profiles in Step 4.
 - Saved verses and collections.
@@ -29,7 +29,9 @@ Home shows the verse of the day and an emotion grid. A user picks a broad emotio
 | Doubtful | Questioning faith; Feeling far from God; Unanswered prayer; Seeking peace |
 
 ## Content rules
-Store verses by reference only, for example Psalm 34:18, and fetch text per translation. `data/emotions.json` holds emotions, sub-emotions, and about four verse references each. `data/prompts.json` holds a reflection question and prayer starter per reference. A verse can appear under several emotions. Never invent verse text. Do not support NIV, ESV, or NLT.
+Store content selections by reference only, for example Psalm 34:18, and fetch text per translation. `data/emotions.json` holds emotions, sub-emotions, and about four verse references each. `data/prompts.json` holds a reflection question and prayer starter per reference. A verse can appear under several emotions. Never invent verse text.
+
+Verselight is a strictly noncommercial personal and portfolio project: no ads, subscriptions, donations, or paid features. NLT is the default and ESV is supported through the official Tyndale and Crossway APIs, server-side only. Keys belong in .env.local or hosting secrets. Do not persist licensed verse text in the repo, framework caches, databases, or files. Show required copyright notices and publisher links. KJV, WEB, ASV, and BSB remain static local files. If a licensed API fails, reaches quota, or is unconfigured, show WEB with an explicit note and WEB tag. Existing valid translation cookies retain the user's choice. NIV remains disabled as Coming soon until licensed provider access is configured; never scrape or copy it. Re-check licenses before monetization or new caching, display, or sharing behavior. See docs/TRANSLATION-LICENSES.md for source terms and setup.
 
 ## Data model
 | Table | Fields |

@@ -6,7 +6,8 @@ import { SiteShell } from "@/components/site-shell";
 import { ContentNotice } from "@/components/content-notice";
 import { getAllEmotions, getEmotionById, getPromptForReference, getSpecificEmotionByIds, type Emotion, type SpecificEmotion } from "@/lib/emotions";
 import { getPreferredTranslation } from "@/lib/translation-preference";
-import { getVerseText } from "@/lib/verses";
+import { getVersePassage } from "@/lib/verse-passage";
+import { PassageAttribution } from "@/components/passage-attribution";
 import { PreferredTranslationSelector } from "@/components/preferred-translation-selector";
 import { TranslationSelector } from "@/components/translation-selector";
 
@@ -24,6 +25,7 @@ export default async function ResultsPage({ params }: { params: Promise<{ emotio
 
 async function ResultsContent({ emotion, specific }: { emotion: Emotion; specific: SpecificEmotion }) {
   const translation = await getPreferredTranslation();
+  const passages = await Promise.all(specific.references.map(reference => getVersePassage(reference, translation)));
   const returnTo = `/emotions/${emotion.id}/${specific.id}`;
 
   return (
@@ -37,15 +39,17 @@ async function ResultsContent({ emotion, specific }: { emotion: Emotion; specifi
         </div>
         <section aria-label={`Verse references for ${specific.name.toLowerCase()}`} className="mt-10">
           <ul className="verse-list">
-            {specific.references.map((reference) => {
+            {specific.references.map((reference, index) => {
               const prompt = getPromptForReference(reference);
+              const passage = passages[index];
               return (
                 <li key={reference}>
                   <article className="h-full">
                     <Card className="verse-card">
                       <CardHeader className="verse-card-header">
-                        <div className="verse-heading-row"><h2 className="verse-reference">{reference}</h2><span className="translation-tag">{translation.toUpperCase()}</span></div>
-                        <p className="verse-text">{getVerseText(reference, translation)}</p>
+                        <div className="verse-heading-row"><h2 className="verse-reference">{reference}</h2><span className="translation-tag">{passage.translationId.toUpperCase()}</span></div>
+                        <p className="verse-text">{passage.text}</p>
+                        <PassageAttribution passage={passage} />
                         <Link className="compare-link" href={`/compare?${new URLSearchParams({ ref: reference, from: returnTo })}`} aria-label={`Compare translations of ${reference}`}>Compare <span aria-hidden="true">↗</span></Link>
                       </CardHeader>
                       <CardContent className="verse-card-content">

@@ -168,6 +168,8 @@
 .compare-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-items: start; }
 .compare-card h2 { margin-top: 16px; font-size: 15px; font-weight: 500; }
 .translation-description, .comparison-notice { font-size: 12px; line-height: 1.8; color: var(--muted-foreground); }
+.passage-note, .passage-credit { margin-top: 12px; font-size: 11px; line-height: 1.8; color: var(--muted-foreground); }
+.passage-credit a { text-decoration: underline; text-underline-offset: 3px; }
 .license-copy h1 { font-family: var(--font-lora), Georgia, serif; font-size: 34px; margin-block: 24px; }
 .license-copy p, .license-copy li { margin-block: 20px; line-height: 1.9; color: var(--muted-foreground); }
 @media (min-width: 900px) { .compare-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } .compare-card.verse-card { padding: 24px; } }

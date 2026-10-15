@@ -34,6 +34,7 @@ export function TranslationSelector({ initialTranslation = defaultTranslation }:
         router.refresh();
       }}>
         {translations.map(translation => <option key={translation.id} value={translation.id}>{translation.shortName}</option>)}
+        <option value="niv" disabled>NIV · Coming soon</option>
       </select>
     </label>
   );

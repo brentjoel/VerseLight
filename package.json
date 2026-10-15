@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "validate:data": "node scripts/validate-data.mjs",
-    "fetch:verses": "node scripts/fetch-verses.mjs"
+    "fetch:verses": "node scripts/fetch-verses.mjs",
+    "test:bible-api": "node --test scripts/test-bible-api.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -16,6 +17,7 @@
     "cn": "^0.4.0",
     "lucide-react": "^1.57.0",
     "next": "16.4.0",
+    "parse5": "^8.0.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "shadcn": "^4.21.5",
