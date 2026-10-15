@@ -13,8 +13,10 @@ export function VerseCarousel({ children }: { children: ReactNode[] }) {
   const region = useRef<HTMLDivElement>(null);
   const start = useRef<{ x: number; y: number } | null>(null);
   const [direction, setDirection] = useState(1);
+  const activeIndex = useRef(0);
   const select = (item: number, travel: number) => {
-    if (item === index) return;
+    if (item === activeIndex.current) return;
+    activeIndex.current = item;
     startTransition(() => {
       addTransitionType(travel > 0 ? "verse-next" : "verse-previous");
       setDirection(travel > 0 ? 1 : -1);
@@ -25,7 +27,7 @@ export function VerseCarousel({ children }: { children: ReactNode[] }) {
     if (children.length === 0) return;
     // Keep keyboard focus available when its current slide becomes hidden.
     if (region.current?.querySelector(".verse-list")?.contains(document.activeElement)) region.current.focus({ preventScroll: true });
-    select((index + offset + children.length) % children.length, offset);
+    select((activeIndex.current + offset + children.length) % children.length, offset);
   };
   return <div ref={region} tabIndex={enhanced && !list ? 0 : undefined} className="verse-carousel" role="region" aria-label="Scripture passages. Use left and right arrows to move between verses." aria-roledescription={enhanced && !list ? "carousel" : undefined} onKeyDown={event => {
     if (list || event.altKey || event.ctrlKey || event.metaKey || (event.target instanceof Element && event.target.closest("input, select, textarea, dialog"))) return;
@@ -44,7 +46,7 @@ export function VerseCarousel({ children }: { children: ReactNode[] }) {
     </ul></ViewTransition>
     {enhanced && !list && children.length > 1 && <div className="verse-pagination">
       <button type="button" className="icon-button verse-arrow" aria-label="Previous verse" data-tooltip="Previous verse" onClick={() => move(-1)}><ArrowLeft size={20} aria-hidden="true" /></button>
-      <div className="verse-dots" aria-label="Choose a verse">{children.map((_, item) => <button key={item} type="button" aria-label={`Show verse ${item + 1}`} aria-current={index === item ? "true" : undefined} onClick={() => select(item, item - index)}><span /></button>)}</div>
+      <div className="verse-dots" aria-label="Choose a verse">{children.map((_, item) => <button key={item} type="button" aria-label={`Show verse ${item + 1}`} aria-current={index === item ? "true" : undefined} onClick={() => select(item, item - activeIndex.current)}><span /></button>)}</div>
       <button type="button" className="icon-button verse-arrow" aria-label="Next verse" data-tooltip="Next verse" onClick={() => move(1)}><ArrowRight size={20} aria-hidden="true" /></button>
     </div>}
   </div>;
