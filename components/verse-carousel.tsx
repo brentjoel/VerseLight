@@ -42,7 +42,7 @@ export function VerseCarousel({ children }: { children: ReactNode[] }) {
       }
       start.current = null;
     }}>
-      {children.map((child, item) => <li key={item} hidden={enhanced && !list && index !== item} aria-label={`Verse ${item + 1} of ${children.length}`}><ActiveVerseContext.Provider value={enhanced && (list || index === item)}>{child}</ActiveVerseContext.Provider></li>)}
+      {children.map((child, item) => <li key={item} hidden={enhanced && !list && index !== item} aria-label={`Verse ${item + 1} of ${children.length}`}><ActiveVerseContext.Provider value={enhanced && !list && index === item}>{child}</ActiveVerseContext.Provider></li>)}
     </ul></ViewTransition>
     {enhanced && !list && children.length > 1 && <div className="verse-pagination">
       <button type="button" className="icon-button verse-arrow" aria-label="Previous verse" data-tooltip="Previous verse" onClick={() => move(-1)}><ArrowLeft size={20} aria-hidden="true" /></button>

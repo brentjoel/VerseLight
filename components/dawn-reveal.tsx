@@ -32,9 +32,8 @@ export function DawnReveal({ path, children }: { path: string; children: ReactNo
         words.forEach((word, index) => {
           // Both colors remain readable. Animation adds emphasis without hiding text.
           run.add(word.animate([
-            { color: style.getPropertyValue("--muted-foreground"), textShadow: "none" },
-            { color: style.getPropertyValue("--foreground"), textShadow: style.getPropertyValue("--scene-word-glow") },
-            { color: style.getPropertyValue("--foreground"), textShadow: "none" },
+            { color: style.getPropertyValue("--muted-foreground") },
+            { color: style.getPropertyValue("--foreground") },
           ], { delay: wordDelay(index), duration: 600, fill: "backwards", easing: "ease-out" }));
         });
         const light = element.querySelector<HTMLElement>(".dawn-light");
