@@ -1,6 +1,6 @@
 # Verselight
 
-An emotion-based Bible verse app. Choose a feeling, read Scripture with a reflection and prayer starter, and compare NLT, ESV, KJV, WEB, ASV, and BSB. NLT is the default; NIV is coming soon, pending licensed provider access. Verselight is a strictly noncommercial personal and portfolio project with no ads, subscriptions, donations, or paid features.
+An emotion-based Bible verse app. Choose a feeling, read Scripture with a reflection and prayer starter, and compare NLT, KJV, WEB, ASV, and BSB. NLT is the default; NIV is coming soon, pending licensed provider access. Verselight is a strictly noncommercial personal and portfolio project with no ads, subscriptions, donations, or paid features.
 
 ## Run locally
 Use Node.js 24 and npm, including for the parser tests that import TypeScript directly.
@@ -24,7 +24,7 @@ npm run lint
 npm run build
 ```
 
-NLT and ESV use official APIs, server-side only. Request keys and set `NLT_API_KEY` and `ESV_API_KEY` in `.env.local` and your hosting environment. `.env.example` lists them without values. `NLT_API_KEY=TEST` explicitly enables the documented anonymous NLT tier for local testing. Missing keys or provider failures show WEB with a note. Never put secrets in tracked files. Full terms, exact notice locations, quotas, and setup: [translation licensing](docs/TRANSLATION-LICENSES.md).
+NLT uses the official Tyndale API, server-side only. Request a key and set `NLT_API_KEY` in `.env.local` and your hosting environment. `.env.example` lists it without a value. `NLT_API_KEY=TEST` explicitly enables the documented anonymous NLT tier for local testing. A missing key or provider failure shows WEB with a note. Never put secrets in tracked files. Full terms, exact notice locations, quotas, and setup: [translation licensing](docs/TRANSLATION-LICENSES.md).
 
 Read [the spec](docs/SPEC.md), [progress](docs/PROGRESS.md), and [rules](AGENTS.md) before changing code. Do not begin Step 4 without instruction.
 
@@ -36,7 +36,7 @@ KJV, WEB, and ASV are downloaded from [bible-api.com](https://bible-api.com/), s
 
 Licenses: [KJV](https://ebible.org/eng-kjv/copyright.htm) is public domain outside the UK, where special rights under letters patent apply; [WEB](https://ebible.org/engwebp/copyright.htm) and [ASV 1901](https://ebible.org/asv/copyright.htm) are public domain; [BSB](https://berean.bible/licensing.htm) was dedicated to the public domain on April 30, 2023. World English Bible is an eBible.org trademark. The site footer links to the same credits at `/licenses`.
 
-NLT is the default; WEB is the fallback. NLT and ESV text is requested at runtime without persistent caching or storage. Their required publisher notices appear at `/licenses` with per-passage markers and links. NIV stays disabled until a licensed provider is configured. The `translation` cookie lasts one year, is validated against six active ids, and is read by Server Components for results and compare defaults. Existing valid preferences are preserved. The selector reads the cookie in the browser on static pages, so the home and feeling pages can remain static. Step 4 will sync the preference to profiles.
+NLT is the default; WEB is the fallback. NLT text is requested at runtime without persistent caching or storage. The required publisher notice appear at `/licenses` with per-passage markers and links. NIV stays disabled until a licensed provider is configured. The `translation` cookie lasts one year, is validated against five active ids, and is read by Server Components for results and compare defaults. Existing valid preferences are preserved. The selector reads the cookie in the browser on static pages, so the home and feeling pages can remain static. Step 4 will sync the preference to profiles.
 
 ## First deployment
 GitHub CLI was not installed during setup. Install it from https://cli.github.com, then run these commands in this folder:

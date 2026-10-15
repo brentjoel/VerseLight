@@ -2,7 +2,7 @@ import { parse, parseFragment, type DefaultTreeAdapterMap } from "parse5";
 
 type Node = DefaultTreeAdapterMap["node"];
 type Element = DefaultTreeAdapterMap["element"];
-export type LicensedTranslationId = "nlt" | "esv";
+export type LicensedTranslationId = "nlt";
 
 function elements(node: Node, tag: string): Element[] {
   return [ ...("tagName" in node && node.tagName === tag ? [node] : []),
@@ -51,22 +51,10 @@ export function parseNlt(html: string, reference: string): string {
   return passages.join(" ") + " (NLT)";
 }
 
-export function parseEsv(payload: unknown, reference: string): string {
-  const { chapter, first, last } = referenceParts(reference);
-  if (!payload || typeof payload !== "object" || !("canonical" in payload) || !("passages" in payload) || !("parsed" in payload)) throw new Error("Invalid ESV response.");
-  const normalize = (value: string) => value.replace(/^Psalms /, "Psalm ").replaceAll("–", "-").replace(/^(Obadiah|Philemon|2 John|3 John|Jude) (\d+(?:-\d+)?)$/, "$1 1:$2");
-  if (typeof payload.canonical !== "string" || normalize(payload.canonical) !== reference || !Array.isArray(payload.passages) || payload.passages.length !== 1 || typeof payload.passages[0] !== "string" || !Array.isArray(payload.parsed) || payload.parsed.length !== 1) throw new Error("Unexpected ESV passage.");
-  const range: unknown = payload.parsed[0];
-  if (!Array.isArray(range) || range.length !== 2 || !range.every(Number.isInteger) || range[1] - range[0] !== last - first || range[0] % 1000 !== first || range[1] % 1000 !== last || Math.floor(range[0] / 1000) % 1000 !== chapter) throw new Error("Incomplete ESV passage.");
-  const passage = payload.passages[0].trim();
-  if (!passage.endsWith("(ESV)") || passage === "(ESV)") throw new Error("Missing ESV text or attribution.");
-  return passage;
-}
-
 // Store only request timestamps and cooldowns, never licensed passage text.
 // These guards are per process; provider quotas remain authoritative on Vercel.
 const usage: Record<LicensedTranslationId, { times: number[]; blockedUntil: number }> = {
-  nlt: { times: [], blockedUntil: 0 }, esv: { times: [], blockedUntil: 0 },
+  nlt: { times: [], blockedUntil: 0 },
 };
 
 export async function requestLicensedPassage(reference: string, id: LicensedTranslationId, key: string, fetcher: typeof fetch = fetch): Promise<string> {
@@ -74,18 +62,13 @@ export async function requestLicensedPassage(reference: string, id: LicensedTran
   const now = Date.now();
   const state = usage[id];
   state.times = state.times.filter(time => now - time < 86400000);
-  const limit = id === "nlt" && key === "TEST" ? 500 : 5000;
-  if (now < state.blockedUntil || state.times.length >= limit || (id === "esv" && (state.times.filter(time => now - time < 60000).length >= 60 || state.times.filter(time => now - time < 3600000).length >= 1000))) throw new Error("Bible provider quota reached.");
+  const limit = key === "TEST" ? 500 : 5000;
+  if (now < state.blockedUntil || state.times.length >= limit) throw new Error("Bible provider quota reached.");
   state.times.push(now);
-  const url = new URL(id === "nlt" ? "https://api.nlt.to/api/passages" : "https://api.esv.org/v3/passage/text/");
-  if (id === "nlt") {
-    url.search = new URLSearchParams({ ref: reference, version: "NLT", key }).toString();
-  } else {
-    url.search = new URLSearchParams({ q: reference, "include-passage-references": "false", "include-verse-numbers": "false", "include-first-verse-numbers": "false", "include-footnotes": "false", "include-footnote-body": "false", "include-headings": "false", "include-short-copyright": "true", "include-copyright": "false" }).toString();
-  }
+  const url = new URL("https://api.nlt.to/api/passages");
+  url.search = new URLSearchParams({ ref: reference, version: "NLT", key }).toString();
   const response = await fetcher(url, {
     cache: "no-store", redirect: "error", signal: AbortSignal.timeout(8000),
-    headers: id === "esv" ? { Authorization: `Token ${key}` } : {},
   });
   if (response.status === 429) {
     const retry = response.headers.get("retry-after");
@@ -96,5 +79,5 @@ export async function requestLicensedPassage(reference: string, id: LicensedTran
   if (Number(response.headers.get("content-length")) > 200000) throw new Error("Unexpected response size.");
   const body = await response.text();
   if (body.length > 200000) throw new Error("Unexpected response size.");
-  return id === "nlt" ? parseNlt(body, reference) : parseEsv(JSON.parse(body), reference);
+  return parseNlt(body, reference);
 }

@@ -11,7 +11,7 @@ export function parseCompareTranslations(value: string | string[] | undefined, p
   const raw = (Array.isArray(value) ? value : [value]).flatMap(item => item.split(","));
   const ids = [...new Set(raw.filter(isTranslationId))];
   if (raw.some(id => !isTranslationId(id)) || ids.length < 2 || ids.length > 4) {
-    return { ids: [], error: "Choose between two and four available translations: NLT, ESV, KJV, WEB, ASV, and BSB. NIV is coming soon." };
+    return { ids: [], error: "Choose between two and four available translations: NLT, KJV, WEB, ASV, and BSB. NIV is coming soon." };
   }
   return { ids };
 }

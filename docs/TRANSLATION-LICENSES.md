@@ -15,17 +15,7 @@ Sources: [official API terms](https://api.nlt.to/), [API documentation](https://
 - Mark each quotation (NLT). Use the publisher's mixed-translation copyright notice. The exact notice, downloaded from the permissions page, is in `data/translation-notices.json` and displayed at `/licenses#nlt`; it is copyright metadata, not verse text.
 - The API returns HTML. Only source-delimited verses matching the requested reference/range are parsed. Verse labels and notes are excluded, HTML entities decoded, inline text preserved, and remote HTML is never injected into the app.
 
-## ESV
-
-Sources: [official API terms, cache limits, and required notices](https://api.esv.org/), [text endpoint documentation](https://api.esv.org/docs/passage-text/).
-
-- Noncommercial websites only, subject to Crossway's stated conditions. An API key is required.
-- At most 60 requests per minute, 1,000 per hour, and 5,000 per day.
-- A query is limited to 500 verses or half a book, whichever is less, with the stated exceptions for single- and double-chapter books. Display is limited to 500 verses or half a book per page, whichever is less.
-- Local storage is limited to 500 verses or half of any book, whichever is less. Crossway encourages periodic cache clearing but does not state a fixed TTL. Verselight does not persist ESV verse text at all.
-- Redistribution is limited to 500 verses, under 50% of a complete book, and under 50% of the work's total text. No licensed share/export feature is implemented. Re-check permissions when adding share cards.
-- Keep the API's (ESV) short notice and include the standard notice on the copyright page; link to ESV.org on every displaying page. The exact standard notice plus copying restriction was downloaded into `data/translation-notices.json` and is displayed at `/licenses#esv`.
-- Request the text endpoint with verse numbers, passage headings, and footnotes disabled. Preserve returned words, punctuation, and (ESV). Verify the canonical reference and returned range.
+ESV was removed at the user's request. No ESV key is needed.
 
 ## NIV
 
@@ -33,12 +23,12 @@ Sources: [official API terms, cache limits, and required notices](https://api.es
 
 ## Setup and behavior
 
-1. Request an [NLT key](https://api.nlt.to/Account/Register) and register for an [ESV API key](https://api.esv.org/). Review the terms associated with your issued keys.
-2. Put `NLT_API_KEY` and `ESV_API_KEY` in `.env.local` locally and in hosting environment secrets. `.env.example` lists both without values. Never use NEXT_PUBLIC names for these keys. `NLT_API_KEY=TEST` explicitly opts into the official anonymous limits for local testing.
-3. Restart `npm.cmd run dev` after changing keys. For hosting, apply the environment variables to the intended environment and rebuild there when ready.
-4. New or invalid preferences resolve to NLT; existing valid cookies retain the user's choice. Missing keys, timeouts, network errors, 429s, server errors, empty or malformed responses fall back to local WEB with a WEB tag and a note. A compare column retains the requested translation's heading so its fallback is understandable.
+1. Request an [NLT key](https://api.nlt.to/Account/Register). Review the terms associated with your issued key.
+2. Put `NLT_API_KEY` in `.env.local` locally and in hosting environment secrets. `.env.example` lists it without a value. Never use a NEXT_PUBLIC name for this key. `NLT_API_KEY=TEST` explicitly opts into the official anonymous limits for local testing.
+3. Restart `npm.cmd run dev` after changing key. For hosting, apply the environment variables to the intended environment and rebuild there when ready.
+4. New or invalid preferences resolve to NLT; existing valid cookies retain the user's choice. Missing key, timeouts, network errors, 429s, server errors, empty or malformed responses fall back to local WEB with a WEB tag and a note. A compare column retains the requested translation's heading so its fallback is understandable.
 5. Requests are server-only, use no-store, have an eight-second timeout, and never log provider errors or credential-bearing URLs. Development HMR response caching is disabled. Licensed verse text is not saved to the repository, database, files, or framework data cache. Only publisher notices are committed.
 6. Per-process timestamp guards enforce published request limits and Retry-After cooldowns; they store no Scripture. They are not a global quota counter across Vercel instances. Providers remain authoritative; quota responses trigger WEB fallback. A shared quota service would require separate infrastructure and is not introduced in Step 3.
 7. KJV, WEB, ASV, and BSB stay in the four existing JSON files. `fetch:verses` and `validate:data` operate on those only. KJV's UK rights exception is documented at `/licenses`.
 
-Verify with `npm.cmd run validate:data`, `npm.cmd run test:bible-api`, `npx.cmd tsc --noEmit`, `npm.cmd run lint`, and `npm.cmd run build`. Parser tests use unmistakably labeled synthetic data, not invented Bible wording. Check live ESV rendering with your own key, plus mobile layout, keyboard controls, and preference persistence by hand.
+Verify with `npm.cmd run validate:data`, `npm.cmd run test:bible-api`, `npx.cmd tsc --noEmit`, `npm.cmd run lint`, and `npm.cmd run build`. Parser tests use unmistakably labeled synthetic data, not invented Bible wording. Check mobile layout, keyboard controls, and preference persistence by hand.

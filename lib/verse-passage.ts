@@ -14,7 +14,7 @@ export async function getVersePassage(reference: string, translationId: Translat
   const id = resolveTranslation(translationId);
   if (isStaticTranslation(id)) return { text: getVerseText(reference, id), translationId: id };
   try {
-    const key = id === "nlt" ? process.env.NLT_API_KEY : process.env.ESV_API_KEY;
+    const key = process.env.NLT_API_KEY;
     if (!key?.trim()) throw new Error("Bible provider is not configured.");
     return { text: await requestLicensedPassage(reference, id, key.trim()), translationId: id };
   } catch {

@@ -40,10 +40,10 @@ Notifications or PWA reminders, memorize mode, AI free-text, and audio.
 
 ## Translation licensing
 - Verselight is strictly noncommercial: a personal and portfolio project with no ads, subscriptions, donations, or paid features.
-- NLT is the default; ESV is supported. Use their official noncommercial APIs server-side only. Keep NLT_API_KEY and ESV_API_KEY in .env.local and hosting secrets, never client code or logs.
+- NLT is the default. Use the official Tyndale noncommercial API server-side only. Keep NLT_API_KEY in .env.local and hosting secrets, never client code or logs.
 - KJV, WEB, ASV, and BSB remain static public-domain files (KJV has special UK rights). WEB is the labeled fallback for API failure or quota exhaustion.
 - NIV is pending a license and provider setup. Show it disabled as Coming soon. Never scrape or copy NIV text.
-- Do not persist NLT or ESV verse text to files, framework caches, databases, or the repository. Preserve source wording and required attribution. Re-check current publisher terms before changing usage, caching, display, or sharing.
+- Do not persist NLT verse text to files, framework caches, databases, or the repository. Preserve source wording and required attribution. Re-check current publisher terms before changing usage, caching, display, or sharing.
 - Do not introduce ads, payments, or donation features without re-checking translation licenses.
 - Current terms and setup are documented in docs/TRANSLATION-LICENSES.md. Continue this Step 3 extension without starting Step 4.
 
