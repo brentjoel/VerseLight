@@ -33,8 +33,6 @@ export default function WheelScene({ emotionId, inner, intensity, rotation, onUn
     let barShade = 1;
     const syncTheme = () => {
       barShade = Number(getComputedStyle(document.documentElement).getPropertyValue("--scene-bar-shade")) || 1;
-      const next = waveCharacters[target.current.emotionId] ?? defaultCharacter;
-      material.color.set(next.color).multiplyScalar(barShade);
     };
     syncTheme();
     const theme = new MutationObserver(syncTheme);

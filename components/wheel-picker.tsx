@@ -6,7 +6,7 @@ import { FeelingLink } from "@/components/feeling-link";
 import type { Emotion } from "@/lib/emotions";
 import { needsSimplePicker, wrapIndex } from "@/lib/wheel";
 
-const Scene = dynamic(() => import("@/components/wheel-scene"), { ssr: false, loading: () => <span className="wheel-loading">Opening the light...</span> });
+const Scene = dynamic(() => import("@/components/wheel-scene"), { ssr: false, loading: () => <span className="wheel-loading skeleton">Opening the light...</span> });
 
 class SceneRecovery extends Component<{ children: ReactNode; onUnavailable: () => void }, { failed: boolean }> {
   state = { failed: false };
@@ -60,7 +60,7 @@ export function WheelPicker({ emotions, children }: { emotions: readonly Emotion
   const selected = wrapIndex(turn, options.length);
   const choice = options[selected];
   const lock = () => { if (broad === null) { setBroad(selected); setTurn(0); } };
-  return <div className="wheel-picker">
+  return <div className="wheel-picker" data-emotion={emotion.id}>
     <div className="wheel-topline"><p className="eyebrow">{broad === null ? "01 / A broad feeling" : `02 / Within ${emotion.name.toLowerCase()}`}</p><button type="button" className="quiet-link" onClick={() => setSimple(true)}>Use simple picker</button></div>
     <p id="wheel-help" className="wheel-help">Drag across the dial, scroll, or use arrow keys. {broad === null ? "Press the center to choose." : "Choose the feeling that fits."}</p>
     <div ref={dial} className={`wheel-dial${broad !== null ? " wheel-inner" : ""}`} onPointerDown={event => {
@@ -75,7 +75,7 @@ export function WheelPicker({ emotions, children }: { emotions: readonly Emotion
       <div className="wheel-orbit" aria-hidden="true" />
       {broad === null && <div className="wheel-ring-labels" aria-hidden="true">{emotions.map((item, index) => {
         const angle = (index - selected) / emotions.length * Math.PI * 2;
-        return <span key={item.id} style={{ left: `${50 + Math.sin(angle) * 42}%`, top: `${50 - Math.cos(angle) * 42}%` }} data-selected={selected === index}>{item.name}</span>;
+        return <span key={item.id} style={{ left: "50%", top: "50%", transform: `translate(-50%, -50%) translate(${Math.sin(angle) * 42}cqw, ${-Math.cos(angle) * 42}cqw)` }} data-selected={selected === index}>{item.name}</span>;
       })}</div>}
       <div className="wheel-center" onKeyDown={event => {
         if (["ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown"].includes(event.key)) {
