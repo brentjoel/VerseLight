@@ -1,5 +1,7 @@
 "use client";
 
+import { Share2 } from "lucide-react";
+import { QuietDialog } from "@/components/quiet-dialog";
 import { useRef, useState } from "react";
 
 export function ShareCardControls({ reference }: { reference: string }) {
@@ -32,12 +34,12 @@ export function ShareCardControls({ reference }: { reference: string }) {
     }
   }
 
-  return <div className="share-controls">
-    <p className="local-help">Share cards use WEB (World English Bible), with public Scripture only.</p>
+  return <QuietDialog label="Share" title="Share a little light" icon={<Share2 size={17} aria-hidden="true" />}><div className="share-controls">
+    <p className="local-help">Public-domain text only. Share cards use WEB (World English Bible), even when you read another translation.</p>
     <div className="local-actions">
       <button className="compare-link" type="button" disabled={busy} onClick={() => void download()} aria-label={`Download WEB image card for ${reference}`}>{busy ? "Preparing card..." : "Download WEB card"}</button>
       <a className="quiet-link" href={url} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" aria-label={`Open WEB image card for ${reference} in a new tab`}>Open card <span className="sr-only">in a new tab</span></a>
     </div>
     <p className="local-help" role={failed ? "alert" : "status"}>{message}</p>
-  </div>;
+  </div></QuietDialog>;
 }
