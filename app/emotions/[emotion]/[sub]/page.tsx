@@ -9,6 +9,7 @@ import { getPreferredTranslation } from "@/lib/translation-preference";
 import { getVersePassage } from "@/lib/verse-passage";
 import { PassageAttribution } from "@/components/passage-attribution";
 import { PreferredTranslationSelector } from "@/components/preferred-translation-selector";
+import { SaveVerseButton } from "@/components/save-verse-button";
 import { TranslationSelector } from "@/components/translation-selector";
 
 export function generateStaticParams() {
@@ -50,6 +51,7 @@ async function ResultsContent({ emotion, specific }: { emotion: Emotion; specifi
                         <div className="verse-heading-row"><h2 className="verse-reference">{reference}</h2><span className="translation-tag">{passage.translationId.toUpperCase()}</span></div>
                         <p className="verse-text">{passage.text}</p>
                         <PassageAttribution passage={passage} />
+                        <SaveVerseButton reference={reference} translationId={passage.translationId} emotionId={emotion.id} specificEmotionId={specific.id} />
                         <Link className="compare-link" href={`/compare?${new URLSearchParams({ ref: reference, from: returnTo })}`} aria-label={`Compare translations of ${reference}`}>Compare <span aria-hidden="true">↗</span></Link>
                       </CardHeader>
                       <CardContent className="verse-card-content">

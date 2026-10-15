@@ -1,6 +1,6 @@
 # Progress
 
-Steps 1 to 3 are complete. Step 4 is next and has not started. This branch only updates documentation/workflow and removes an obsolete code comment. DONE checkboxes reflect the requested roadmap status; operational handoff items below remain explicit.
+Steps 1 to 4 are implemented. Step 4 is on `step-4-local-verses` for preview approval before merging. Step 5 has not started. Browser visual/keyboard review remains an explicit preview handoff because no browser is connected to this session.
 
 ## Checklist
 
@@ -28,11 +28,11 @@ Steps 1 to 3 are complete. Step 4 is next and has not started. This branch only 
 
 **Files likely touched:** `lib/translations.ts`, `lib/translation-preference.ts`, `lib/verse-passage.ts`, `lib/bible-api.ts`, `lib/verses.ts`, `lib/compare.ts`, translation/attribution components, results/compare/licenses routes, `data/verses/`, notices, scripts, `.env.example`, translation terms.
 
-### [ ] 4. Local storage layer, saved verses, collections, My Verses page, Export and Import
+### [x] 4. Local storage layer, saved verses, collections, My Verses page, Export and Import
 
 **Goal:** Keep saved Scripture references and collections in the browser with portable local backups.
 
-**Acceptance criteria (PLANNED):** Typed localStorage layer with schema version, sequential migrations and safe parsing/validation; bounded input and collection relationships; reference-only saves with no NLT text; My Verses save/remove and collection management; guest access for everyone; existing preference adoption/reconciliation; storage-unavailable memory fallback and clear recovery copy; cross-tab conflict handling; validated local JSON Export and Import, count preview and confirmed replacement; invalid/failed import preserves existing data; loading/empty/error states; meaningful storage/migration/backup tests; design checklist and required checks pass. Establish empty validated shapes for Step 5 without implementing its features.
+**Acceptance criteria:** Typed localStorage layer with schema version, sequential migrations and safe parsing/validation; bounded input and collection relationships; reference-only saves with no NLT text; My Verses save/remove and collection management; guest access for everyone; existing preference adoption/reconciliation; storage-unavailable memory fallback and clear recovery copy; cross-tab conflict handling; validated local JSON Export and Import, count preview and confirmed replacement; invalid/failed import preserves existing data; loading/empty/error states; meaningful storage/migration/backup tests; design checklist and required checks pass. Establish empty validated shapes for Step 5 without implementing its features.
 
 **Files likely touched:** `lib/storage.ts`, `lib/storage-migrations.ts`, storage tests, `app/my-verses/`, client save/collection/backup components, results UI, docs. All names for unbuilt files are proposals.
 
@@ -61,6 +61,13 @@ Steps 1 to 3 are complete. Step 4 is next and has not started. This branch only 
 **Files likely touched:** `app/about/`, privacy copy, `app/licenses/`, `lib/bible-api.ts`, `lib/verse-passage.ts`, provider tests, operational configuration if needed, `README.md`, docs.
 
 ## Decisions log
+
+- 2026-10-15: Step 4 verification passed: `npx.cmd tsc --noEmit`, `npm.cmd run lint`, `npm.cmd run build` including content validation (57 generated pages), and all 12 `npm.cmd run test:storage` tests. Production HTTP smoke checks passed home, My Verses, broad feeling, WEB results with save controls, and comparison. The new storage/backup components make no fetch, beacon, upload or logging calls. `.env.local` remains ignored and unread. No browser is connected, so narrow/wide, light/dark, keyboard and file-picker interaction must be reviewed on the preview; no visual verification is claimed.
+
+- 2026-10-15: Step 4 implemented on `step-4-local-verses` with no new dependencies: typed schema-1 localStorage envelope, bounded validation, reference-only saves, collections with rename/delete/membership management, static `/my-verses` shell and browser-only JSON Export/Import. Stored preferences reconcile with the current theme and validated translation cookie. Saves use the actually displayed translation, including WEB on fallback. No Scripture text, personal requests, Step 5 activity, streak or badge awards are stored.
+- 2026-10-15: Step 4 safety choices: 5 MiB UTF-8 limit, 10,000 items/list, collection names 1-80 trimmed characters, exact record keys, canonical reference/feeling validation, UUIDs, ISO timestamps, unique saves/memberships and valid links. Version 1 is the first format; the sequential migration runner rejects missing/unknown migrations instead of guessing a legacy format. Reserved Step 5 arrays must be empty and streak totals zero; importing later-step data is explicitly rejected until a compatible implementation ships.
+- 2026-10-15: Step 4 storage failures keep ordinary edits in a shared in-memory session with an Export notice. A failed persistent Import/reset preserves both stored and visible data. Unreadable data stays untouched until explicit recovery/reset; raw recovery is a separate download. Import validates a staged copy, previews counts, offers Export first and requires confirmed full replacement; stale previews are rejected. Cross-tab edits use Web Locks where available plus exact stored-value checks; conflicts require explicit reload. Without Web Locks, checks cannot guarantee an atomic simultaneous cross-tab write, a platform limitation rather than a server dependency.
+- 2026-10-15: Step 4 try-it path: `npm.cmd run dev`, choose Anxious > Worried about the future, Save verse, open My Verses, create/rename a collection and check membership. Reload to verify persistence, Export, remove a saved verse, then choose the JSON file and confirm replacement to restore it. Use two tabs to see the conflict notice and explicit reload. In browser settings that block storage, use Export before leaving the memory-only session. Backups are local, unencrypted, and origin-specific. No connected browser is available for visual/keyboard testing; complete narrow/wide, both-theme and keyboard review on the Vercel preview before merge approval.
 
 - 2026-10-15: Restructure verification passed: `npx.cmd tsc --noEmit`, `npm.cmd run lint`, and `npm.cmd run build` (including content validation and all 56 generated pages). Final cleanup search found no obsolete provider or identity-system references in tracked app/config/docs; `.env.example` already contains only `NLT_API_KEY`, so no edit was needed. `.env.local` remains ignored and unread. Only documentation and the stale comment changed; no runtime behavior, dependencies or personal-data features changed. New docs contain no em dashes; the generated Next.js instruction block is preserved.
 
@@ -104,6 +111,6 @@ These records preserve completed work and past handoffs. Current decisions and s
 ## Open questions
 
 - Confirm the Vercel Git integration, first deployment status and branch preview URL; earlier implementation records only establish the deployment handoff.
-- Complete visual browser review of existing narrow/wide layouts, both themes, keyboard controls and cookie persistence. Earlier records report no connected browser.
+- Complete visual browser review of narrow/wide layouts, both themes, keyboard controls, cookie persistence and Step 4 save/collection/JSON file-picker interactions. Earlier records report no connected browser.
 - Before Step 6 licensed-text share cards, re-check current publisher and issued-key terms.
 - Resolve deployment-wide NLT abuse/quota handling in Step 7 without personal-data storage or tracking; current timestamp guards are process-local only.

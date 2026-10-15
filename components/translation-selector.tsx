@@ -1,5 +1,6 @@
 "use client";
 
+import { getPersonalStore, usePersonalStorage } from "@/lib/browser-storage";
 import { useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { defaultTranslation, isTranslationId, resolveTranslation, translations, type TranslationId } from "@/lib/translations";
@@ -22,6 +23,7 @@ function subscribe(onChange: () => void) {
 
 export function TranslationSelector({ initialTranslation = defaultTranslation }: { initialTranslation?: TranslationId }) {
   const router = useRouter();
+  const storage = usePersonalStorage();
   const selected = useSyncExternalStore(subscribe, readPreference, () => initialTranslation);
   return (
     <label className="translation-selector">
@@ -31,6 +33,7 @@ export function TranslationSelector({ initialTranslation = defaultTranslation }:
         if (!isTranslationId(id)) return;
         document.cookie = `translation=${id}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
         window.dispatchEvent(new Event("translation-change"));
+        if (storage.ready) void getPersonalStore().setPreferences({ preferredTranslation: id });
         router.refresh();
       }}>
         {translations.map(translation => <option key={translation.id} value={translation.id}>{translation.shortName}</option>)}

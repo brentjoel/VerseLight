@@ -78,6 +78,14 @@ Surface shadow is `0 12px 40px rgb(0 0 0 / 12%)` in dark and `0 12px 40px rgb(40
 - Comparison spans the shell. Form has 24px padding, 28px block margin; choices wrap with 12px 24px gaps. Grid stacks with 20px gap until 900px, then uses `repeat(auto-fit, minmax(220px, 1fr))`. Cards align at the top and use 24px padding at that breakpoint.
 - Shared state panel is at most 580px, margin 40px auto 80px, padding 36px 24px. Content notices use 28px padding, 16px radius, muted 14px copy. Reuse these for new states.
 
+## My Verses and local storage UI (Step 4)
+
+The shared shell now has a wrapping 12px navigation row below the header, with 44px-tall Choose a feeling and My Verses links. A storage notice uses the existing card surface, border and muted text, 18px 22px padding and 12px radius.
+
+The library stays within 820px. Sections are separated by 40px. Collections use a single-column 16px-gap grid with 22px 24px padded, 16px-radius cards. Local forms use an 8px gap, 44px inputs with 10px radius and labeled fields; input/action rows stack on small screens and align horizontally from 640px. Saved references use Lora 22px with the existing translation tag and card treatment. Native labeled collection checkboxes have 44px rows. Backup panels use 28px padding and 20px radius; import previews/confirmations use secondary surface, 20px padding and 12px radius. Status copy uses primary and errors use foreground with explicit alert semantics. Disabled actions retain their labels with 0.6 opacity.
+
+Loading says "Opening your saved verses...". Empty collections and saved lists have a warm next action. Storage problems show a shared notice and local recovery controls; import has a counts preview, explicit replacement and cancellation, and an Export-first action. No new motion was added; existing focus, theme variables and reduced-motion rules apply. Visual and keyboard review is still a preview handoff while no browser is connected.
+
 ## Interaction and motion
 
 Visible keyboard focus is a 2px primary outline offset 5px on links, buttons, selects and inputs. A Skip to content link appears on focus. Back links, selectors, theme control and compare actions have 44px minimum targets. Native labeled selects and fieldset/legend checkboxes retain keyboard behavior. Credits underline links with 3px offset.

@@ -19,6 +19,7 @@ On PowerShell with blocked script launchers, use `npm.cmd` and `npx.cmd`.
 npm run fetch:verses
 npm run validate:data
 npm run test:bible-api
+npm run test:storage
 npx tsc --noEmit
 npm run lint
 npm run build
@@ -26,7 +27,15 @@ npm run build
 
 NLT uses the official Tyndale API, server-side only. Request a key and set `NLT_API_KEY` in `.env.local` and your hosting environment. `.env.example` lists it without a value. `NLT_API_KEY=TEST` explicitly enables the documented anonymous NLT tier for local testing. A missing key or provider failure shows WEB with a note. Never put secrets in tracked files. Full terms, exact notice locations, quotas, and setup: [translation licensing](docs/TRANSLATION-LICENSES.md).
 
-Read [the spec](docs/SPEC.md), [progress](docs/PROGRESS.md), and [rules](AGENTS.md) before each task. Read [architecture](docs/ARCHITECTURE.md) before structure/data flow changes and [design](docs/DESIGN.md) before UI work. Step 4 is next and remains unstarted. Everyone is a guest; planned saved verses, collections and journal use browser storage with Export and Import, with no server persistence for personal data.
+Read [the spec](docs/SPEC.md), [progress](docs/PROGRESS.md), and [rules](AGENTS.md) before each task. Read [architecture](docs/ARCHITECTURE.md) before structure/data flow changes and [design](docs/DESIGN.md) before UI work. Step 4 is implemented; Step 5 has not started. Everyone is a guest; saved verses and collections use browser storage with Export and Import; the journal is still planned, with no server persistence for personal data.
+
+## My Verses and backups
+
+Choose a feeling and select Save verse beside a passage, then open My Verses from the navigation. Create/rename/delete collections and use each reference's checkboxes to organize it. Removing a save removes its collection memberships; deleting a collection keeps its verses. Saves contain references and the displayed translation id, never Scripture text. Read and compare opens the existing public passage view on demand.
+
+Export downloads a local JSON file. To restore or move data, choose that file in another browser, review the counts, and confirm full replacement. Export current data first if you want to keep it. Version 1 is the first supported backup format; unsupported versions, fields, relationships, files over 5 MiB and future journal/progress records are rejected. Nothing is uploaded. Backups are unencrypted personal files, so keep them safe.
+
+Clearing browser data, private browsing, or losing the device can remove saved data. When storage is unavailable or full, ordinary changes remain only in the current tab's session; Export before leaving. A failed persistent import leaves current records intact. Unreadable storage offers a raw recovery download before confirmed reset. Another tab's edits block writes until you explicitly reload saved data; Export your current tab first if needed. Browser Web Locks serialize cooperating tabs when supported; browsers without them use best-effort stored-value conflict checks. Preview and production origins have separate storage.
 
 ## Verse data and licensing
 
@@ -36,16 +45,16 @@ KJV, WEB, and ASV are downloaded from [bible-api.com](https://bible-api.com/), s
 
 Licenses: [KJV](https://ebible.org/eng-kjv/copyright.htm) is public domain outside the UK, where special rights under letters patent apply; [WEB](https://ebible.org/engwebp/copyright.htm) and [ASV 1901](https://ebible.org/asv/copyright.htm) are public domain; [BSB](https://berean.bible/licensing.htm) was dedicated to the public domain on April 30, 2023. World English Bible is an eBible.org trademark. The site footer links to the same credits at `/licenses`.
 
-NLT is the default; WEB is the fallback. NLT text is requested at runtime without persistent caching or storage. The required publisher notices appear at `/licenses` with per-passage markers and links. NIV stays disabled until a licensed provider is configured. The `translation` cookie lasts one year, is validated against five active ids, and is read by Server Components for results and compare defaults. Existing valid preferences are preserved. The selector reads the cookie in the browser on static pages, so the home and feeling pages can remain static. Step 4 will add typed browser storage and local JSON backups; personal records stay on the device. The existing translation cookie remains the narrow preference exception for server passage rendering.
+NLT is the default; WEB is the fallback. NLT text is requested at runtime without persistent caching or storage. The required publisher notices appear at `/licenses` with per-passage markers and links. NIV stays disabled until a licensed provider is configured. The `translation` cookie lasts one year, is validated against five active ids, and is read by Server Components for results and compare defaults. Existing valid preferences are preserved. The selector reads the cookie in the browser on static pages, so the home and feeling pages can remain static. Step 4 includes typed browser storage and local JSON backups; personal records stay on the device. The existing translation cookie remains the narrow preference exception for server passage rendering.
 
 ## Branch previews and merging
 
-For a feature step, create `step-N-short-name`, do only the next unchecked step, meet its acceptance criteria, update progress and run the required checks. Commit small and push the branch. This documentation-only restructure uses `docs-restructure`.
+For a feature step, create `step-N-short-name`, do only the next unchecked step, meet its acceptance criteria, update progress and run the required checks. Commit small and push the branch. Step 4 uses `step-4-local-verses`.
 
 ```sh
-git push -u origin docs-restructure
+git push -u origin step-4-local-verses
 ```
 
 If the GitHub repository is connected to Vercel with Git previews enabled, open the branch deployment from the Vercel project Deployments tab or its GitHub deployment check. Set the server-only NLT key in the intended hosting environment; WEB fallback works when the key is absent. Preview origins have separate browser storage. The historical setup records do not verify a first live deployment; import the existing GitHub repository into Vercel with the Next.js preset if it is not connected yet.
 
-Open a pull request from `docs-restructure` to `main`, review the diff and preview, and wait for explicit user approval before merging. After approval and passing checks, merge through the pull request. A main-branch merge can trigger production deployment when Vercel is configured for it. Never commit `.env.local` or copy secrets into a pull request.
+Open a pull request from `step-4-local-verses` to `main`, review the diff and preview, and wait for explicit user approval before merging. After approval and passing checks, merge through the pull request. A main-branch merge can trigger production deployment when Vercel is configured for it. Never commit `.env.local` or copy secrets into a pull request.
