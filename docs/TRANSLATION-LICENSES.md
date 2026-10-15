@@ -23,6 +23,10 @@ Decision: daily verses and downloadable PNG cards use WEB only. The daily panel 
 
 The share route accepts a single canonical curated reference and explicit `translation=web` only. Other translations, extra/duplicate inputs and arbitrary text are rejected. Responses are `no-store`. Browser downloads contain only public WEB Scripture and credits; private records never enter card requests. New translations for image sharing require their own terms review.
 
+## Step 9 DOM reveal
+
+Step 9 review, 2026-10-15: Rechecked the official [NLT API terms](https://api.nlt.to/), [Tyndale permissions](https://www.tyndale.com/permissions) and [WEB copyright statement](https://ebible.org/engwebp/copyright.htm) before adding DOM-only word emphasis. Exact source wording, whitespace, translation tags and existing notices remain intact. Full text is readable from the start. No verse text is drawn into imagery, duplicated into artwork, persisted or newly cached; provider requests and sharing stay unchanged.
+
 ## NIV
 
 [Biblica's official permissions page](https://www.biblica.com/permissions/) lists a legitimate express-license route for qualifying strictly noncommercial apps without AI/ML features, through [API.Bible](https://api.bible/) or [YouVersion Platform](https://platform.youversion.com/). Royalty-free licensing does not necessarily mean a provider has no usage fees. No NIV provider account, license, or credential has been configured for Verselight. NIV is disabled as Coming soon until that is done. No NIV text is scraped, copied, or stored. The application has no AI features; using a coding assistant to develop it does not add an AI feature to the app.

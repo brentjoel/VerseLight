@@ -289,3 +289,18 @@ button:disabled, input:disabled { opacity: 0.6; cursor: default; }
 .wheel-intensity input { accent-color: #d5bd8b; }
 .wheel-picker > .local-help { text-align: center; }
 @media (min-width: 640px) { .wheel-picker { padding: 28px 32px 36px; } }
+
+/* Dawn remains decorative: no Scripture is hidden or covered by the light. */
+.dawn-reveal { position: relative; isolation: isolate; }
+.dawn-reveal::before { content: ""; position: absolute; inset: 100px -16px 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 50% 8%, rgb(var(--emotion-rgb) / 9%), transparent 65%); }
+.dawn-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 16px; }
+.dawn-controls .local-help { margin: 0; }
+.dawn-skip { visibility: hidden; min-height: 44px; }
+.dawn-reveal[data-animating="true"] .dawn-skip { visibility: visible; }
+.dawn-skip:focus { visibility: visible; }
+.dawn-reveal .verse-card { background: radial-gradient(ellipse at 50% 0, rgb(var(--emotion-rgb) / 4%), transparent 65%), var(--card); }
+.dawn-horizon { height: 96px; position: relative; overflow: hidden; border-radius: 16px; background: #0b0d10; margin-bottom: 24px; }
+.dawn-light { position: absolute; inset: -80px -40px; opacity: .18; background: radial-gradient(ellipse at center, #d5bd8b 0, rgb(213 189 139 / 22%) 25%, transparent 60%); pointer-events: none; }
+.dawn-ring { position: absolute; width: 72px; height: 72px; border: 1px solid rgb(213 189 139 / 30%); border-radius: 50%; left: calc(50% - 36px); top: 12px; }
+.dawn-ring::after { content: ""; position: absolute; inset: 12px; border: inherit; border-radius: inherit; }
+@media (prefers-reduced-motion: reduce) { .dawn-horizon { display: none; } .dawn-skip { visibility: hidden !important; } }

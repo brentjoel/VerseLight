@@ -1,6 +1,6 @@
 # Progress
 
-Steps 1 to 7 are merged on main, with Step 7 verified on Vercel as confirmed by the owner on 2026-10-15. Step 8 is implemented on `step-8-wheel-picker` at the owner's request. Browser/device and Lighthouse review and merge approval remain pending. Steps 9 to 11 remain PLANNED in [the wheel UI plan](wheel-ui-plan.md). No main merge or production deployment is authorized.
+Steps 1 to 8 are merged on main (Step 8 merge commit `5564b95`). Step 9 is implemented on `step-9-dawn-reveal`; rendered/device/Lighthouse review and merge approval remain pending. Steps 10 and 11 remain PLANNED in [the wheel UI plan](wheel-ui-plan.md). No main merge or production deployment is authorized.
 
 ## Checklist
 
@@ -80,13 +80,19 @@ These steps follow [docs/wheel-ui-plan.md](wheel-ui-plan.md). Each uses its own 
 
 **Verification:** Typecheck, lint, production build/content validation and all 46 tests passed (3 wheel, 12 storage, 15 progress, 3 daily/share, 13 provider). Local Home, broad emotion and Journal HTTP checks returned 200; Home includes the original fallback in server HTML. `npm.cmd run dev` found the existing localhost:3000 server, used without stopping it. Browser inventory is empty, so rendered AA/focus, touch/drag, real-device 60fps and mobile Lighthouse >=90 are pending and not claimed. Review Home broad dial, Home inner wheel/intensity, simple/reduced-motion picker, results then Journal, and light-mode Home at mobile/desktop widths before merge. No licensed-text/provider changes, personal requests, tracking or environment variables. `.env.local` was not read or edited.
 
-### [ ] 9. Dawn reveal
+### [x] 9. Dawn reveal (implemented; preview review pending)
 
 **Goal:** Follow the final feeling selection with a quiet light reveal and emotion-linked verse atmosphere.
 
 **Acceptance criteria:** Start the scene dark after final selection, break light from the dial center and visually reveal words at a comfortable reading pace. Full verse text exists in the DOM from the start; animation never delays reading or injects Scripture word by word. Provide Skip animation and instant reduced-motion display. Add a quiet background atmosphere tied to the chosen emotion while preserving source wording, translation labels and attribution. Meet all shared criteria above without changing translation-provider or NLT API logic.
 
 **Files likely touched:** `app/emotions/[emotion]/[sub]/page.tsx`, `components/` dawn reveal/atmosphere and wheel scene (proposed), `app/globals.css`, reveal/atmosphere tests, `docs/DESIGN.md`, `docs/PROGRESS.md`.
+
+**Implementation, 2026-10-15:** Wheel-only final selection sets a one-use, in-memory navigation intent after the existing local journal save succeeds. Results consume it after hydration; no URL, cookie, storage, schema, provider or environment changes. A dark, decorative double ring emits warm center light over 2.4 seconds. The first passage receives word-by-word emphasis at 260ms per word after a 600ms lead; later passages remain immediate. To satisfy immediate readability, words begin in the existing AA muted color and settle into foreground, never opacity zero. All exact source text is present in server HTML, selectable and accessible from the start. Whitespace and punctuation are preserved. Existing translation labels, attribution, fallback, Save, Compare and share actions remain. A static emotion wash uses existing source-driven emotion tokens in both themes.
+
+**Recovery and scope:** Skip animation cancels all effects immediately. Reduced motion, simple picker, direct visits/reloads and modified links show instant text; hidden tabs and live reduced-motion changes cancel animation. Cleanup cancels pending frames, timers and effects. No new 3D code, particles, dependencies, storage fields or Step 10/11 features. The first passage alone animates to keep a single reading cadence; all four passages remain available. Publisher API/permissions and WEB copyright pages were rechecked for DOM display; no artwork or persistent licensed-text storage is introduced.
+
+**Verification:** `npx.cmd tsc --noEmit`, `npm.cmd run lint`, `npm.cmd run build` (60 generated pages) and all 49 tests pass, including 3 dawn tests covering exact reconstruction of all 336 static passages, whitespace fixtures, cadence and single-use navigation intent. Local HTTP checks cover one result in each of 8 emotions with all four passages matching WEB source, plus Home, Journal and Compare. `npm.cmd run dev` detected the existing localhost:3000 server and it was used without stopping it. Browser inventory is empty; rendered narrow/wide, light/dark, keyboard/screen-reader, Skip, live reduced-motion, device 60fps and mobile Lighthouse >=90 remain preview checks, not verified claims. Review Home-to-results reveal, Skip mid-reveal, simple/reduced-motion results, a second emotion in light mode, and Compare/Journal regression before merge approval. `.env.local` was not read or edited directly.
 
 ### [ ] 10. Night sky journal
 

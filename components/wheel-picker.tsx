@@ -83,7 +83,7 @@ export function WheelPicker({ emotions, children }: { emotions: readonly Emotion
         }
       }}>
         <p className="eyebrow">{broad === null ? "Turn toward a feeling" : emotion.name}</p>
-        {broad === null ? <button type="button" className="wheel-lock" aria-describedby="wheel-help" onClick={lock}>{choice.name}<span>Press to choose</span></button> : <FeelingLink emotionId={emotion.id} specificId={choice.id} name={choice.name} />}
+        {broad === null ? <button type="button" className="wheel-lock" aria-describedby="wheel-help" onClick={lock}>{choice.name}<span>Press to choose</span></button> : <FeelingLink dawn emotionId={emotion.id} specificId={choice.id} name={choice.name} />}
       </div>
     </div>
     <p className="wheel-current" role="status" aria-live="polite">{selected + 1} of {options.length}: {choice.name}</p>
