@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { SiteNav } from "@/components/site-nav";
 import Link from "next/link";
 import { Sparkle } from "lucide-react";
 import { StorageNotice } from "@/components/storage-notice";
@@ -14,7 +16,7 @@ export function SiteShell({ children, translationControl }: Readonly<{ children:
         </Link>
         <div className="header-controls">{translationControl ?? <TranslationSelector />}<ThemeToggle /></div>
       </header>
-      <nav className="site-nav" aria-label="Main navigation"><Link href="/">Choose a feeling</Link><Link href="/my-verses">My Verses</Link><Link href="/journal">Journal</Link></nav>
+      <Suspense><SiteNav /></Suspense>
       <StorageNotice />
       <main id="main-content" className="site-main">{children}</main>
       <footer className="site-footer">

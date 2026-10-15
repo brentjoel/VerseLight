@@ -27,7 +27,7 @@ export function ThemeToggle() {
   }
 
   return (
-    <button type="button" onClick={toggleTheme} className="theme-toggle" aria-label="Switch between light and dark theme" title="Switch color theme">
+    <button type="button" onClick={toggleTheme} className="theme-toggle" aria-label="Switch between light and dark theme" data-tooltip="Switch color theme">
       <Sun className="theme-sun" size={18} aria-hidden="true" />
       <Moon className="theme-moon" size={18} aria-hidden="true" />
     </button>

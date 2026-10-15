@@ -61,16 +61,16 @@ export function WheelPicker({ emotions, children }: { emotions: readonly Emotion
   const choice = options[selected];
   const lock = () => { if (broad === null) { setBroad(selected); setTurn(0); } };
   return <div className="wheel-picker">
-    <div className="wheel-topline"><p className="eyebrow">{broad === null ? "01 / A broad feeling" : `02 / Within ${emotion.name.toLowerCase()}`}</p><button type="button" className="compare-link" onClick={() => setSimple(true)}>Use simple picker</button></div>
+    <div className="wheel-topline"><p className="eyebrow">{broad === null ? "01 / A broad feeling" : `02 / Within ${emotion.name.toLowerCase()}`}</p><button type="button" className="quiet-link" onClick={() => setSimple(true)}>Use simple picker</button></div>
     <p id="wheel-help" className="wheel-help">Drag across the dial, scroll, or use arrow keys. {broad === null ? "Press the center to choose." : "Choose the feeling that fits."}</p>
     <div ref={dial} className={`wheel-dial${broad !== null ? " wheel-inner" : ""}`} onPointerDown={event => {
       if (event.target instanceof Element && event.target.closest("button, a")) return;
-      drag.current = event.clientX; event.currentTarget.setPointerCapture(event.pointerId);
+      drag.current = event.clientX; event.currentTarget.dataset.dragging = "true"; event.currentTarget.setPointerCapture(event.pointerId);
     }} onPointerMove={event => {
       if (drag.current === null) return;
       const steps = Math.trunc((event.clientX - drag.current) / 36);
       if (steps) { rotate(steps); drag.current += steps * 36; }
-    }} onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }}>
+    }} onPointerUp={event => { drag.current = null; event.currentTarget.dataset.dragging = "false"; }} onPointerCancel={event => { drag.current = null; event.currentTarget.dataset.dragging = "false"; }}>
       <SceneRecovery onUnavailable={unavailable}><Scene emotionId={emotion.id} inner={broad !== null} intensity={intensity} rotation={-turn * Math.PI * 2 / options.length} onUnavailable={unavailable} /></SceneRecovery>
       <div className="wheel-orbit" aria-hidden="true" />
       {broad === null && <div className="wheel-ring-labels" aria-hidden="true">{emotions.map((item, index) => {
@@ -87,7 +87,7 @@ export function WheelPicker({ emotions, children }: { emotions: readonly Emotion
       </div>
     </div>
     <p className="wheel-current" role="status" aria-live="polite">{selected + 1} of {options.length}: {choice.name}</p>
-    <div className="wheel-navigation"><button type="button" className="compare-link" aria-label="Previous feeling" onClick={() => rotate(-1)}>←</button><span>Take your time.</span><button type="button" className="compare-link" aria-label="Next feeling" onClick={() => rotate(1)}>→</button></div>
+    <div className="wheel-navigation"><button type="button" className="compare-link" data-tooltip="Previous feeling" aria-label="Previous feeling" onClick={() => rotate(-1)}>←</button><span>Take your time.</span><button type="button" className="compare-link" data-tooltip="Next feeling" aria-label="Next feeling" onClick={() => rotate(1)}>→</button></div>
     <ul className="wheel-options" aria-label={broad === null ? "Broad emotions" : `Feelings within ${emotion.name}`}>
       {options.map((option, index) => <li key={option.id}><button type="button" aria-pressed={selected === index} onClick={() => { rotate(index - selected); }}>{option.name}</button></li>)}
     </ul>
