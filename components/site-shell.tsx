@@ -14,7 +14,7 @@ export function SiteShell({ children, translationControl }: Readonly<{ children:
         </Link>
         <div className="header-controls">{translationControl ?? <TranslationSelector />}<ThemeToggle /></div>
       </header>
-      <nav className="site-nav" aria-label="Main navigation"><Link href="/">Choose a feeling</Link><Link href="/my-verses">My Verses</Link></nav>
+      <nav className="site-nav" aria-label="Main navigation"><Link href="/">Choose a feeling</Link><Link href="/my-verses">My Verses</Link><Link href="/journal">Journal</Link></nav>
       <StorageNotice />
       <main id="main-content" className="site-main">{children}</main>
       <footer className="site-footer">

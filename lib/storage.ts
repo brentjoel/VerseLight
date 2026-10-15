@@ -1,4 +1,6 @@
 import { migrateVersioned } from "./storage-migrations";
+import { clockIsBehind, deriveStreak, localClock, recordActivity, type LocalClock } from "./streaks";
+import { awardBadges } from "./badges";
 import { checkSize, emptyData, parseJson, requireValid, SCHEMA_VERSION, validateBackup, validateEnvelope, validatePersonalData, type Backup, type PersonalData, type Preferences, type SavedVerse, type StorageEnvelope } from "./storage-schema";
 
 export interface StoragePort {
@@ -7,7 +9,7 @@ export interface StoragePort {
   exclusive?<T>(work: () => T): Promise<T>;
 }
 export type StorageMode = "persistent" | "memory" | "blocked" | "conflict";
-export interface StorageSnapshot { ready: boolean; mode: StorageMode; envelope: StorageEnvelope; message?: string }
+export interface StorageSnapshot { ready: boolean; mode: StorageMode; envelope: StorageEnvelope; message?: string; clockNotice?: boolean }
 export type StorageResult = { ok: true } | { ok: false; error: string };
 const defaults: Preferences = { theme: "dark", preferredTranslation: "nlt" };
 function envelope(data: PersonalData, revision = 0): StorageEnvelope {
@@ -32,8 +34,9 @@ export class PersonalStore {
   private listeners = new Set<() => void>();
   private port: StoragePort;
   private applyPreferences: (preferences: Preferences) => void;
-  constructor(port: StoragePort, applyPreferences: (preferences: Preferences) => void = () => {}) {
-    this.port = port; this.applyPreferences = applyPreferences;
+  private clock: () => LocalClock;
+  constructor(port: StoragePort, applyPreferences: (preferences: Preferences) => void = () => {}, clock = localClock) {
+    this.port = port; this.applyPreferences = applyPreferences; this.clock = clock;
   }
   getSnapshot = () => this.state;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
@@ -55,7 +58,10 @@ export class PersonalStore {
     try {
       const saved = raw === null ? envelope(emptyData(defaults)) : validateEnvelope(migrateVersioned(parseJson(raw)));
       const data = validatePersonalData({ ...saved.data, preferences: { ...saved.data.preferences, ...preferences } });
-      this.publish({ ready: true, mode: "persistent", envelope: { ...saved, data } });
+      const clock = this.clock();
+      const clockNotice = clockIsBehind(data.streakState, clock);
+      data.streakState = { ...data.streakState, ...deriveStreak(data.activityDays, clockNotice ? data.streakState.maxObservedLocalDate! : clock.localDate) };
+      this.publish({ ready: true, mode: "persistent", envelope: { ...saved, data }, clockNotice });
     } catch {
       this.publish({ ready: true, mode: "blocked", envelope: envelope(emptyData({ ...defaults, ...preferences })), message: "Your saved data could not be opened safely. It has not been changed. Download the recovery file before choosing a fresh start." });
     }
@@ -75,7 +81,7 @@ export class PersonalStore {
     try { return this.state.mode !== "memory" && this.port.exclusive ? await this.port.exclusive(work) : work(); }
     catch { return { ok: false, error: "We could not safely access browser storage. Your saved data has not been replaced." }; }
   }
-  private change(edit: (data: PersonalData) => void, options: { replace?: boolean; expected?: StorageEnvelope; reset?: boolean } = {}): Promise<StorageResult> {
+  private change(edit: (data: PersonalData, clock: LocalClock) => void, options: { replace?: boolean; expected?: StorageEnvelope; reset?: boolean } = {}): Promise<StorageResult> {
     return this.transaction(() => {
       if (!this.state.ready) return { ok: false, error: "Your saved data is still opening. Please try again." };
       if (this.state.mode === "conflict" || (this.state.mode === "blocked" && !options.reset)) return { ok: false, error: "Please resolve the storage notice before editing." };
@@ -90,7 +96,13 @@ export class PersonalStore {
       }
       try {
         const data = structuredClone(this.state.envelope.data);
-        edit(data);
+        const clock = this.clock();
+        edit(data, clock);
+        const clockNotice = clockIsBehind(data.streakState, clock);
+        if (!clockNotice) {
+          data.streakState = { ...data.streakState, ...deriveStreak(data.activityDays, clock.localDate), maxObservedAt: clock.instant, maxObservedLocalDate: clock.localDate };
+          data.badges = awardBadges(data, clock.instant);
+        }
         const next = validateEnvelope(envelope(validatePersonalData(data), this.state.envelope.revision + 1));
         const serialized = JSON.stringify(next); checkSize(serialized);
         serializeBackup(next.data); // Every accepted edit must remain exportable within the file limit.
@@ -101,22 +113,42 @@ export class PersonalStore {
               this.publish({ ...this.state, message: "The replacement could not be saved. Your current data is unchanged. Free browser space or export a backup and try again." });
               return { ok: false, error: "The replacement could not be saved. Your current data is unchanged." };
             }
-            this.publish({ ready: true, mode: "memory", envelope: next, message: "Your browser could not save these changes. They last only this session. Export a backup before leaving." });
+            this.publish({ ready: true, mode: "memory", envelope: next, clockNotice, message: "Your browser could not save these changes. They last only this session. Export a backup before leaving." });
             this.applyPreferences(next.data.preferences);
             return { ok: true };
           }
         }
         const mode = this.state.mode === "memory" ? "memory" : "persistent";
-        this.publish({ ready: true, mode, envelope: next, ...(mode === "memory" ? { message: "Changes last only this session. Export a backup before leaving." } : {}) });
+        this.publish({ ready: true, mode, envelope: next, clockNotice, ...(mode === "memory" ? { message: "Changes last only this session. Export a backup before leaving." } : {}) });
         this.applyPreferences(next.data.preferences);
         return { ok: true };
       } catch (error) { return { ok: false, error: message(error) }; }
     });
   }
   save(input: Omit<SavedVerse, "id" | "createdAt">) {
-    return this.change(data => {
-      if (!data.savedVerses.some(save => save.reference === input.reference && save.translationId === input.translationId)) data.savedVerses.push({ ...input, id: crypto.randomUUID(), createdAt: new Date().toISOString() });
+    return this.change((data, clock) => {
+      if (!data.savedVerses.some(save => save.reference === input.reference && save.translationId === input.translationId)) data.savedVerses.push({ ...input, id: crypto.randomUUID(), createdAt: clock.instant });
+      if (!clockIsBehind(data.streakState, clock)) recordActivity(data.activityDays, "save", clock);
     });
+  }
+  recordMood(emotionId: string, specificEmotionId: string) {
+    return this.change((data, clock) => {
+      requireValid(!clockIsBehind(data.streakState, clock), "Your device clock moved back. Your history is safe. New reflections can be recorded when time catches up.");
+      data.moodEntries.push({ id: crypto.randomUUID(), emotionId, specificEmotionId, localDate: clock.localDate, createdAt: clock.instant });
+      recordActivity(data.activityDays, "emotion", clock);
+    });
+  }
+  editMood(id: string, note: string) {
+    return this.change(data => { const mood = data.moodEntries.find(mood => mood.id === id); requireValid(mood, "This reflection is no longer here."); mood.note = note.trim(); });
+  }
+  removeMood(id: string) { return this.change(data => { data.moodEntries = data.moodEntries.filter(mood => mood.id !== id); }); }
+  refreshProgress() {
+    const snapshot = this.state;
+    if (!snapshot.ready || snapshot.mode === "blocked" || snapshot.mode === "conflict") return;
+    const clock = this.clock();
+    const behind = clockIsBehind(snapshot.envelope.data.streakState, clock);
+    if (behind) { if (!snapshot.clockNotice) this.publish({ ...snapshot, clockNotice: true }); return; }
+    if (snapshot.clockNotice || snapshot.envelope.data.streakState.maxObservedAt !== clock.instant) void this.change(() => {});
   }
   removeSave(id: string) {
     return this.change(data => {
