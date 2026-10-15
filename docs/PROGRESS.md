@@ -1,6 +1,6 @@
 # Progress
 
-Steps 1 to 4 are implemented. Step 4 is on `step-4-local-verses` for preview approval before merging. Step 5 has not started. Browser visual/keyboard review remains an explicit preview handoff because no browser is connected to this session.
+Steps 1 to 5 are implemented. Step 5 is on `step-5-mood-journal`, based on the unmerged Step 4 branch, for preview approval before merging. Step 6 has not started. Browser visual/keyboard review remains an explicit preview handoff because no browser is connected to this session.
 
 ## Checklist
 
@@ -36,11 +36,11 @@ Steps 1 to 4 are implemented. Step 4 is on `step-4-local-verses` for preview app
 
 **Files likely touched:** `lib/storage.ts`, `lib/storage-migrations.ts`, storage tests, `app/my-verses/`, client save/collection/backup components, results UI, docs. All names for unbuilt files are proposals.
 
-### [ ] 5. Mood journal with calendar heatmap, streaks with grace day, badges
+### [x] 5. Mood journal with calendar heatmap, streaks with grace day, badges
 
 **Goal:** Offer private local reflection history and gentle progress milestones.
 
-**Acceptance criteria (PLANNED):** Locally stored mood entries with optional bounded notes; accessible calendar heatmap and useful loading/empty/error states; device-local dates; idempotent daily activity; pure streak/badge functions; one non-accumulating grace day per Monday week assigned to the missed date; no invented activity; clock-change safety and historical date preservation; unique badge awards; backup round trips include all new records; tests cover boundaries, DST, retries, clock and timezone changes, imports and grace exhaustion; design checklist and required checks pass.
+**Acceptance criteria:** Locally stored mood entries with optional bounded notes; accessible calendar heatmap and useful loading/empty/error states; device-local dates; idempotent daily activity; pure streak/badge functions; one non-accumulating grace day per Monday week assigned to the missed date; no invented activity; clock-change safety and historical date preservation; unique badge awards; backup round trips include all new records; tests cover boundaries, DST, retries, clock and timezone changes, imports and grace exhaustion; design checklist and required checks pass. Implemented; visual and keyboard preview review is still required before merge approval.
 
 **Files likely touched:** `app/journal/`, journal/heatmap/badge components, `lib/streaks.ts`, `lib/badges.ts`, storage schema/migrations and tests, docs.
 
@@ -61,6 +61,14 @@ Steps 1 to 4 are implemented. Step 4 is on `step-4-local-verses` for preview app
 **Files likely touched:** `app/about/`, privacy copy, `app/licenses/`, `lib/bible-api.ts`, `lib/verse-passage.ts`, provider tests, operational configuration if needed, `README.md`, docs.
 
 ## Decisions log
+
+- 2026-10-15: Step 5 final verification passed: `npx.cmd tsc --noEmit`, `npm.cmd run lint`, `npm.cmd run build` (content validation and 58 generated pages), 15 `test:progress` tests and 12 `test:storage` tests. `npm.cmd run dev` HTTP checks passed home, Journal, My Verses, Anxious and WEB results with the initial save-control loading label. Development reports existing instant-navigation warnings at the unchanged async params accesses in broad/results routes; production build passes. New journal/progress code has no fetch, beacon, upload or logging calls; `.env.local` remains ignored and unread. Browser inventory is empty, so visual/keyboard review remains required on the preview. Push requests a branch preview through the existing Git integration; hosting/preview URL must still be verified.
+
+- 2026-10-15: Step 5 only, on `step-5-mood-journal` based on Step 4 without merging main. Added `/journal`, local feeling-selection records, optional 2,000-character notes with edit/remove controls, month heatmap with text labels and date filtering, pure local-date streak and badge functions, and full progress backup previews/round trips. No new dependencies, server personal-data paths, or licensed-text changes. Step 6 remains unstarted.
+- 2026-10-15: Step 5 choices: retain schema 1 because Step 4 already reserved all progress fields, with its empty records still valid and no migration needed. Strict validation now accepts the defined records and reconstructs totals/grace from the activity ledger on Import rather than trusting imported totals. Old app versions reject nonempty progress safely. Repeated feeling choices create separate reflections, while daily activity merges unique sources. Removing reflections keeps their historical activity and earned badges. Existing Step 4 saves gain no invented historical activity; eligible content badges are awarded at the next safe progress refresh/edit.
+- 2026-10-15: Step 5 clock safety: persist maximum observed instant/local date at safe edits and minute/focus refreshes; freeze new reflections, activity, grace and awards on backward time/date. Saving a reference and editing existing content remain available during the freeze. Travel retains original dates/offsets and may pause accrual until both time and date catch up. Forward jumps use the real gap. Local clocks are not trusted time. The ledger assigns each consumed grace date to its Monday week, never counts grace as activity, and shows pending continuity without spending grace until return.
+- 2026-10-15: Step 5 design source review covers shared dark/light variables, mobile table/card layout, semantic calendar caption/headers, date buttons with text activity descriptions and pressed states, labeled notes, explicit removal confirmation, focus including textareas, existing reduced-motion rules, and loading/empty/error/recovery states. CUA inventory returned no apps or browsers; no rendered or keyboard verification is claimed. Before merge, review narrow/wide layouts, both themes, keyboard focus, feeling recording, note editing/removal, calendar selection and JSON file-picker interactions on the preview.
+- 2026-10-15: Step 5 try-it path: `npm.cmd run dev`, choose Anxious then Worried about the future, open Journal, add a note and Save note, select today's calendar cell, then save a verse and create a collection in My Verses to see milestones. Export a backup, remove a reflection, then Import and confirm replacement to restore its note. Repeat actions to verify one active day. Use browser-local test data to review grace/clock scenarios; automated tests cover these without changing the machine clock. Backups now include private journal notes; keep them safe.
 
 - 2026-10-15: Step 4 verification passed: `npx.cmd tsc --noEmit`, `npm.cmd run lint`, `npm.cmd run build` including content validation (57 generated pages), and all 12 `npm.cmd run test:storage` tests. Production HTTP smoke checks passed home, My Verses, broad feeling, WEB results with save controls, and comparison. The new storage/backup components make no fetch, beacon, upload or logging calls. `.env.local` remains ignored and unread. No browser is connected, so narrow/wide, light/dark, keyboard and file-picker interaction must be reviewed on the preview; no visual verification is claimed.
 
