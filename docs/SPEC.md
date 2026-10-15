@@ -4,7 +4,7 @@
 
 Everyone is a guest. Choose a broad emotion, then a specific feeling, and read four curated passages in a preferred translation, each with a reflection question and prayer starter. This flow, translation selection, comparison and credits are DONE. All eventual features work for every visitor. Personal records stay in the visitor's browser with local JSON Export and Import backups, with no server persistence.
 
-DONE: Save a verse by reference, organize collections on My Verses, and Export/Import local JSON backups. PLANNED: Record moods, view a calendar heatmap, grow streaks with a weekly grace day, earn badges and share image cards. Home will show a real verse of the day; its current panel is a placeholder. No personal data leaves the device. The existing non-sensitive translation preference cookie is the narrow exception used for server passage rendering.
+DONE: Save a verse by reference, organize collections on My Verses, Export/Import local JSON backups, record moods with optional notes, view a calendar heatmap, grow streaks with a weekly grace day, and earn badges. PLANNED: Share image cards and a real verse of the day; Home's current panel is a placeholder. No personal data leaves the device. The existing non-sensitive translation preference cookie is the narrow exception used for server passage rendering.
 
 ## Features and status
 
@@ -12,7 +12,7 @@ DONE: Save a verse by reference, organize collections on My Verses, and Export/I
 - DONE: NLT default, KJV, WEB, ASV, BSB, and side-by-side comparison of two to four translations. Existing NIV stays disabled as Coming soon pending licensed access. Keep the provider list extensible.
 - DONE: Validated translation cookie and remembered theme. Dark default with working light mode and mobile-first UI.
 - DONE Step 4: Typed browser storage, saved verses, collections, My Verses, and validated JSON Export and Import.
-- PLANNED Step 5: Mood journal with calendar heatmap, local-date streaks with one grace day per week, and badges.
+- DONE Step 5: Mood journal with calendar heatmap, local-date streaks with one grace day per week, and badges. Preview visual/keyboard review remains pending.
 - PLANNED Step 6: Share cards using Next.js ImageResponse, verse of the day by local day of year, polish and accessibility pass.
 - PLANNED Step 7: Privacy note, About page and translation credits, stronger NLT rate/quota handling, error monitoring basics and README launch checks.
 
@@ -37,7 +37,7 @@ Strictly noncommercial personal and portfolio project: no ads, payments, subscri
 
 ## Local data model
 
-Envelope, preferences, saves and collections are DONE. Mood/activity/badge fields and streak calculations remain PLANNED for Step 5; schema 1 currently accepts only empty future lists and zero streak totals. See [architecture](ARCHITECTURE.md) for validation, migrations, write behavior and backup format. Use a small typed localStorage layer in `lib/`, a versioned envelope and an in-memory fallback when storage is unavailable. No server data service is used.
+Envelope, preferences, saves, collections, mood/activity/badge fields and streak calculations are DONE. Schema 1 accepts validated progress records and remains compatible with Step 4's empty fields. Notes are bounded to 2,000 characters. Import recomputes streak/grace totals from the activity ledger. See [architecture](ARCHITECTURE.md) for validation, migrations, write behavior and backup format. Use a small typed localStorage layer in `lib/`, a versioned envelope and an in-memory fallback when storage is unavailable. No server data service is used.
 
 | Shape | Fields |
 | --- | --- |
@@ -53,13 +53,13 @@ Envelope, preferences, saves and collections are DONE. Mood/activity/badge field
 
 DONE: Stable browser-generated ids, validated canonical references/translation ids, local YYYY-MM-DD dates and ISO instants. Save uniqueness is reference plus translation. Collection membership points to saved ids. Deleting a save removes its memberships; deleting a collection keeps its verses. Backups have a format marker, schema version, export timestamp and validated personal data; import previews counts and requires confirmation before full replacement. Validate size, fields, relationships and migrations before writes; invalid files leave data intact. Existing theme storage and translation cookie remain working with preference adoption. Schema 1 is the initial local format; unknown versions or missing migrations are rejected without altering the original.
 
-## Streaks and badges (PLANNED)
+## Streaks and badges (DONE Step 5)
 
 Step 5 uses pure `lib/` functions. Selecting a specific feeling or saving a verse counts once per device local calendar date, regardless of repeated actions. Local dates use device year/month/day, not a fixed timezone or UTC day. Preserve historical dates across timezone changes. Backward clock/date changes freeze new accrual and show a notice until time catches up; forward changes use the real gap without inventing activity. Local-only clock checks cannot establish trusted time.
 
 One non-accumulating grace day per Monday-through-Sunday local week can bridge exactly one missed date. Assign grace to that missed date's week, including across week boundaries; retry never consumes it twice. It preserves continuity without adding an active day. Larger gaps or used grace start a new streak. The ledger is authoritative; derived totals are recomputed. Full rules and test cases are in architecture.
 
-Badge keys: streak-3, streak-7, streak-30, streak-100, first-save, saved-10, first-collection, first-mood. Award each once and retain earned milestones when ordinary content is removed. No streak or badge feature is built yet.
+Badge keys: streak-3, streak-7, streak-30, streak-100, first-save, saved-10, first-collection, first-mood. Award each once and retain earned milestones when ordinary content is removed. Repeated feeling choices create separate reflections but one activity day. Removing a reflection keeps the historical activity ledger. Schema-1 backups include notes, ledger, clock metadata and earned badges.
 
 ## Delivery
 

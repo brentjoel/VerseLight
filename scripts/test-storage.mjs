@@ -24,7 +24,7 @@ function memory(initial = null) {
 }
 function setup(port = memory(), prefs = {}) {
   const applied = [];
-  const store = new PersonalStore(port, value => applied.push(value));
+  const store = new PersonalStore(port, value => applied.push(value), () => ({ localDate: '2026-10-15', instant: '2026-10-15T12:00:00.000Z', utcOffsetMinutes: 0 }));
   store.initialize(prefs);
   return { store, port, applied };
 }
@@ -49,7 +49,7 @@ test('save, reload, collection membership and deletion round trip without verse 
   assert.deepEqual(reloaded.getSnapshot().envelope.data.collections[0].savedVerseIds, [saved.id]);
   assert.equal(reloaded.getSnapshot().envelope.data.collections[0].name, 'Hope');
   assert.equal(Object.hasOwn(JSON.parse(port.raw).data.savedVerses[0], 'text'), false);
-  assert.deepEqual(JSON.parse(port.raw).data.activityDays, []);
+  assert.deepEqual(JSON.parse(port.raw).data.activityDays[0].sources, ['save']);
   await reloaded.removeSave(saved.id);
   assert.deepEqual(reloaded.getSnapshot().envelope.data.collections[0].savedVerseIds, []);
   await reloaded.save(saveInput);
@@ -98,7 +98,7 @@ test('validation rejects extra text, invalid timestamps, ids, translation, conte
     data => { data.collections[0].name = 'x'.repeat(81); },
     data => { data.savedVerses = Array(MAX_RECORDS + 1).fill(data.savedVerses[0]); },
     data => { data.moodEntries = [{}]; },
-    data => { data.streakState.currentStreak = 1; },
+    data => { data.streakState.currentStreak = -1; },
   ];
   for (const change of changes) { const copy = structuredClone(source); change(copy); assert.throws(() => validatePersonalData(copy)); }
 });

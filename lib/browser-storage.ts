@@ -38,12 +38,15 @@ function connect() {
   if (connected) return;
   connected = true;
   current.initialize(readBrowserPreferences());
+  current.refreshProgress();
+  window.setInterval(() => current.refreshProgress(), 60000);
   if (current.getSnapshot().mode !== "blocked") applyBrowserPreferences(current.getSnapshot().envelope.data.preferences);
   window.addEventListener("storage", event => {
     if (event.key === STORAGE_KEY || event.key === null) current.checkExternal();
   });
   window.addEventListener("focus", () => {
     current.checkExternal();
+    current.refreshProgress();
     const snapshot = current.getSnapshot();
     const preferences = readBrowserPreferences();
     if (snapshot.mode === "persistent" && preferences.preferredTranslation !== snapshot.envelope.data.preferences.preferredTranslation) void current.setPreferences(preferences);

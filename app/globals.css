@@ -202,6 +202,20 @@
 .local-form label, .membership legend { color: var(--muted-foreground); font-size: 12px; }
 .local-form input, .local-form select { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; color: var(--foreground); background: var(--card); font: inherit; font-size: 14px; }
 .local-form input::placeholder { color: var(--muted-foreground); }
+.local-form textarea { width: 100%; min-width: 0; padding: 12px; border: 1px solid var(--border); border-radius: 10px; color: var(--foreground); background: var(--card); font: inherit; resize: vertical; }
+textarea:focus-visible { outline: 2px solid var(--primary); outline-offset: 5px; }
+.journal-calendar { width: 100%; table-layout: fixed; border-spacing: 4px; border-collapse: separate; margin-top: 20px; }
+.journal-calendar caption { text-align: left; font-family: var(--font-lora), Georgia, serif; font-size: 22px; margin-bottom: 12px; }
+.journal-calendar th { font-size: 11px; font-weight: 400; color: var(--muted-foreground); }
+.calendar-day { width: 100%; min-height: 44px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--foreground); font-size: 12px; cursor: pointer; }
+.calendar-day[data-level="1"] { background: color-mix(in srgb, var(--primary) 12%, var(--card)); }
+.calendar-day[data-level="2"] { background: color-mix(in srgb, var(--primary) 24%, var(--card)); }
+.calendar-day[data-level="3"] { background: color-mix(in srgb, var(--primary) 38%, var(--card)); }
+.calendar-day[aria-pressed="true"] { border: 2px solid var(--primary); }
+.calendar-mark { display: block; font-size: 10px; line-height: 1.2; }
+.badge-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.badge-list li { padding: 12px 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); font-size: 13px; }
+.badge-list span { display: block; margin: 4px 0 0; }
 .local-form input:hover, .local-form select:hover { border-color: var(--hover-border); }
 .local-input-row { display: flex; flex-direction: column; align-items: start; gap: 10px; }
 .local-input-row .compare-link, .local-actions .compare-link, .inline-confirm .compare-link { margin-top: 0; }

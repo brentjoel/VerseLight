@@ -10,7 +10,8 @@
     "validate:data": "node scripts/validate-data.mjs",
     "fetch:verses": "node scripts/fetch-verses.mjs",
     "test:bible-api": "node --test scripts/test-bible-api.mjs",
-    "test:storage": "node --test scripts/test-storage.mjs"
+    "test:storage": "node --test scripts/test-storage.mjs",
+    "test:progress": "node --test scripts/test-progress.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

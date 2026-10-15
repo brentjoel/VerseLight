@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteShell } from "@/components/site-shell";
 import { ContentNotice } from "@/components/content-notice";
+import { FeelingLink } from "@/components/feeling-link";
 import { getAllEmotions, getEmotionById } from "@/lib/emotions";
 
 export const ensureStatic = "navigation";
@@ -31,9 +32,7 @@ export default async function EmotionPage({ params }: { params: Promise<{ emotio
           <ul className="specific-grid">
             {emotion.specifics.map((specific) => (
               <li key={specific.id}>
-                <Link href={`/emotions/${emotion.id}/${specific.id}`} className="emotion-link specific-link">
-                  {specific.name}<span aria-hidden="true">→</span>
-                </Link>
+                <FeelingLink emotionId={emotion.id} specificId={specific.id} name={specific.name} />
               </li>
             ))}
           </ul>
