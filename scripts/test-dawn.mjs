@@ -33,3 +33,23 @@ test('wheel intent is consumed once and never replays on unrelated or direct vis
   assert.equal(consumeDawn('/other'), false);
   assert.equal(consumeDawn('/selected'), false);
 });
+
+test('each verse and translation gets a fresh full run; rapid changes cancel previous effects', async () => {
+  const { createDawnRun } = await import('../lib/dawn.ts');
+  let cancelled = 0;
+  const effect = () => ({ cancel() { cancelled++; } });
+  const first = createDawnRun(); first.add(effect()); first.add(effect());
+  first.cancel(); first.cancel();
+  assert.equal(cancelled, 2);
+  const next = createDawnRun(); next.add(effect());
+  assert.equal(next.running, true);
+  next.cancel(); // Skip applies only to this run.
+  next.add(effect()); // A stale callback cannot leave an overlapping effect.
+  assert.equal(cancelled, 4);
+  const previous = createDawnRun();
+  assert.equal(previous.running, true);
+  const translated = createDawnRun();
+  previous.cancel();
+  assert.equal(translated.running, true);
+  translated.cancel();
+});

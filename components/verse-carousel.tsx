@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { createContext, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight, List, BookOpen } from "lucide-react";
 
 const subscribe = () => () => {};
+export const ActiveVerseContext = createContext(false);
 
 export function VerseCarousel({ children }: { children: ReactNode[] }) {
   const enhanced = useSyncExternalStore(subscribe, () => true, () => false);
@@ -30,7 +31,7 @@ export function VerseCarousel({ children }: { children: ReactNode[] }) {
       }
       start.current = null;
     }}>
-      {children.map((child, item) => <li key={item} hidden={enhanced && !list && index !== item} aria-label={`Verse ${item + 1} of ${children.length}`}>{child}</li>)}
+      {children.map((child, item) => <li key={item} hidden={enhanced && !list && index !== item} aria-label={`Verse ${item + 1} of ${children.length}`}><ActiveVerseContext.Provider value={enhanced && (list || index === item)}>{child}</ActiveVerseContext.Provider></li>)}
     </ul>
     {enhanced && !list && children.length > 1 && <div className="verse-pagination">
       <button type="button" className="icon-button verse-arrow" aria-label="Previous verse" data-tooltip="Previous verse" onClick={() => move(-1)}><ArrowLeft size={20} aria-hidden="true" /></button>

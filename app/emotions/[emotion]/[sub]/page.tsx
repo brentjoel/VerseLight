@@ -43,15 +43,14 @@ async function ResultsContent({ emotion, specific }: { emotion: Emotion; specifi
           <p>Take your time with these references. Let a question or a prayer be a place to begin.</p>
         </div>
         <section aria-label={`Verse references for ${specific.name.toLowerCase()}`} className="mt-10">
-          <DawnReveal key={returnTo + translation} path={returnTo}>
-            <VerseCarousel>
+            <VerseCarousel key={returnTo}>
               {specific.references.map((reference, index) => {
                 const prompt = getPromptForReference(reference);
                 const passage = passages[index];
                 return (
-                  <article key={reference} className="verse-card reading-verse">
+                  <DawnReveal key={reference} path={returnTo + reference + translation}><article className="verse-card reading-verse">
                     <div className="verse-heading-row"><h2 className="verse-reference">{reference}</h2><span className="translation-tag">{passage.translationId.toUpperCase()}</span></div>
-                    <p className="verse-text">{index === 0 ? passageTokens(passage.text).map((token, tokenIndex) => /^\s+$/u.test(token) ? token : <span key={tokenIndex} data-dawn-word="">{token}</span>) : passage.text}</p>
+                    <p className="verse-text">{passageTokens(passage.text).map((token, tokenIndex) => /^\s+$/u.test(token) ? token : <span key={tokenIndex} data-dawn-word="">{token}</span>)}</p>
                     <PassageAttribution passage={passage} />
                     <div className="verse-actions">
                       <SaveVerseButton reference={reference} translationId={passage.translationId} emotionId={emotion.id} specificEmotionId={specific.id} />
@@ -64,11 +63,10 @@ async function ResultsContent({ emotion, specific }: { emotion: Emotion; specifi
                         <div className="prayer-block"><h3 className="prompt-label">A prayer to begin</h3><p className="prayer-copy">{prompt.prayer}</p></div>
                       </> : <p className="text-sm leading-7 text-muted-foreground">The reflection for this reference is unavailable right now. You can still bring what is on your heart to God.</p>}
                     </details>
-                  </article>
+                  </article></DawnReveal>
                 );
               })}
             </VerseCarousel>
-          </DawnReveal>
           {specific.references.length === 0 && <ContentNotice>References for this feeling are being prepared with care. Please visit again soon.</ContentNotice>}
         </section>
       </div>
