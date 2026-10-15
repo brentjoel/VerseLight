@@ -11,6 +11,7 @@ import { PassageAttribution } from "@/components/passage-attribution";
 import { PreferredTranslationSelector } from "@/components/preferred-translation-selector";
 import { SaveVerseButton } from "@/components/save-verse-button";
 import { TranslationSelector } from "@/components/translation-selector";
+import { ShareCardControls } from "@/components/share-card-controls";
 
 export function generateStaticParams() {
   return getAllEmotions().flatMap((emotion) => emotion.specifics.map((specific) => ({ emotion: emotion.id, sub: specific.id })));
@@ -53,6 +54,7 @@ async function ResultsContent({ emotion, specific }: { emotion: Emotion; specifi
                         <PassageAttribution passage={passage} />
                         <SaveVerseButton reference={reference} translationId={passage.translationId} emotionId={emotion.id} specificEmotionId={specific.id} />
                         <Link className="compare-link" href={`/compare?${new URLSearchParams({ ref: reference, from: returnTo })}`} aria-label={`Compare translations of ${reference}`}>Compare <span aria-hidden="true">↗</span></Link>
+                        <ShareCardControls reference={reference} />
                       </CardHeader>
                       <CardContent className="verse-card-content">
                         {prompt ? (
