@@ -1,4 +1,5 @@
 import { parse, parseFragment, type DefaultTreeAdapterMap } from "parse5";
+import { instanceQuota, retryAfterMilliseconds, type NltQuota } from "./nlt-quota";
 
 type Node = DefaultTreeAdapterMap["node"];
 type Element = DefaultTreeAdapterMap["element"];
@@ -51,33 +52,43 @@ export function parseNlt(html: string, reference: string): string {
   return passages.join(" ") + " (NLT)";
 }
 
-// Store only request timestamps and cooldowns, never licensed passage text.
-// These guards are per process; provider quotas remain authoritative on Vercel.
-const usage: Record<LicensedTranslationId, { times: number[]; blockedUntil: number }> = {
-  nlt: { times: [], blockedUntil: 0 },
-};
-
-export async function requestLicensedPassage(reference: string, id: LicensedTranslationId, key: string, fetcher: typeof fetch = fetch): Promise<string> {
+export async function requestLicensedPassage(reference: string, id: LicensedTranslationId, key: string, fetcher: typeof fetch = fetch, quota?: NltQuota): Promise<string> {
   referenceParts(reference);
-  const now = Date.now();
-  const state = usage[id];
-  state.times = state.times.filter(time => now - time < 86400000);
-  const limit = key === "TEST" ? 500 : 5000;
-  if (now < state.blockedUntil || state.times.length >= limit) throw new Error("Bible provider quota reached.");
-  state.times.push(now);
+  if (id !== "nlt" || !key.trim()) throw new Error("Invalid Bible provider configuration.");
+  const guard = quota ?? instanceQuota;
+  await guard.reserve(key === "TEST" ? 500 : 5000);
   const url = new URL("https://api.nlt.to/api/passages");
   url.search = new URLSearchParams({ ref: reference, version: "NLT", key }).toString();
-  const response = await fetcher(url, {
-    cache: "no-store", redirect: "error", signal: AbortSignal.timeout(8000),
-  });
-  if (response.status === 429) {
-    const retry = response.headers.get("retry-after");
-    const duration = retry && /^\d+$/.test(retry) ? Number(retry) * 1000 : Date.parse(retry ?? "") - Date.now();
-    state.blockedUntil = Date.now() + Math.max(60000, Number.isFinite(duration) ? duration : 60000);
+  try {
+    const response = await fetcher(url, {
+      cache: "no-store", redirect: "error", signal: AbortSignal.timeout(8000),
+    });
+    if (response.status === 429 || response.status === 503 || response.status === 401 || response.status === 403) {
+      const duration = response.status === 401 || response.status === 403 ? 86400000 : retryAfterMilliseconds(response.headers.get("retry-after"));
+      await guard.block(duration);
+    }
+    if (!response.ok) throw new Error("Bible provider is unavailable.");
+    if (Number(response.headers.get("content-length")) > 200000 || !response.body) throw new Error("Unexpected response size.");
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let bytes = 0;
+    let body = "";
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        bytes += value.byteLength;
+        if (bytes > 200000) {
+          await reader.cancel();
+          throw new Error("Unexpected response size.");
+        }
+        body += decoder.decode(value, { stream: true });
+      }
+      body += decoder.decode();
+    } finally { reader.releaseLock(); }
+    return parseNlt(body, reference);
+  } catch {
+    // Never propagate fetch errors, causes or URLs containing the provider key.
+    throw new Error("Bible provider is unavailable.");
   }
-  if (!response.ok) throw new Error("Bible provider is unavailable.");
-  if (Number(response.headers.get("content-length")) > 200000) throw new Error("Unexpected response size.");
-  const body = await response.text();
-  if (body.length > 200000) throw new Error("Unexpected response size.");
-  return parseNlt(body, reference);
 }

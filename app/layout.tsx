@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Lora } from "next/font/google";
 import "./globals.css";
+import { siteUrl } from "@/lib/site-url";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
 const lora = Lora({ subsets: ["latin"], variable: "--font-lora", display: "swap" });
@@ -9,8 +10,15 @@ const lora = Lora({ subsets: ["latin"], variable: "--font-lora", display: "swap"
 const themeScript = `try{var t=localStorage.getItem('verselight-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch{}`;
 
 export const metadata: Metadata = {
+  metadataBase: siteUrl,
   title: "Verselight | A moment of peace",
   description: "A quiet place for Scripture, reflection, and prayer, wherever your day finds you.",
+  openGraph: {
+    siteName: "Verselight",
+    title: "Verselight | A moment of peace",
+    description: "A quiet place for Scripture, reflection, and prayer.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

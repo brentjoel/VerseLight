@@ -19,7 +19,7 @@ export function SiteShell({ children, translationControl }: Readonly<{ children:
       <main id="main-content" className="site-main">{children}</main>
       <footer className="site-footer">
         <span>Come as you are. Take your time.</span>
-        <p className="translation-credits">Scripture: NLT via Tyndale. KJV, WEB, ASV via bible-api.com; BSB via BereanBible.com. This is a noncommercial project. <a href="/licenses">Sources and copyright notices</a></p>
+        <p className="translation-credits">Scripture: NLT via Tyndale. KJV, WEB, ASV via bible-api.com; BSB via BereanBible.com. This is a noncommercial project. <Link href="/about">About and privacy</Link>. <a href="/licenses">Sources and copyright notices</a></p>
       </footer>
     </div>
   );

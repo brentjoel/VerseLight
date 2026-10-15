@@ -14,7 +14,7 @@ DONE: Save a verse by reference, organize collections on My Verses, Export/Impor
 - DONE Step 4: Typed browser storage, saved verses, collections, My Verses, and validated JSON Export and Import.
 - DONE Step 5: Mood journal with calendar heatmap, local-date streaks with one grace day per week, and badges. Preview visual/keyboard review remains pending.
 - PLANNED Step 6: Share cards using Next.js ImageResponse, verse of the day by local day of year, polish and accessibility pass.
-- PLANNED Step 7: Privacy note, About page and translation credits, stronger NLT rate/quota handling, error monitoring basics and README launch checks.
+- IMPLEMENTED Step 7 code: About/privacy with complete translation credits, best-effort per-instance NLT burst/quota/cooldown handling, fixed operational warning codes, configurable site origin and README launch checks. Owner explicitly declined a shared quota store and accepted the serverless limitation. Hosting and preview/accessibility verification remain pending. Step 6 is untouched.
 
 ## Emotions
 | Broad emotion | Specific feelings |
