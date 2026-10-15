@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Sparkle } from "lucide-react";
+import { StorageNotice } from "@/components/storage-notice";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TranslationSelector } from "@/components/translation-selector";
 
@@ -13,6 +14,8 @@ export function SiteShell({ children, translationControl }: Readonly<{ children:
         </Link>
         <div className="header-controls">{translationControl ?? <TranslationSelector />}<ThemeToggle /></div>
       </header>
+      <nav className="site-nav" aria-label="Main navigation"><Link href="/">Choose a feeling</Link><Link href="/my-verses">My Verses</Link></nav>
+      <StorageNotice />
       <main id="main-content" className="site-main">{children}</main>
       <footer className="site-footer">
         <span>Come as you are. Take your time.</span>

@@ -188,3 +188,49 @@
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   .emotion-link:hover, .emotion-link:hover .card-arrow, .theme-toggle:hover { transform: none; }
 }
+
+/* Step 4: local reference library and browser-only backups. */
+.site-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding-top: 12px; color: var(--primary); font-size: 12px; }
+.site-nav a { display: inline-flex; align-items: center; min-height: 44px; border-radius: 6px; }
+.site-nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.storage-notice { margin-top: 16px; padding: 18px 22px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); color: var(--muted-foreground); font-size: 13px; overflow-wrap: anywhere; }
+.storage-notice a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+.library-wrap { max-width: 820px; margin: 0 auto 48px; }
+.library-section { margin-top: 40px; }
+.library-section .section-heading { margin-bottom: 20px; }
+.local-form { display: grid; gap: 8px; margin-block: 16px; }
+.local-form label, .membership legend { color: var(--muted-foreground); font-size: 12px; }
+.local-form input, .local-form select { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; color: var(--foreground); background: var(--card); font: inherit; font-size: 14px; }
+.local-form input::placeholder { color: var(--muted-foreground); }
+.local-form input:hover, .local-form select:hover { border-color: var(--hover-border); }
+.local-input-row { display: flex; flex-direction: column; align-items: start; gap: 10px; }
+.local-input-row .compare-link, .local-actions .compare-link, .inline-confirm .compare-link { margin-top: 0; }
+.local-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; }
+.local-help { color: var(--muted-foreground); font-size: 12px; line-height: 1.9; margin-block: 10px; overflow-wrap: anywhere; }
+.local-feedback { min-height: 28px; color: var(--primary); font-size: 13px; }
+.local-error { color: var(--foreground); margin-block: 16px; }
+.collection-grid { display: grid; gap: 16px; margin-top: 20px; }
+.collection-editor { padding: 22px 24px; border: 1px solid var(--border); border-radius: 16px; background: var(--card); }
+.collection-editor .local-form { margin-top: 0; }
+.quiet-link { display: inline-flex; align-items: center; min-height: 44px; width: fit-content; padding: 4px 2px; border-radius: 6px; color: var(--primary); font-size: 12px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+button:disabled, input:disabled { opacity: 0.6; cursor: default; }
+.save-control { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.save-control .local-error { flex-basis: 100%; font-size: 12px; margin: 0; }
+.save-control .quiet-link { margin-top: 14px; }
+.saved-list { margin-top: 24px; }
+.saved-card { display: flex; flex-direction: column; gap: 8px; }
+.saved-reference { font-family: var(--font-lora), Georgia, serif; font-size: 22px; overflow-wrap: anywhere; }
+.membership { padding-block: 12px; border-block: 1px solid var(--border); margin-block: 8px; }
+.membership label { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 13px; overflow-wrap: anywhere; }
+.membership input { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--primary); }
+.backup-panel { padding: 28px; border: 1px solid var(--border); border-radius: 20px; background: var(--card); }
+.backup-panel > p, .inline-confirm p, .import-preview p { font-size: 13px; line-height: 1.9; }
+.import-preview, .inline-confirm { margin-top: 24px; padding: 20px; border: 1px solid var(--border); border-radius: 12px; background: var(--secondary); }
+.import-preview h3 { font-family: var(--font-lora), Georgia, serif; font-size: 22px; }
+.import-preview p + p { margin-top: 12px; }
+.inline-confirm .compare-link { margin-right: 12px; margin-top: 12px; }
+@media (min-width: 640px) {
+  .local-input-row { flex-direction: row; align-items: center; }
+  .local-input-row input { flex: 1; }
+  .local-input-row .compare-link { flex-shrink: 0; }
+}

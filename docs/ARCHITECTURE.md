@@ -1,6 +1,6 @@
 # Verselight architecture
 
-Inspected 2026-10-15. **DONE** means present in the repository. **PLANNED** means an unbuilt design, even when its shape is specified below. Steps 1 to 3 are complete. Step 4 has not started. See [SPEC](SPEC.md), [progress](PROGRESS.md), and [design](DESIGN.md).
+Inspected 2026-10-15. **DONE** means present in the repository. **PLANNED** means an unbuilt design, even when its shape is specified below. Steps 1 to 4 are implemented. Step 4 awaits preview approval before merge; Step 5 has not started. See [SPEC](SPEC.md), [progress](PROGRESS.md), and [design](DESIGN.md).
 
 ## Overview
 
@@ -19,16 +19,17 @@ Browser -> static home and two-step feeling picker
              -> source text, actual translation tag, attribution
 Browser -> localStorage theme preference -> CSS dark/light variables
 
-PLANNED
+DONE
 Browser interactions -> typed lib/storage.ts -> versioned localStorage JSON
-                        -> saved verses, collections, mood journal
-                        -> activity ledger -> pure streak/badge calculations
-                        -> preferences
+                        -> saved references, collections, preferences
 Browser file APIs <-> validated JSON Export and Import (local only)
+
+PLANNED
+Browser -> local mood journal, activity ledger -> pure streak/badge calculations
 No personal records flow to the Next.js server or any external service.
 ```
 
-**DONE:** Picker, four verses per feeling, prompts, translation preference, comparison and credits work. **PLANNED:** Saved verses, collections, My Verses, backups, journal, heatmap, streaks, badges, share cards and a real verse of the day. The daily verse panel is currently a placeholder.
+**DONE:** Picker, four verses per feeling, prompts, translation preference, comparison and credits work. **DONE:** Reference-only saved verses, collections, My Verses and local backups. **PLANNED:** Journal, heatmap, streaks, badges, share cards and a real verse of the day. The daily verse panel is currently a placeholder.
 
 ## Folder map
 
@@ -45,9 +46,10 @@ No personal records flow to the Next.js server or any external service.
 | DONE | `scripts/` | Public-domain downloader, validator, provider tests |
 | DONE | `proxy.ts` | Results path validation before streaming for HTTP 404 |
 | DONE | `public/`, `docs/` | Static assets and project documents |
-| PLANNED | `lib/storage.ts`, `lib/storage-migrations.ts` | Typed browser persistence, validation, migrations and backups |
+| DONE | `lib/storage.ts`, `lib/storage-schema.ts`, `lib/storage-migrations.ts`, `lib/browser-storage.ts` | Typed browser persistence, strict validation, migration runner, local backups and reactive client bridge |
 | PLANNED | `lib/streaks.ts`, `lib/badges.ts` | Pure calendar, continuity and award functions |
-| PLANNED | `app/my-verses/`, `app/journal/` | Static shells with client-only personal data views |
+| DONE | `app/my-verses/`, local storage components | Static shell with client-only saved references, collections, backups and recovery |
+| PLANNED | `app/journal/` | Static shell with client-only journal |
 
 ## Data sources and rendering
 
@@ -60,10 +62,11 @@ No personal records flow to the Next.js server or any external service.
 | DONE | `/emotions/[emotion]/[sub]` | Known params generated; static shell, request-time passages inside Suspense because translation uses async cookies |
 | DONE | `/compare` | Static shell and request-time comparison inside Suspense for validated search params/cookie |
 | DONE | Results path proxy | Rejects unknown parent/feeling pairs before streaming to preserve HTTP 404 |
-| PLANNED | My Verses and journal | Static page shell; client reads browser storage after hydration, with loading/empty/error states |
+| DONE | `/my-verses` | Static page shell; client reads browser storage after hydration, with loading/empty/error states |
+| PLANNED | Journal | Static shell and client-only personal history |
 | PLANNED | Share image route and daily verse | Public reference/translation inputs only, license review before including NLT; personal records never posted |
 
-**DONE:** Next.js 16.4 enables Cache Components and Partial Prefetching. Server Components are the default. Small client controls handle theme and translation. Static pages read the preference cookie in the browser; results and compare use server cookie reads behind Suspense. No personal records currently exist. **PLANNED:** Keep future personal content outside server rendering, requests and shared caches. Static data has no artificial loading delay; dynamic passages already show loading notices.
+**DONE:** Next.js 16.4 enables Cache Components and Partial Prefetching. Server Components are the default. Small client controls handle theme and translation. Static pages read the preference cookie in the browser; results and compare use server cookie reads behind Suspense. **DONE:** Personal records are outside server rendering, requests and shared caches. Static data has no artificial loading delay; dynamic passages already show loading notices.
 
 ## Translation flow
 
@@ -75,42 +78,41 @@ No personal records flow to the Next.js server or any external service.
 
 **DONE:** The implementation caps curated ranges at 50 verses. Its rolling per-process request timestamp guard permits 500 requests for TEST or 5,000 for a key per 24 hours. It stores timestamps/cooldowns only. HTTP 429 applies Retry-After with at least a minute of cooldown. These are implementation guards, not global Vercel accounting. Missing key, timeout, HTTP/network error, malformed/empty passage, or quota failure returns WEB with an actual WEB tag and visible note. The service avoids logging errors and key-bearing URLs. Full publisher terms and issued-key caveats are in the licensing document; re-check them before changing display, caching, storage or sharing.
 
-**PLANNED:** Backups and saved verses contain references and translation ids only, including for NLT. Do not cache licensed text in browser storage or exported JSON. Step 7 strengthens route abuse/quota handling without personal data collection or a server database.
+**DONE:** Backups and saved verses contain references and translation ids only, including for NLT. Do not cache licensed text in browser storage or exported JSON. Step 7 strengthens route abuse/quota handling without personal data collection or a server database.
 
-## Client storage design (PLANNED)
+## Client storage design (DONE)
 
-Everything in this section is **PLANNED** except the explicitly noted existing theme/cookie behavior.
+**DONE:** `lib/storage-schema.ts` validates personal data, envelopes and backups. `lib/storage.ts` is a browser-independent store with injected I/O and immutable snapshots. `lib/storage-migrations.ts` runs sequential pure migrations on copies. `lib/browser-storage.ts` supplies the client-only singleton, browser preferences, subscription hook and Web Locks adapter. No storage reads occur during server rendering or module initialization. No new dependencies were added.
 
-**PLANNED decision:** Use localStorage behind a small typed client-only layer in `lib/`. Current personal records are small text and references; a single JSON envelope keeps related edits together without a dependency. Do not store verse text or images. IndexedDB is unnecessary for the initial scope; reconsider only with measured size/performance evidence. Do not access storage during server rendering or module initialization.
+**DONE decision:** Use localStorage key `verselight-data`, with `schemaVersion: 1`, increasing `revision`, `updatedAt` ISO timestamp and `data`. A single JSON write replaces a validated envelope. The initial scope is small text/reference records, with no images or verse text. IndexedDB remains unnecessary; reconsider only with measured size/performance evidence. Version 1 is the first released format; no invented legacy migration exists. Unknown future versions and older versions without an explicitly registered migration are rejected while preserving original data. Tests exercise multi-step migration ordering, copy isolation and invalid/missing steps.
 
-**PLANNED envelope:** Key `verselight-data`, `schemaVersion: 1`, monotonically increasing `revision`, `updatedAt` ISO timestamp, and `data` holding the shapes below. Future schema versions run sequential pure migrations on a copy, then validate the entire result before writing. Reject unknown future versions and preserve the original if parsing/migration fails. Keep an explicit migration path from each supported version and test invalid/old versions.
+**DONE validation:** JSON is parsed as unknown. Exact keys, active translations, known canonical references, valid matching feeling context, UUIDs, ISO instants, unique record ids, reference/translation pairs and collection membership are checked. Reject unsafe prototype-related keys, unexpected fields (including verse text), duplicate or dangling links, files/envelopes over 5 MiB UTF-8 and lists over 10,000 entries. Collection names are trimmed, 1-80 characters. Accepted edits must fit both persisted and exported representations. Note/date/activity fields remain PLANNED Step 5 work and are not accepted as nonempty records yet.
 
-**PLANNED typed API:** Load, subscribe, mutate, export and import return typed success/error outcomes. Parse JSON into `unknown`, validate enums, canonical references, emotion/feeling relationships, unique ids, valid local dates/ISO timestamps, bounded strings and cross-record collection membership before exposing records. Reject unexpected properties, prototype-related keys, duplicate records and dangling links. Proposed initial limits: 5 MiB file/envelope, 10,000 records per list, collection names 1-80 trimmed characters, notes at most 2,000 characters. Check before parsing and before writes; actual browser quota may be lower. All limits are PLANNED choices to verify in Step 4.
+**DONE writes and fallback:** The typed methods return success/error results. Each write re-reads and compares the exact stored value before replacement. Cooperating browser tabs use a named Web Lock when the API is available. Storage/focus events detect another tab's writes or clearing and block edits until explicit reload; Export preserves the current tab's view first. Without Web Locks, the stored-value checks are best effort and cannot eliminate a simultaneous check/write race. No server coordination is added.
 
-**PLANNED writes:** Construct and validate a complete next envelope, serialize once and replace the key with one setItem. Catch unavailable storage, quota and serialization failures. Re-read revision before edits, subscribe to storage events across tabs and ask the visitor to reload on conflicting edits rather than silently overwrite. localStorage is not a multi-tab transaction system. Keep a shared in-memory state when persistence fails; explain that changes last only this session and offer Export. Never silently erase corrupted stored data; show recovery/reset choices and allow a raw local recovery download clearly distinguished from a validated backup.
+**DONE:** When reads fail or ordinary writes exceed browser quota, the shared store keeps edits in memory for this tab's session and shows a notice with an Export link. No automatic retry overwrites persisted data. Reload explicitly warns about losing session changes. A persistent Import/reset write failure leaves both visible and persisted records unchanged. Unreadable stored data is blocked rather than erased, with a separate raw recovery download and confirmed fresh start. The raw file is labeled as unvalidated data, not a normal backup.
 
-**PLANNED Export:** Browser-generated JSON file with `format: "verselight-backup"`, `schemaVersion`, `exportedAt` and validated data. Include preferences and all personal records, exclude keys and verse text. No upload, remote conversion, or automatic download. Warn that the file includes private notes and should be kept safely.
+**DONE Export/Import:** Export creates a local browser download with `format: "verselight-backup"`, `schemaVersion`, `exportedAt` and validated data, never Scripture or keys. Import reads the selected file locally after a file-size check, migrates only supported schemas, validates every record and relationship, previews reference/collection counts and warns about full replacement. Export of current data is offered before the explicit Replace confirmation. Cancellation, invalid files, stale previews, conflicts and failed persistent writes preserve current records. Memory-only imports carry a session-only warning. Backup files are unencrypted; the UI tells visitors to keep them safe. No upload, remote conversion or automatic download occurs.
 
-**PLANNED Import:** Read the chosen file locally with a size limit, validate format/version, migrate supported older schemas, validate every field and relationship, and preview counts before confirmation. Version 1 uses full replacement, not merge, to keep relationships and streak ledgers predictable. Offer Export of current data first. Validate a staged copy before replacing anything; cancel, invalid files and failed persistence leave existing persisted data intact. Recompute streaks and streak-badge eligibility from the imported activity ledger. Validate content-badge keys and award timestamps structurally; retained content milestones may outlive deleted saves or collections, so current records cannot prove their history. Local backups are not tamper-proof. An unavailable-storage session can import into memory with an explicit persistence warning.
+### Personal data shapes
 
-### Personal data shapes (PLANNED)
-
-All ids are browser-generated stable UUID strings. References must exist in curated content; translations must be active `TranslationId` values. ISO timestamps are device instants; `LocalDate` is a validated `YYYY-MM-DD` calendar date derived using the device's local date, never UTC slicing.
+**DONE:** Stable browser-generated UUIDs, canonical curated references and active TranslationId values. Saves and collections have ISO device instants. Preferences, saves, collections and the envelope are implemented. **PLANNED:** Full MoodEntry, ActivityDay, StreakState and Badge behavior below belongs to Step 5. Version 1 reserves empty `moodEntries`, `activityDays`, `badges` and `graceDates` arrays plus zero current/longest streak; any nonempty progress import is explicitly rejected, not discarded or trusted. Upgrade validation and migrations with the Step 5 implementation before accepting those records.
 
 | Shape | Fields |
 | --- | --- |
 | `Preferences` | `theme: "dark" or "light"`, `preferredTranslation: TranslationId` |
 | `SavedVerse` | `id`, `reference`, `translationId`, optional `emotionId` and `specificEmotionId` (valid pair), `createdAt` |
 | `Collection` | `id`, `name`, `savedVerseIds: string[]` (unique valid saved ids), `createdAt`, `updatedAt` |
-| `MoodEntry` | `id`, `emotionId`, `specificEmotionId`, optional `note`, `localDate`, `createdAt` |
-| `ActivityDay` | `localDate` (unique), `firstActivityAt`, `utcOffsetMinutes` at recording, `sources: ("emotion" or "save")[]` (unique) |
-| `StreakState` | `currentStreak`, `longestStreak`, optional `lastActiveDate`, `graceDates: LocalDate[]`, optional `maxObservedLocalDate` and `maxObservedAt`; derived from activity plus clock-safety metadata |
-| `Badge` | `key`, `earnedAt`; one award per supported key |
+| `MoodEntry` (PLANNED) | `id`, `emotionId`, `specificEmotionId`, optional `note`, `localDate`, `createdAt` |
+| `ActivityDay` (PLANNED) | `localDate` (unique), `firstActivityAt`, `utcOffsetMinutes` at recording, `sources: ("emotion" or "save")[]` (unique) |
+| `StreakState` (PLANNED calculation and full fields) | `currentStreak`, `longestStreak`, optional `lastActiveDate`, `graceDates: LocalDate[]`, optional `maxObservedLocalDate` and `maxObservedAt`; derived from activity plus clock-safety metadata |
+| `Badge` (PLANNED) | `key`, `earnedAt`; one award per supported key |
 | `PersonalData` | `preferences`, `savedVerses`, `collections`, `moodEntries`, `activityDays`, `streakState`, `badges` |
 
-**PLANNED:** Deduplicate saved verses by `(reference, translationId)`; removing a saved verse removes its collection memberships. Collection deletion leaves saved verses intact. Activity records do not disappear when a verse is removed. Store no user identifier and no verse text. Mood notes remain optional. Step 4 adds the envelope and backup validation for all shapes; later-step lists stay empty until their features are built.
 
-**DONE:** Theme currently uses `verselight-theme`; translation uses the validated cookie. **PLANNED:** Adopt the existing theme value and valid cookie preference on first local envelope creation. On explicit preference changes or confirmed Import, update the existing theme key/DOM and translation cookie so controls remain consistent. Treat the cookie as the runtime translation source for existing server passage rendering. When an existing valid cookie differs from the envelope, reconcile the envelope to it; never silently reset it to the default.
+**DONE:** Saves deduplicate by `(reference, translationId)`. Removing a saved verse removes collection memberships; collection deletion keeps saves. My Verses stores/displays references only and opens the existing public comparison view on demand, with prefetch disabled. Only public curated reference/translation inputs go to that reading view, never collection names or saved-record ids. The Save button stores the actual displayed translation, including WEB when NLT falls back. No activity or badge is recorded in Step 4.
+
+**DONE preferences:** Adopt the current DOM theme and validated translation cookie on client load; missing/invalid cookies retain the existing NLT default behavior. These reconcile the envelope's in-memory preferences and persist on the next accepted edit. Explicit theme/translation changes also update the envelope when writable. Confirmed Import applies the backup's theme to the DOM and existing `verselight-theme` key, writes the existing preference cookie, notifies the selector and refreshes the public route. The valid cookie remains the runtime server passage source; conflict/blocked stores keep working controls without replacing unreadable or competing records. Theme/cookie values are the only preference mirrors outside the envelope.
 
 ## Streak logic (PLANNED)
 
@@ -127,7 +129,7 @@ Everything here is **PLANNED** for Step 5. Keep functions pure in `lib/`; pass d
 
 ## Privacy
 
-**DONE decision:** Never send personal records, notes, backups, activity, streaks or badges to any server. No analytics or tracking is present; ask before adding either. **PLANNED:** Personal data stays in this browser and origin; no cross-device synchronization. Clearing browser data, private browsing, device loss or eviction can lose it, so explain Export and Import. Backups are unencrypted local files; do not imply device-level secrecy.
+**DONE decision:** Never send personal records, notes, backups, activity, streaks or badges to any server. No analytics or tracking is present; ask before adding either. **DONE:** Personal data stays in this browser and origin; no cross-device synchronization. Clearing browser data, private browsing, device loss or eviction can lose it, so explain Export and Import. Backups are unencrypted local files; do not imply device-level secrecy.
 
 **DONE limitation:** The existing translation cookie goes to this site's server to select passages. Requests also expose normal network metadata; NLT requests send a curated passage reference and the server key, never personal records. This is the narrow documented preference exception to the local-only rule. Never put personal data in URLs, cookies, logs, share-image requests or monitoring reports. **PLANNED:** A share card can use public reference/translation data, with download/share happening in the browser; exclude private notes and mood history. Step 7's error monitoring must avoid personal payloads and tracking and require approval if adding analytics/tracking.
 
@@ -147,8 +149,8 @@ Everything here is **PLANNED** for Step 5. Keep functions pure in `lib/`; pass d
 | DONE | Strictly noncommercial; NLT default, WEB fallback, four static translations, existing disabled NIV |
 | DONE | Static public shells with dynamic cookie-dependent passages; server key and no persistent NLT text |
 | DONE | Preserve current CSS, controls, routes and working features in this documentation change |
-| PLANNED | Small typed localStorage layer, versioned migrations and validated local JSON backups in Step 4 |
+| DONE | Typed localStorage layer, schema-1 validation, migration runner and validated local JSON backups in Step 4 |
 | PLANNED | Pure local-date streaks, explicit weekly grace ledger and badge calculations in Step 5 |
 | PLANNED | Share cards, daily verse, polish in Step 6; launch privacy, quota and operational checks in Step 7 |
 
-**DONE workflow:** Typecheck, lint and build are required before completion. Build includes data validation. Provider tests are available as `npm.cmd run test:bible-api`. **PLANNED:** Meaningful storage/migration/backup tests in Step 4 and calendar/streak tests in Step 5 accompany implementation. No new dependencies or feature code are introduced here.
+**DONE workflow:** Typecheck, lint and build are required before completion. Build includes data validation. Provider tests are available as `npm.cmd run test:bible-api`. **DONE:** `npm.cmd run test:storage` covers persistence, collection relationships, import validation, failure preservation, migrations, memory fallback and tab conflicts. **PLANNED:** Calendar/streak tests accompany Step 5. No new dependencies were added in Step 4. Visual browser review of both themes, responsive layouts and keyboard interaction is a preview handoff because the implementation session has no connected browser.

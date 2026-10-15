@@ -4,14 +4,14 @@
 
 Everyone is a guest. Choose a broad emotion, then a specific feeling, and read four curated passages in a preferred translation, each with a reflection question and prayer starter. This flow, translation selection, comparison and credits are DONE. All eventual features work for every visitor. Personal records stay in the visitor's browser with local JSON Export and Import backups, with no server persistence.
 
-PLANNED: Save a verse by reference, organize collections on My Verses, record moods, view a calendar heatmap, grow streaks with a weekly grace day, earn badges and share image cards. Home will show a real verse of the day; its current panel is a placeholder. No personal data leaves the device. The existing non-sensitive translation preference cookie is the narrow exception used for server passage rendering.
+DONE: Save a verse by reference, organize collections on My Verses, and Export/Import local JSON backups. PLANNED: Record moods, view a calendar heatmap, grow streaks with a weekly grace day, earn badges and share image cards. Home will show a real verse of the day; its current panel is a placeholder. No personal data leaves the device. The existing non-sensitive translation preference cookie is the narrow exception used for server passage rendering.
 
 ## Features and status
 
 - DONE: Two-step emotion picker, four passages per feeling, reflection and prayer prompts.
 - DONE: NLT default, KJV, WEB, ASV, BSB, and side-by-side comparison of two to four translations. Existing NIV stays disabled as Coming soon pending licensed access. Keep the provider list extensible.
 - DONE: Validated translation cookie and remembered theme. Dark default with working light mode and mobile-first UI.
-- PLANNED Step 4: Typed browser storage, saved verses, collections, My Verses, and validated JSON Export and Import.
+- DONE Step 4: Typed browser storage, saved verses, collections, My Verses, and validated JSON Export and Import.
 - PLANNED Step 5: Mood journal with calendar heatmap, local-date streaks with one grace day per week, and badges.
 - PLANNED Step 6: Share cards using Next.js ImageResponse, verse of the day by local day of year, polish and accessibility pass.
 - PLANNED Step 7: Privacy note, About page and translation credits, stronger NLT rate/quota handling, error monitoring basics and README launch checks.
@@ -35,9 +35,9 @@ PLANNED: Save a verse by reference, organize collections on My Verses, record mo
 
 Strictly noncommercial personal and portfolio project: no ads, payments, subscriptions, donations, or paid features. NLT uses the official Tyndale API, server-side only with `NLT_API_KEY` in ignored local environment or hosting secrets. No persistent NLT text in browser storage, backups, files, framework caches, or the repository. Preserve wording, required notices and publisher links. KJV, WEB, ASV and BSB use static public-domain files; KJV has special UK rights. Missing key, provider error or quota exhaustion shows WEB with a WEB tag and explicit note. Valid translation cookies retain the chosen preference. Do not scrape or copy NIV. Re-check publisher terms before changing display, sharing, caching, usage, or introducing ads, payments or donations. See [translation terms](TRANSLATION-LICENSES.md).
 
-## Local data model (PLANNED)
+## Local data model
 
-All rows below are PLANNED. See [architecture](ARCHITECTURE.md) for validation, migrations, write behavior and backup format. Use a small typed localStorage layer in `lib/`, a versioned envelope and an in-memory fallback when storage is unavailable. No server data service is used.
+Envelope, preferences, saves and collections are DONE. Mood/activity/badge fields and streak calculations remain PLANNED for Step 5; schema 1 currently accepts only empty future lists and zero streak totals. See [architecture](ARCHITECTURE.md) for validation, migrations, write behavior and backup format. Use a small typed localStorage layer in `lib/`, a versioned envelope and an in-memory fallback when storage is unavailable. No server data service is used.
 
 | Shape | Fields |
 | --- | --- |
@@ -51,7 +51,7 @@ All rows below are PLANNED. See [architecture](ARCHITECTURE.md) for validation, 
 | Badge | unique supported `key`, `earnedAt` |
 | PersonalData | `preferences`, `savedVerses`, `collections`, `moodEntries`, `activityDays`, `streakState`, `badges` |
 
-PLANNED: Stable browser-generated ids, validated canonical references/translation ids, local YYYY-MM-DD dates and ISO instants. Save uniqueness is reference plus translation. Collection membership points to saved ids. Deleting a save removes its memberships; deleting a collection keeps its verses. Backups have a format marker, schema version, export timestamp and validated personal data; import previews counts and requires confirmation before full replacement. Validate size, fields, relationships and migrations before writes; invalid files leave data intact. Existing theme storage and translation cookie remain working during planned preference adoption.
+DONE: Stable browser-generated ids, validated canonical references/translation ids, local YYYY-MM-DD dates and ISO instants. Save uniqueness is reference plus translation. Collection membership points to saved ids. Deleting a save removes its memberships; deleting a collection keeps its verses. Backups have a format marker, schema version, export timestamp and validated personal data; import previews counts and requires confirmation before full replacement. Validate size, fields, relationships and migrations before writes; invalid files leave data intact. Existing theme storage and translation cookie remain working with preference adoption. Schema 1 is the initial local format; unknown versions or missing migrations are rejected without altering the original.
 
 ## Streaks and badges (PLANNED)
 
