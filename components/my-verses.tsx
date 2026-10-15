@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { RemovalButton } from "@/components/removal-button";
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { getPersonalStore, reloadPersonalStorage, usePersonalStorage } from "@/lib/browser-storage";
@@ -22,7 +23,7 @@ function CollectionEditor({ collection, disabled, run }: { collection: Collectio
       <div className="local-input-row"><input id={`rename-${collection.id}`} value={name} required maxLength={80} onChange={event => setName(event.target.value)} disabled={disabled} /><button className="compare-link" disabled={disabled || !name.trim()}>Rename</button></div>
     </form>
     <p className="local-help">{collection.savedVerseIds.length} saved {collection.savedVerseIds.length === 1 ? "reference" : "references"}</p>
-    {confirm ? <div className="inline-confirm"><p>Delete this collection? Your saved verses will stay.</p><button type="button" className="compare-link" disabled={disabled} onClick={() => void run(() => getPersonalStore().deleteCollection(collection.id), "Collection deleted. Your saved verses are still here.")}>Delete collection</button><button type="button" className="compare-link" onClick={() => setConfirm(false)}>Keep collection</button></div> : <button type="button" className="quiet-link" disabled={disabled} onClick={() => setConfirm(true)}>Delete collection</button>}
+    {confirm ? <div className="inline-confirm"><p>Delete this collection? Your saved verses will stay.</p><RemovalButton className="compare-link" disabled={disabled} onRemove={() => void run(() => getPersonalStore().deleteCollection(collection.id), "Collection deleted. Your saved verses are still here.")}>Delete collection</RemovalButton><button type="button" className="compare-link" onClick={() => setConfirm(false)}>Keep collection</button></div> : <button type="button" className="quiet-link" disabled={disabled} onClick={() => setConfirm(true)}>Delete collection</button>}
   </div>;
 }
 
@@ -73,7 +74,7 @@ export function MyVerses() {
     event.preventDefault();
     void run(async () => { const result = await getPersonalStore().createCollection(collectionName); if (result.ok) setCollectionName(""); return result; }, "Collection created.");
   }
-  if (!snapshot.ready) return <p className="content-notice" role="status">Opening your saved verses...</p>;
+  if (!snapshot.ready) return <p className="content-notice skeleton" role="status">Opening your saved verses...</p>;
   return <>
     <div className="local-feedback" aria-live="polite"><p role="status">{busy ? "Taking care of that..." : status}</p></div>
     {error && <p className="content-notice local-error" role="alert">{error}</p>}
@@ -95,7 +96,7 @@ export function MyVerses() {
             <p className="local-help">Saved as a reference. Scripture is loaded only when you open the reading view.</p>
             <Link href={`/compare?${query}`} prefetch={false} className="back-link">Read and compare <span aria-hidden="true">&#8599;</span></Link>
             {collections.length > 0 && <fieldset className="membership"><legend>Add to collections</legend>{collections.map(collection => <label key={collection.id}><input type="checkbox" checked={collection.savedVerseIds.includes(verse.id)} disabled={locked} onChange={event => { const checked = event.target.checked; void run(() => getPersonalStore().setMembership(collection.id, verse.id, checked), checked ? "Added to collection." : "Removed from collection."); }} />{collection.name}</label>)}</fieldset>}
-            <button type="button" className="quiet-link" disabled={locked} onClick={() => void run(() => getPersonalStore().removeSave(verse.id), "Saved verse removed, including its collection memberships.")}>Remove saved verse</button>
+            <RemovalButton disabled={locked} onRemove={() => void run(() => getPersonalStore().removeSave(verse.id), "Saved verse removed, including its collection memberships.")}>Remove saved verse</RemovalButton>
           </li>;
         })}</ul>}
       </section>

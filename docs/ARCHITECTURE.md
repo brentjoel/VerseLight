@@ -186,3 +186,6 @@ README contains the exact pending Vercel checklist. Project verselight, reposito
 
 ## Motion polish reveal lifecycle
 The carousel provides transient active-verse context to each server-rendered passage. DawnReveal owns a disposable run per activation and is keyed by passage/translation. Hidden slides cancel effects; revisiting starts a full fresh run, including after Skip. Every passage preserves exact whitespace in DOM spans. Reduced motion, hidden tabs, theme changes and unmount cancel animation, frames and timers. The earlier wheel-intent helper is retained for compatibility but no longer gates display. No personal data, provider, persistence or route behavior changes.
+
+## Shared motion presentation
+React 19.3 ViewTransition in SiteShell supplies route arrivals; VerseCarousel tags transient next/previous state transitions for directional snapshots. CSS provides entrance fallback without API support, passes pointer events through transition overlays and removes movement for reduced motion. Existing server/client boundaries, routes and requests remain. RemovalButton owns a cancellable 150ms visual exit before calling the existing removal handler; native confirmations and persistence validation are unchanged. Save feedback is transient component state and CSS animation-end cleanup. No new runtime dependencies or stored fields.

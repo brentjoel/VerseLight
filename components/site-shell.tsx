@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, ViewTransition } from "react";
 import { SiteNav } from "@/components/site-nav";
 import Link from "next/link";
 import { Sparkle } from "lucide-react";
@@ -18,7 +18,7 @@ export function SiteShell({ children, translationControl }: Readonly<{ children:
       </header>
       <Suspense><SiteNav /></Suspense>
       <StorageNotice />
-      <main id="main-content" className="site-main">{children}</main>
+      <ViewTransition default="none" enter="page-arrival" exit="page-arrival"><main id="main-content" className="site-main">{children}</main></ViewTransition>
       <footer className="site-footer">
         <span>Come as you are. Take your time.</span>
         <p className="translation-credits">Scripture: NLT via Tyndale. KJV, WEB, ASV via bible-api.com; BSB via BereanBible.com. This is a noncommercial project. <Link href="/about">About and privacy</Link>. <a href="/licenses">Sources and copyright notices</a></p>
