@@ -30,14 +30,14 @@ Use an 8px spacing rhythm, generous open space, maximum 1040px shell and 760px r
 ## Screens
 
 - Home: brief greeting; centered unboxed wheel dominates the first viewport. A small morning star near the wheel opens the existing daily WEB verse in an accessible dialog with Save, Share and other translations. Simple picker stays available as a small text link and the no-WebGL/reduced-motion fallback. Retain all wheel keyboard, semantic emotion lists, detents, intensity and recovery behavior.
-- Results: one large centered verse at a time, with swipe, arrow buttons, keyboard arrows, progress dots and a polite ?Verse 2 of 4? announcement. Keep View all verses, and preserve full server-rendered text without JavaScript. Attribution is always visible. Quiet Save, Compare and Share icon/label row. Reflect question and prayer live in a native collapsible section.
+- Results: one large centered verse at a time, with swipe, arrow buttons, keyboard arrows, progress dots and a polite "Verse 2 of 4" announcement. Keep View all verses, and preserve full server-rendered text without JavaScript. Attribution is always visible. Quiet Save, Compare and Share icon/label row. Reflect question and prayer live in a native collapsible section.
 - Share: native modal dialog with existing WEB download/open options and an explicit public-domain text only note. Never render NLT into imagery or alter the share route.
 - Navigation: mobile fixed bottom tabs Feel, Verses, Journal, minimum 44px targets, active gold underline plus `aria-current`. Desktop uses simple top navigation. Footer links retain About/privacy and licenses.
 - Compare, My Verses, Journal, About, Licenses, 404 and simple picker share the same type, spacing, surfaces and both palettes. Preserve loading, empty, error, backup, calendar and form behavior.
 
 ## Interaction
 
-All hover rules must be inside `@media (hover: hover) and (pointer: fine)` and mirrored with `:focus-visible` (or `:focus-within` for grouped surfaces). Transitions are 200ms ease-out (range 180?240ms). Never change layout on hover. Cards lift 2px with a brighter hairline and soft gold glow; buttons softly fill/glow, icons lift 1px; pressed buttons sink 1px. Links animate an underline; navigation gold underline slides in. Icon controls have hover/focus tooltips as well as accessible names or visible labels.
+All hover rules must be inside `@media (hover: hover) and (pointer: fine)` and mirrored with `:focus-visible` (or `:focus-within` for grouped surfaces). Transitions are 200ms ease-out (range 180 to 240ms). Never change layout on hover. Cards lift 2px with a brighter hairline and soft gold glow; buttons softly fill/glow, icons lift 1px; pressed buttons sink 1px. Links animate an underline; navigation gold underline slides in. Icon controls have hover/focus tooltips as well as accessible names or visible labels.
 
 Wheel uses grab/grabbing cursors, gently brightens bars near the pointer and gives the focused/hovered label a soft glow. Center control pulses with light, without movement. Morning star slowly twinkles and brightens on hover/focus. Verse arrows and progress dots scale slightly. Page arrival fades with an 8px rise over 220ms. Reduced motion removes transforms and pulses, retains color/opacity feedback, uses the original simple picker, and displays Scripture immediately.
 

@@ -36,7 +36,8 @@ test('actual pre-paint script selects root theme and handles blocked storage', (
 test('both palettes define matching scene tokens with distinct light colors', () => {
   const keys = Object.keys(palettes[0]).filter(key => key.startsWith('--scene-'));
   assert.deepEqual(keys, Object.keys(palettes[1]).filter(key => key.startsWith('--scene-')));
-  assert.equal(palettes[0]['--scene-sky'], '#0b0d10');
+  assert.equal(palettes[0]['--scene-sky'], palettes[0]['--background']);
+  assert.equal(palettes[1]['--scene-sky'], palettes[1]['--background']);
   assert.notEqual(palettes[0]['--scene-sky'], palettes[1]['--scene-sky']);
   assert.equal(palettes[0]['--scene-bar-shade'], '1');
   assert.ok(Number(palettes[1]['--scene-bar-shade']) < 1);
@@ -61,12 +62,13 @@ test('scene text, selected controls, borders and focus meet AA across the sky gr
 test('verse ink and all result controls meet AA through every dawn color stage and emotion wash', () => {
   const emotions = [...css.matchAll(/--emotion-rgb:\s*(\d+) (\d+) (\d+)/g)].map(m => m.slice(1).map(Number));
   assert.equal(emotions.length, 8);
-  for (const p of palettes) for (const emotion of emotions) for (let wash = 0; wash <= 4; wash++) {
-    const card = mix(rgb(p['--card']), emotion, wash / 100);
+  for (const p of palettes) for (const surface of ['--card', '--background']) for (const emotion of emotions) for (let wash = 0; wash <= 9; wash++) {
+    const card = mix(rgb(p[surface]), emotion, wash / 100);
     for (let i = 0; i <= 100; i++) aa(mix(rgb(p['--muted-foreground']), rgb(p['--foreground']), i / 100), card);
     for (const key of ['--foreground', '--muted-foreground', '--primary']) aa(rgb(p[key]), card);
     // Reflection/prayer overlay and Journal's strongest heatmap cell.
     aa(rgb(p['--muted-foreground']), mix(card, rgb(p['--primary']), .04));
     aa(rgb(p['--foreground']), mix(rgb(p['--card']), rgb(p['--primary']), .38));
+    aa(rgb(p['--scene-selected']), mix(rgb(p['--background']), rgb(p['--primary']), .10));
   }
 });

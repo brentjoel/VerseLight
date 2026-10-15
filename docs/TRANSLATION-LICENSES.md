@@ -27,6 +27,10 @@ The share route accepts a single canonical curated reference and explicit `trans
 
 Step 9 review, 2026-10-15: Rechecked the official [NLT API terms](https://api.nlt.to/), [Tyndale permissions](https://www.tyndale.com/permissions) and [WEB copyright statement](https://ebible.org/engwebp/copyright.htm) before adding DOM-only word emphasis. Exact source wording, whitespace, translation tags and existing notices remain intact. Full text is readable from the start. No verse text is drawn into imagery, duplicated into artwork, persisted or newly cached; provider requests and sharing stay unchanged.
 
+## Step 9 presentation redesign
+
+Rechecked the [official NLT API terms](https://api.nlt.to/), [Tyndale permissions](https://www.tyndale.com/permissions) and [WEB copyright statement](https://ebible.org/engwebp/copyright.htm) on 2026-10-15 for the carousel and dialogs. The same source quotations remain selectable DOM text, with the actual translation name and the existing full NLT copyright metadata now visible under each NLT passage. Daily verses and share downloads remain WEB only with their credits and an explicit public-domain text only note. No licensed verse text is drawn into WebGL, added to imagery or persisted; no request, cache, provider or image-route behavior changes.
+
 ## NIV
 
 [Biblica's official permissions page](https://www.biblica.com/permissions/) lists a legitimate express-license route for qualifying strictly noncommercial apps without AI/ML features, through [API.Bible](https://api.bible/) or [YouVersion Platform](https://platform.youversion.com/). Royalty-free licensing does not necessarily mean a provider has no usage fees. No NIV provider account, license, or credential has been configured for Verselight. NIV is disabled as Coming soon until that is done. No NIV text is scraped, copied, or stored. The application has no AI features; using a coding assistant to develop it does not add an AI feature to the app.
