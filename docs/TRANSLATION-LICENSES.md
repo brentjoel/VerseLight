@@ -1,6 +1,6 @@
 # Translation terms and setup
 
-Reviewed 2026-10-15 against the official pages below. Step 7 rechecked the official API terms, documentation and publisher permissions. No licensed-text sharing or caching change is introduced.
+Reviewed 2026-10-15 against the official pages below, covering Step 6 daily WEB passages/share cards and Step 7 NLT limits and launch checks. No NLT artwork or persistent licensed-text caching is introduced.
 
 Verselight is a strictly noncommercial personal and portfolio project. No ads, subscriptions, donations, or paid features. Re-check the publisher terms before changing this, display behavior, sharing, or storage.
 
@@ -14,6 +14,14 @@ Sources: [official API terms](https://api.nlt.to/), [API documentation](https://
 - Tyndale's separate print/eBook quotation guidelines allow up to 500 verses, no complete book, and no more than 25% of the work. Those are not a substitute for the API's usage conditions.
 - Mark each quotation (NLT). Use the publisher's mixed-translation copyright notice. The exact notice, downloaded from the permissions page, is in `data/translation-notices.json` and displayed at `/licenses#nlt`; it is copyright metadata, not verse text.
 - The API returns HTML. Only source-delimited verses matching the requested reference/range are parsed. Verse labels and notes are excluded, HTML entities decoded, inline text preserved, and remote HTML is never injected into the app.
+
+## Step 6 daily verse and share cards
+
+Rechecked the [WEB publisher statement](https://ebible.org/engwebp/copyright.htm), [NLT API terms](https://api.nlt.to/) and [Tyndale permissions](https://www.tyndale.com/permissions) on 2026-10-15. WEB explicitly permits copying, distribution and sharing, with its trademark identifying unchanged text. Cards preserve exact local source wording, identify WEB and World English Bible, and credit eBible.org/public domain.
+
+Decision: daily verses and downloadable PNG cards use WEB only. The daily panel labels WEB even when another translation is preferred, and links to comparison for reading in other translations. The existing NLT reading path remains unchanged. Tyndale's artwork guidance calls for a permissions request; API access alone is not treated as permission for downloadable artwork. No issued-key artwork grant has been established in this task, and Verselight's own no-persistent-NLT-text rule also excludes downloadable NLT images. This is a conservative implementation decision, not a claim that all NLT social sharing is prohibited. No NLT text is fetched by the share route or daily panel, or written to image files, storage or backups.
+
+The share route accepts a single canonical curated reference and explicit `translation=web` only. Other translations, extra/duplicate inputs and arbitrary text are rejected. Responses are `no-store`. Browser downloads contain only public WEB Scripture and credits; private records never enter card requests. New translations for image sharing require their own terms review.
 
 ## NIV
 

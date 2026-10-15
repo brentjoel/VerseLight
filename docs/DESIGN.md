@@ -71,7 +71,7 @@ Surface shadow is `0 12px 40px rgb(0 0 0 / 12%)` in dark and `0 12px 40px rgb(40
 
 - Shared shell is `min(100% - 40px, 1040px)`, centered, minimum 100svh. At 640px it becomes `min(100% - 80px, 1040px)`. Header is at least 104px with a bottom border. Brand sits left; translation and theme controls right with a 12px gap.
 - Main padding is 64px top / 32px bottom, then 78px / 36px at 640px. Footer has a top border and 26px block padding. At 420px and below it stacks with 4px gap; section helper copy hides and featured content stacks.
-- Home hero is centered, with a 48px bottom margin (55px at 640px). Featured section precedes the emotion grid with a 60px bottom margin. Featured card has 30px padding (36px 40px at 640px), 18px gap, eyebrow/title above description and Coming soon pill. Verse of the day is still a placeholder.
+- Home hero is centered, with a 48px bottom margin (55px at 640px). Featured section precedes the emotion grid with a 60px bottom margin. Featured card has 30px padding (36px 40px at 640px), 18px gap, eyebrow/title above the daily WEB reference, text and actions. Step 6 replaces the placeholder.
 - Emotion tiles form two columns with 12px gap, then four at 900px with 16px gap. A full-card link contains emoji and arrow, emotion dot/name, and muted summary. Padding is 23px 18px (24px at 900px). Icon is 39px square with 12px radius.
 - Specific feelings sit in an 820px detail column with 36px top / 48px bottom margin. Grid is one column, two at 640px, gap 16px. Links have 28px padding, minimum height 145px, title and arrow. Detail icon is 52px square with 16px radius.
 - Results use a 700px column with 36px top / 48px bottom margin, heading bottom gap 40px, and verse-list gap 24px. Verse cards have 30px padding (36px at 640px), 24px internal gap, border and shadow. Anatomy: reference and actual-translation tag, Scripture, attribution/fallback note, Compare link, Reflect label/question, then prayer panel. Prayer panel has 24px top margin, 22px 24px padding, primary 35% left border and primary 4% wash.
@@ -101,6 +101,22 @@ Emotion hover lifts 3px with 220ms ease transitions on transform, border and sha
 Warm, plain, patient, and brief. Existing examples: "Come as you are. Take your time.", "One small moment at a time.", and "Finding your verses...". Avoid pressure, promises of outcomes, and em dashes in app-authored copy. Preserve all publisher Scripture wording and punctuation exactly. Say which translation is actually displayed on fallback.
 
 ## Design checklist for every new page
+
+Step 6 source review covers every route below. New controls reuse theme variables, 44px action heights, semantic buttons/links, visible focus and live loading/error/status copy. The daily passage uses established verse typography and an h3 reference beneath the panel h2. Loading waits for the device date; missing content and no-JavaScript states offer a reading link. Cards retain full text and credits with a fixed dark palette independent of page theme. Text remains available as HTML on the originating page. Card links announce new-tab behavior. Download errors offer retry and open-image recovery.
+
+| Route | Source checklist review | Remaining rendered review |
+| --- | --- | --- |
+| Home | Daily loading/empty/recovery, heading hierarchy, WEB label, Save/card controls | Narrow/wide, both themes, midnight, keyboard |
+| Broad emotions (all 8) | Shared shell, h1, descriptive full-card links, focus, static empty state | Narrow/wide, both themes, keyboard |
+| Results (all 32) | Passage loading, attribution/fallback, headings, labeled Save/Compare/card controls | Narrow/wide, both themes, keyboard |
+| Compare | Native labeled fieldset, invalid-input recovery/reset, loading, actual translation/fallback, card controls | Narrow/wide, both themes, keyboard |
+| My Verses | Labeled forms, loading/empty/errors, recovery, explicit replacement/removal | Narrow/wide, both themes, keyboard/file picker |
+| Journal | Labeled notes/calendar, non-color descriptions, loading/empty/errors, recovery link | Narrow/wide, both themes, keyboard |
+| About and licenses | Shared shell, semantic headings, linked attribution, daily WEB/share privacy copy, static content | Narrow/wide, both themes, keyboard |
+| 404 and error | Shared shell, h1, return link and error retry | Narrow/wide, both themes, keyboard/retry |
+| Share PNG | Strict inputs, exact WEB text/credits, variable height, 400/503 recovery | Shortest/longest PNG inspected; browser save pending |
+
+The existing reduced-motion rule disables animation/transitions and hover transforms across routes; Step 6 adds no motion. Computed foreground/muted/primary contrast against background/card has a minimum 7.44:1 dark and 5.17:1 light. Focus uses primary. Header wrapping below 381px prevents potential brand/control overlap. These are source and numeric checks, not a rendered audit. The implementation session had no connected browser. Step 6 is now merged per owner confirmation; remaining rendered-review checks are retained in the Step 7 launch checklist.
 
 - [ ] Dark default with working light mode through existing variables and theme control.
 - [ ] Mobile-first layout, no horizontal overflow, consistent shell, cards, typography and spacing.

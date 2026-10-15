@@ -2,7 +2,7 @@
 
 Scripture, reflection, and prayer for the feeling you bring today. Everyone is a guest. Saved references, collections, journal notes, activity, streaks, and badges stay in the browser with local JSON backups. Strictly noncommercial: no ads, payments, subscriptions, donations, or paid features.
 
-Owner-supplied live URL: [Verselight](https://verselight-pf16jt6xm-dev-e4cd.vercel.app/). Vercel project: `verselight`; GitHub: `brentjoel/verselight`. Hosting configuration and deployment health remain **pending manual verification**. Step 6's daily verse and share cards remain unbuilt.
+Owner-supplied live URL: [Verselight](https://verselight-pf16jt6xm-dev-e4cd.vercel.app/). Vercel project: `verselight`; GitHub: `brentjoel/verselight`. Hosting configuration and deployment health remain **pending manual verification**. Step 6 daily WEB passages, WEB share cards and accessibility polish are merged on main. Step 7 launch verification remains open.
 
 ## Local setup
 
@@ -23,7 +23,7 @@ Copy `.env.example` to ignored `.env.local`, then fill in values privately:
 npm run dev
 ```
 
-Open http://localhost:3000. Choose Anxious > Worried about the future, change translations, and Compare. Try Save verse, My Verses collections, and Journal notes. The theme button switches dark/light. Footer links open About/privacy and full translation credits. Never print or commit `.env.local`.
+Open http://localhost:3000. Choose Anxious > Worried about the future, change translations, and Compare. Try Save verse, My Verses collections, and Journal notes. The theme button switches dark/light. Home selects a WEB passage by device-local day of year from a repeating curated cycle, independent of the reading translation. Download WEB card or Open card uses public WEB text and credits only. Cards never include notes, saved-record metadata or NLT text. Footer links open About/privacy and full translation credits. Never print or commit `.env.local`.
 
 ## Checks
 
@@ -31,6 +31,7 @@ Open http://localhost:3000. Choose Anxious > Worried about the future, change tr
 npm run test:bible-api
 npm run test:storage
 npm run test:progress
+npm run test:daily-share
 npx tsc --noEmit
 npm run lint
 npm run build
@@ -66,9 +67,9 @@ Server logs emit only `[verselight] nlt_fallback` and `[verselight] server_error
 - [ ] Check Domains and deployment status: confirm whether the supplied URL is stable or deployment-specific; set the intended production origin in `NEXT_PUBLIC_SITE_URL`. Check HTTPS, About's site link, and its canonical/OG URL after a build. Preview About links intentionally use the configured origin.
 - [ ] On the preview, verify NLT text, attribution, cookie persistence, Compare, and WEB. With a deliberately absent/invalid **preview-only** key, verify labeled WEB fallback and fixed warnings; restore it and redeploy. Do not load-test Tyndale or alter the production key. Automated tests cover quota/timeout/Retry-After failures.
 - [ ] Review Runtime Logs, access settings and retention. Confirm warning codes contain no cookies, notes, backups, keys or full provider URLs. Leave Analytics, Speed Insights, session replay and external log drains disabled unless separately approved. Confirm fetch tracing does not reveal credential query strings.
-- [ ] In narrow/wide layouts and both themes, check `/about`, `/licenses`, footer links, keyboard focus/skip link, headings, contrast, zoom/wrapping, and reduced motion. Verify Journal and My Verses Export/Import with disposable records; confirm no record/backup requests leave the browser in DevTools Network.
+- [ ] In narrow/wide layouts and both themes, check the daily WEB passage, WEB card download/open controls, `/about`, `/licenses`, footer links, keyboard focus/skip link, headings, contrast, zoom/wrapping, and reduced motion. Verify Journal and My Verses Export/Import with disposable records; confirm no record/backup requests leave the browser in DevTools Network.
 - [ ] Review security/licensing, backup recovery, diff and preview. Obtain user approval before merging to `main`. After an approved merge, verify the production deployment and repeat the read/credits/privacy smoke check. A pushed branch is not proof of hosting verification.
 
 ## Delivery workflow
 
-Read [AGENTS.md](AGENTS.md), [spec](docs/SPEC.md), and [progress](docs/PROGRESS.md). Read architecture before data flow changes and design before UI work. This branch does Step 7 only at the owner's request; Step 6 remains unchecked. Commit and push `step-7-launch-checks` for a Vercel Git preview, then wait for approval before merging. No independent production deployment.
+Read [AGENTS.md](AGENTS.md), [spec](docs/SPEC.md), and [progress](docs/PROGRESS.md). Read architecture before data flow changes and design before UI work. This branch integrates the merged Step 6 work into Step 7 at the owner's request; Step 6 is checked and the Step 7 launch checkbox remains open. Commit and push `step-7-launch-checks` for a Vercel Git preview, then wait for approval before merging. No independent production deployment.
