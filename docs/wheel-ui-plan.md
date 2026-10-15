@@ -1,6 +1,6 @@
 # Wheel UI Plan: "Wheel within a Wheel"
 
-Status: PLANNED. Do not start until Steps 1 to 7 are merged to main and the launch checks are verified.
+Status: Step 8 implemented on `step-8-wheel-picker` at the owner's request after Steps 1 to 7 were confirmed merged and verified. Preview/device/Lighthouse review and merge approval remain pending. Steps 9 to 11 are PLANNED and unstarted.
 
 ## Concept
 A signature interaction layer inspired by Ezekiel 1:16 (wheel within a wheel) with a light theme drawn from Psalm 119:105 and Genesis 1:3. Tone is reverent and calm, never flashy. Imagery is limited to light, stars, and wheels. No faces, angels, figures, or denomination-specific symbols.

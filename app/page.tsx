@@ -6,6 +6,7 @@ import { ContentNotice } from "@/components/content-notice";
 import { getAllEmotions } from "@/lib/emotions";
 import { DailyVerse } from "@/components/daily-verse";
 import web from "@/data/verses/web.json";
+import { WheelPicker } from "@/components/wheel-picker";
 
 export default function Home() {
   const emotions = getAllEmotions();
@@ -31,6 +32,7 @@ export default function Home() {
           <div><p className="eyebrow mb-3">Begin where you are</p><h2 id="emotions-heading">Find the words that fit.</h2></div>
           <p id="emotions-status">Start with a feeling.<br />No account needed.</p>
         </div>
+        <WheelPicker emotions={emotions}>
         <ul className="emotion-grid">
           {emotions.map((emotion) => (
             <li key={emotion.id}>
@@ -46,6 +48,7 @@ export default function Home() {
             </li>
           ))}
         </ul>
+        </WheelPicker>
         {emotions.length === 0 && <ContentNotice>Our feelings library is resting for a moment. Please visit again soon.</ContentNotice>}
       </section>
       <p className="closing-note">One small moment at a time.</p>

@@ -96,6 +96,12 @@ Emotion hover lifts 3px with 220ms ease transitions on transform, border and sha
 
 `prefers-reduced-motion: reduce` disables all animation and transitions, resets smooth scrolling, and removes hover transforms. New motion must remain subtle and honor the same rule.
 
+## Step 8 Home wheel
+
+Home progressively replaces the original picker with a 540px maximum square dial in a 24px-radius dark panel. The scene remains dark in light mode, with explicit foreground `#EEEDF2`, supporting text `#B9BAC4`, control borders `#777780` and warm selected/focus accent `#D5BD8B` (selected text `#17141F`). Existing per-emotion colors tint decorative bars only. No new global theme tokens.
+
+Panel padding is 24px/16px on mobile, 28px/32px from 640px. A thin orbit and 128 instanced bars frame a DOM center control. Broad labels sit on the outer ring; a semantic wrapping button list below provides full labels, 44px targets and pressed states at both levels. Inner selection contracts the orbit over 500ms; bar characters interpolate with time-based easing. Arrows and Enter work on the center; previous/next buttons support other input. Focus moves to the inner reading link after locking. Intensity uses native labeled radios and explicitly says it is not saved. Loading, scene failure, low capability, context loss and reduced motion preserve the original grid. Verse rendering remains immediate. Reduced motion skips the scene entirely; global reduced-motion CSS also disables transitions. Source checklist reviewed; rendered narrow/wide, dark/light, keyboard, touch, screen-reader and contrast-tool checks remain for preview review.
+
 ## Copy tone
 
 Warm, plain, patient, and brief. Existing examples: "Come as you are. Take your time.", "One small moment at a time.", and "Finding your verses...". Avoid pressure, promises of outcomes, and em dashes in app-authored copy. Preserve all publisher Scripture wording and punctuation exactly. Say which translation is actually displayed on fallback.

@@ -257,3 +257,35 @@ button:disabled, input:disabled { opacity: 0.6; cursor: default; }
   .local-input-row input { flex: 1; }
   .local-input-row .compare-link { flex-shrink: 0; }
 }
+/* Home wheel: the scene keeps a dark, readable palette in either page theme. */
+.wheel-picker { --wheel-light: #d5bd8b; position: relative; padding: 24px 16px 32px; border: 1px solid var(--border); border-radius: 24px; background: #0b0d10; color: #eeedf2; }
+.wheel-picker .eyebrow, .wheel-picker .local-help { color: #b9bac4; }
+.wheel-picker .compare-link { color: #eeedf2; border-color: #777780; min-height: 44px; }
+.wheel-picker button:focus-visible, .wheel-picker a:focus-visible, .wheel-picker input:focus-visible { outline: 2px solid var(--wheel-light); outline-offset: 4px; }
+.wheel-topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.wheel-help { max-width: 450px; margin: 16px auto 0; text-align: center; color: #b9bac4; font-size: 13px; }
+.wheel-dial { position: relative; width: min(100%, 540px); aspect-ratio: 1; margin: 8px auto 0; touch-action: pan-y; }
+.wheel-canvas, .wheel-canvas canvas, .wheel-ring-labels { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.wheel-loading { position: absolute; top: 15%; width: 100%; text-align: center; color: #b9bac4; font-size: 12px; }
+.wheel-orbit { position: absolute; inset: 14%; border: 1px solid #d5bd8b30; border-radius: 50%; transition: inset 500ms ease; pointer-events: none; }
+.wheel-inner .wheel-orbit { inset: 24%; }
+.wheel-ring-labels span { position: absolute; transform: translate(-50%, -50%); font-size: clamp(10px, 2.3vw, 13px); color: #b9bac4; background: #0b0d10; padding: 2px; transition: left 350ms ease, top 350ms ease; }
+.wheel-ring-labels [data-selected="true"] { color: #f0d9a9; }
+.wheel-center { position: absolute; inset: 29%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.wheel-center .eyebrow { font-size: 9px; }
+.wheel-lock { width: 100%; min-height: 88px; cursor: pointer; font-family: var(--font-lora), Georgia, serif; font-size: clamp(22px, 4vw, 34px); color: #eeedf2; }
+.wheel-lock span { display: block; font: 11px Arial, sans-serif; color: #b9bac4; margin-top: 8px; }
+.wheel-center .specific-link { min-height: 88px; padding: 8px; gap: 8px; color: #eeedf2; font-size: clamp(14px, 3vw, 20px); background: transparent; border: 0; }
+.wheel-center .local-help { position: absolute; top: 100%; width: 240px; background: #0b0d10; z-index: 2; }
+.wheel-current { text-align: center; font-size: 13px; color: #d5bd8b; }
+.wheel-navigation { display: flex; justify-content: center; align-items: center; gap: 24px; margin: 12px 0 24px; font-size: 12px; color: #b9bac4; }
+.wheel-navigation button { min-width: 48px; justify-content: center; }
+.wheel-options { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 640px; margin: auto; list-style: none; padding: 0; }
+.wheel-options button { min-height: 44px; padding: 8px 14px; border: 1px solid #777780; border-radius: 99px; font-size: 13px; cursor: pointer; }
+.wheel-options button[aria-pressed="true"] { background: #d5bd8b; border-color: #d5bd8b; color: #17141f; }
+.wheel-intensity { display: flex; justify-content: center; gap: 20px; margin: 28px auto 4px; text-align: center; }
+.wheel-intensity legend { margin-bottom: 8px; width: 100%; font-size: 14px; }
+.wheel-intensity label { display: flex; gap: 8px; align-items: center; min-height: 44px; text-transform: capitalize; font-size: 13px; }
+.wheel-intensity input { accent-color: #d5bd8b; }
+.wheel-picker > .local-help { text-align: center; }
+@media (min-width: 640px) { .wheel-picker { padding: 28px 32px 36px; } }
