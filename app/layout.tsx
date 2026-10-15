@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Lora } from "next/font/google";
 import "./globals.css";
 import { siteUrl } from "@/lib/site-url";
@@ -17,6 +17,14 @@ export const metadata: Metadata = {
     description: "A quiet place for Scripture, reflection, and prayer.",
     type: "website",
   },
+  twitter: { card: "summary_large_image", title: "Verselight | A moment of peace", description: "A little light for wherever you are." },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0a0c10" },
+    { media: "(prefers-color-scheme: light)", color: "#faf6ee" },
+  ],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

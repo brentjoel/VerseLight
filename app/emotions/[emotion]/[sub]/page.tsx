@@ -16,6 +16,12 @@ import { ShareCardControls } from "@/components/share-card-controls";
 import { DawnReveal } from "@/components/dawn-reveal";
 import { passageTokens } from "@/lib/dawn";
 
+export async function generateMetadata({ params }: { params: Promise<{ emotion: string; sub: string }> }) {
+  const { emotion, sub } = await params;
+  const feeling = getSpecificEmotionByIds(emotion, sub);
+  return { title: `${feeling?.name ?? "A moment to reflect"} | Verselight`, description: "Take your time with four curated Scripture passages, a reflection question and a prayer starter." };
+}
+
 export function generateStaticParams() {
   return getAllEmotions().flatMap((emotion) => emotion.specifics.map((specific) => ({ emotion: emotion.id, sub: specific.id })));
 }
@@ -25,7 +31,7 @@ export default async function ResultsPage({ params }: { params: Promise<{ emotio
   const emotion = getEmotionById(emotionId);
   const specific = getSpecificEmotionByIds(emotionId, sub);
   if (!emotion || !specific) notFound();
-  return <SiteShell translationControl={<Suspense fallback={<TranslationSelector />}><PreferredTranslationSelector /></Suspense>}><Suspense fallback={<ContentNotice>Finding your verses...</ContentNotice>}><ResultsContent emotion={emotion} specific={specific} /></Suspense></SiteShell>;
+  return <SiteShell translationControl={<Suspense fallback={<TranslationSelector />}><PreferredTranslationSelector /></Suspense>}><Suspense fallback={<ContentNotice loading>Finding your verses...</ContentNotice>}><ResultsContent emotion={emotion} specific={specific} /></Suspense></SiteShell>;
 }
 
 async function ResultsContent({ emotion, specific }: { emotion: Emotion; specific: SpecificEmotion }) {

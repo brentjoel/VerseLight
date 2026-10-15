@@ -5,6 +5,7 @@ import { siteUrl } from "@/lib/site-url";
 
 export const metadata = {
   title: "About and privacy | Verselight",
+  description: "Learn about Verselight, browser-only personal records, local backups, privacy and Scripture translation credits.",
   alternates: { canonical: new URL("/about", siteUrl).href },
   openGraph: { title: "About and privacy | Verselight", url: new URL("/about", siteUrl).href },
 };

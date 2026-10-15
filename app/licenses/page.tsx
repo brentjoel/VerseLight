@@ -2,6 +2,8 @@ import Link from "next/link";
 import { SiteShell } from "@/components/site-shell";
 import { TranslationCredits } from "@/components/translation-credits";
 
+export const metadata = { title: "Translation sources and credits | Verselight", description: "Read the source, copyright and licensing notices for the Bible translations used by Verselight." };
+
 export default function LicensesPage() {
   return <SiteShell>
     <div className="results-wrap license-copy">

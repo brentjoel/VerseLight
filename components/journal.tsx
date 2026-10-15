@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { RemovalButton } from "@/components/removal-button";
+import { Constellation } from "@/components/constellation";
 import { useState } from "react";
 import emotions from "@/data/emotions.json";
 import { BADGES } from "@/lib/badges";
@@ -80,7 +81,7 @@ export function Journal() {
     <section className="library-section" aria-labelledby="reflections-heading"><div className="section-heading"><h2 id="reflections-heading">{selected ? `Reflections on ${selected}` : "Your reflections"}</h2></div>
       {selected && <button className="compare-link" onClick={() => setSelected("")}>Show all reflections</button>}
       <p className="local-help">Choose a specific feeling to add a reflection. Notes are optional. Removing a reflection keeps its historical activity day.</p>
-      {entries.length ? <ul className="verse-list">{entries.slice(0, limit).map(mood => <Reflection key={`${mood.id}:${mood.note ?? ""}`} mood={mood} disabled={disabled} run={run} />)}</ul> : <p className="content-notice">No reflections here yet. <Link href="/">Choose a feeling</Link> when you are ready.</p>}
+      {entries.length ? <ul className="verse-list">{entries.slice(0, limit).map(mood => <Reflection key={`${mood.id}:${mood.note ?? ""}`} mood={mood} disabled={disabled} run={run} />)}</ul> : <div className="content-notice"><Constellation /><p>No reflections here yet. <Link href="/">Choose a feeling</Link> when you are ready.</p></div>}
       {entries.length > limit && <button className="compare-link" onClick={() => setLimit(limit + 20)}>Show more reflections</button>}
       <p className="local-help"><Link href="/my-verses#backups">Export or import your journal with a local backup.</Link> Backups include notes and are unencrypted.</p>
     </section>

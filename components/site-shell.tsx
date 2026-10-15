@@ -1,7 +1,7 @@
 import { Suspense, ViewTransition } from "react";
 import { SiteNav } from "@/components/site-nav";
 import Link from "next/link";
-import { Sparkle } from "lucide-react";
+import { BrandMark } from "@/components/brand-mark";
 import { StorageNotice } from "@/components/storage-notice";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TranslationSelector } from "@/components/translation-selector";
@@ -11,7 +11,7 @@ export function SiteShell({ children, translationControl }: Readonly<{ children:
     <div className="site-shell">
       <header className="site-header">
         <Link href="/" aria-label="Verselight home" className="brand">
-          <Sparkle size={21} strokeWidth={1.25} aria-hidden="true" />
+          <BrandMark />
           <span>Verselight<span className="text-primary">.</span></span>
         </Link>
         <div className="header-controls">{translationControl ?? <TranslationSelector />}<ThemeToggle /></div>

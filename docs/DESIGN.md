@@ -1,6 +1,6 @@
 # Verselight design
 
-Step 9 redesign, 2026-10-15. This replaces the earlier lavender/card-heavy rules. Calm, minimal, premium: a quiet sky with a single warm light. One primary task per screen. Existing data, routes, storage, providers and features remain intact.
+Motion polish on merged Step 9, 2026-10-15. This replaces the earlier lavender/card-heavy rules. Calm, minimal, premium: a quiet sky with a single warm light. One primary task per screen. Existing data, routes, storage, providers and features remain intact.
 
 ## Tokens
 
@@ -63,3 +63,13 @@ Fine-pointer hover lives inside `(hover: hover) and (pointer: fine)` and is mirr
 Route arrivals fade and rise 8px. Use native View Transitions as progressive enhancement with CSS arrival fallback. Verse travel follows next/previous direction with outgoing drift and incoming opposite drift, then the full dawn emphasis. Rapid input cancels previous decorative effects immediately. Wheel orbit contracts/expands by transform. Native Reflect disclosure keeps its semantics and animates its content by opacity/transform with a rotating chevron, avoiding animated height/layout. Dialogs fade/scale and their backdrops fade with static soft blur. Theme cross-fades include the scene. Saved bookmark fills/pops with a tiny gold sparkle and polite transient Saved feedback; existing removal remains in My Verses. Compare columns and library/journal lists arrive with a bounded short stagger; deleted items fade/drift before removal. Loading uses subtle skeleton shimmer; empty states fade in. Home greeting, wheel and morning star enter with a short stagger; the star slowly twinkles.
 
 Reduced motion removes translation, scaling, parallax, pulses and shimmer, keeps short opacity/color feedback and instant Scripture. Never block interaction or text, announce words, retain stale effects/timers, or add hover-only information. Keep AA contrast, 44px targets, keyboard focus, native dialog/disclosure behavior and screen-reader announcements. Mid-range phone 60fps and mobile Lighthouse >=90 in all four categories require measured review.
+
+## Finishing details
+
+Use a low-cost layered night sky in dark mode: soft vignette, near-invisible CSS grain and only five opacity-twinkling stars, all behind content. Light mode uses a warm morning haze with dark readable ink. Emotion tints stay faint behind the wheel and verse; keep personal content out of artwork. Pause decorative motion when hidden and remove it for reduced motion. No heavy raster backgrounds.
+
+Headings and verse text use balanced wrapping, optical serif sizing and comfortable reading measures. Preserve source Scripture punctuation exactly; use curly quotes only in authored UI copy. Dates/counts use tabular numbers. Each verse reference has a small decorative star-and-line divider. The brand is a simple inline SVG star within a double wheel; use this geometry for favicon sizes, Apple touch and manifest icons. UI icons use Lucide at a consistent 1.5 stroke with accessible names. Decorative artwork is hidden from assistive technology.
+
+Open Graph and Twitter cards use Next.js ImageResponse: Verselight, a short plain tagline and a warm wheel glow, never Scripture. Metadata uses the existing validated NEXT_PUBLIC_SITE_URL through metadataBase; give every page a title and description. Share cards retain exact WEB text, translation/source credit, current public input validation and no-store responses, restyled with night/gold, serif type and the same wheel mark. Do not expand supported translations or request behavior.
+
+Empty states and 404 use a small SVG constellation, warm copy and an existing clear route home. Gold selection, subtle scrollbars, 4/8-based spacing and radius tokens, dual theme-color metadata and consistent visible gold focus finish the shell. Check both themes at 360, 768, 1024, 1440 and 1920px, including long comparison text, populated local lists, native dialogs, selected calendar cells and the simple picker. Keep AA text contrast and mobile Lighthouse Performance, Accessibility, Best Practices and SEO >=90; report measured results and any unavailable checks honestly.
