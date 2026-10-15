@@ -66,14 +66,14 @@ export function Journal() {
       <div className="section-heading"><h2 id="calendar-heading">Your calendar</h2></div>
       <div className="local-actions"><button className="compare-link" onClick={() => setMonth(shiftDate(first, -1).slice(0, 7))} disabled={first <= "0001-02-01"}>Previous month</button><button className="compare-link" onClick={() => setMonth(next.slice(0, 7))} disabled={first >= "9999-11-01"}>Next month</button></div>
       <p id="calendar-key" className="local-help">Empty: no activity. A dot marks activity without a reflection; r shows the reflection count. Deeper color means more reflections. G marks a used grace day. Choose a date to read its reflections.</p>
-      <table className="journal-calendar" aria-describedby="calendar-key"><caption>{first.slice(0, 7)}</caption><thead><tr>{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => <th scope="col" key={day}>{day}</th>)}</tr></thead><tbody>{Array.from({ length: cells.length / 7 }, (_, week) => <tr key={week}>{cells.slice(week * 7, week * 7 + 7).map((date, index) => {
+      <div className="calendar-scroll"><table className="journal-calendar" aria-describedby="calendar-key"><caption>{first.slice(0, 7)}</caption><thead><tr>{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => <th scope="col" key={day}>{day}</th>)}</tr></thead><tbody>{Array.from({ length: cells.length / 7 }, (_, week) => <tr key={week}>{cells.slice(week * 7, week * 7 + 7).map((date, index) => {
         if (!date) return <td key={`blank-${index}`} />;
         const count = moodEntries.filter(mood => mood.localDate === date).length;
         const active = activityDays.some(day => day.localDate === date);
         const grace = streakState.graceDates.includes(date);
         const description = `${date}: ${count} reflections, ${active ? "active day" : grace ? "grace day" : "no activity"}`;
         return <td key={date}><button className="calendar-day" data-level={count > 1 ? 3 : count ? 2 : active ? 1 : 0} aria-pressed={selected === date} aria-label={description} title={description} onClick={() => { setSelected(date); setLimit(20); }}>{Number(date.slice(8))}<span className="calendar-mark" aria-hidden="true">{count ? `${count}r` : active ? "•" : grace ? "G" : "\u00a0"}</span></button></td>;
-      })}</tr>)}</tbody></table>
+      })}</tr>)}</tbody></table></div>
     </section>
     <section className="library-section" aria-labelledby="reflections-heading"><div className="section-heading"><h2 id="reflections-heading">{selected ? `Reflections on ${selected}` : "Your reflections"}</h2></div>
       {selected && <button className="compare-link" onClick={() => setSelected("")}>Show all reflections</button>}

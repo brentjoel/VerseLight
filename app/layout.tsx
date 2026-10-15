@@ -2,12 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Lora } from "next/font/google";
 import "./globals.css";
 import { siteUrl } from "@/lib/site-url";
+import { themeScript } from "@/lib/theme";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
 const lora = Lora({ subsets: ["latin"], variable: "--font-lora", display: "swap" });
-
-// Set the stored theme before paint. Dark is the default, including without JavaScript.
-const themeScript = `try{var t=localStorage.getItem('verselight-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch{}`;
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,

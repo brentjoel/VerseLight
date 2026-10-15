@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "test:theme": "node --test scripts/test-theme.mjs",
+    "test:dawn": "node --test scripts/test-dawn.mjs",
     "test:wheel": "node --test scripts/test-wheel.mjs",
     "dev": "next dev",
     "build": "npm run validate:data && next build",

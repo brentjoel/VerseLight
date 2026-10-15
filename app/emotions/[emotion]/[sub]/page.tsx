@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ArrowUpRight } from "lucide-react";
+import { VerseCarousel } from "@/components/verse-carousel";
 import { SiteShell } from "@/components/site-shell";
 import { ContentNotice } from "@/components/content-notice";
 import { getAllEmotions, getEmotionById, getPromptForReference, getSpecificEmotionByIds, type Emotion, type SpecificEmotion } from "@/lib/emotions";
@@ -12,6 +13,8 @@ import { PreferredTranslationSelector } from "@/components/preferred-translation
 import { SaveVerseButton } from "@/components/save-verse-button";
 import { TranslationSelector } from "@/components/translation-selector";
 import { ShareCardControls } from "@/components/share-card-controls";
+import { DawnReveal } from "@/components/dawn-reveal";
+import { passageTokens } from "@/lib/dawn";
 
 export function generateStaticParams() {
   return getAllEmotions().flatMap((emotion) => emotion.specifics.map((specific) => ({ emotion: emotion.id, sub: specific.id })));
@@ -40,36 +43,32 @@ async function ResultsContent({ emotion, specific }: { emotion: Emotion; specifi
           <p>Take your time with these references. Let a question or a prayer be a place to begin.</p>
         </div>
         <section aria-label={`Verse references for ${specific.name.toLowerCase()}`} className="mt-10">
-          <ul className="verse-list">
-            {specific.references.map((reference, index) => {
-              const prompt = getPromptForReference(reference);
-              const passage = passages[index];
-              return (
-                <li key={reference}>
-                  <article className="h-full">
-                    <Card className="verse-card">
-                      <CardHeader className="verse-card-header">
-                        <div className="verse-heading-row"><h2 className="verse-reference">{reference}</h2><span className="translation-tag">{passage.translationId.toUpperCase()}</span></div>
-                        <p className="verse-text">{passage.text}</p>
-                        <PassageAttribution passage={passage} />
-                        <SaveVerseButton reference={reference} translationId={passage.translationId} emotionId={emotion.id} specificEmotionId={specific.id} />
-                        <Link className="compare-link" href={`/compare?${new URLSearchParams({ ref: reference, from: returnTo })}`} aria-label={`Compare translations of ${reference}`}>Compare <span aria-hidden="true">↗</span></Link>
-                        <ShareCardControls reference={reference} />
-                      </CardHeader>
-                      <CardContent className="verse-card-content">
-                        {prompt ? (
-                          <>
-                            <div><h3 className="prompt-label">Reflect</h3><p className="reflect-copy">{prompt.reflect}</p></div>
-                            <div className="prayer-block"><h3 className="prompt-label">A prayer to begin</h3><p className="prayer-copy">{prompt.prayer}</p></div>
-                          </>
-                        ) : <p className="text-sm leading-7 text-muted-foreground">The reflection for this reference is unavailable right now. You can still bring what is on your heart to God.</p>}
-                      </CardContent>
-                    </Card>
+          <DawnReveal key={returnTo + translation} path={returnTo}>
+            <VerseCarousel>
+              {specific.references.map((reference, index) => {
+                const prompt = getPromptForReference(reference);
+                const passage = passages[index];
+                return (
+                  <article key={reference} className="verse-card reading-verse">
+                    <div className="verse-heading-row"><h2 className="verse-reference">{reference}</h2><span className="translation-tag">{passage.translationId.toUpperCase()}</span></div>
+                    <p className="verse-text">{index === 0 ? passageTokens(passage.text).map((token, tokenIndex) => /^\s+$/u.test(token) ? token : <span key={tokenIndex} data-dawn-word="">{token}</span>) : passage.text}</p>
+                    <PassageAttribution passage={passage} />
+                    <div className="verse-actions">
+                      <SaveVerseButton reference={reference} translationId={passage.translationId} emotionId={emotion.id} specificEmotionId={specific.id} />
+                      <Link className="compare-link" data-tooltip="Compare translations" href={`/compare?${new URLSearchParams({ ref: reference, from: returnTo })}`} aria-label={`Compare translations of ${reference}`}><ArrowUpRight size={17} aria-hidden="true" />Compare</Link>
+                      <ShareCardControls reference={reference} />
+                    </div>
+                    <details className="reflect-section"><summary>Reflect</summary>
+                      {prompt ? <>
+                        <div><h3 className="prompt-label">A question to sit with</h3><p className="reflect-copy">{prompt.reflect}</p></div>
+                        <div className="prayer-block"><h3 className="prompt-label">A prayer to begin</h3><p className="prayer-copy">{prompt.prayer}</p></div>
+                      </> : <p className="text-sm leading-7 text-muted-foreground">The reflection for this reference is unavailable right now. You can still bring what is on your heart to God.</p>}
+                    </details>
                   </article>
-                </li>
-              );
-            })}
-          </ul>
+                );
+              })}
+            </VerseCarousel>
+          </DawnReveal>
           {specific.references.length === 0 && <ContentNotice>References for this feeling are being prepared with care. Please visit again soon.</ContentNotice>}
         </section>
       </div>

@@ -17,6 +17,7 @@ export default function WheelScene({ emotionId, inner, intensity, rotation, onUn
     try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false, powerPreference: "low-power" }); }
     catch { onUnavailable(); return; }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setClearColor(0x000000, 0);
     element.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-2, 2, 2, -2, .1, 10);
@@ -29,7 +30,31 @@ export default function WheelScene({ emotionId, inner, intensity, rotation, onUn
     scene.add(bars);
     const dummy = new THREE.Object3D();
     const color = new THREE.Color();
+    let barShade = 1;
+    const syncTheme = () => {
+      barShade = Number(getComputedStyle(document.documentElement).getPropertyValue("--scene-bar-shade")) || 1;
+      const next = waveCharacters[target.current.emotionId] ?? defaultCharacter;
+      material.color.set(next.color).multiplyScalar(barShade);
+    };
+    syncTheme();
+    const theme = new MutationObserver(syncTheme);
+    theme.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     const current = { ...defaultCharacter };
+    const hoverColor = new THREE.Color();
+    let pointerAngle: number | null = null;
+    const dial = element.parentElement;
+    const finePointer = matchMedia("(hover: hover) and (pointer: fine)");
+    const point = (event: PointerEvent) => {
+      if (!finePointer.matches || event.pointerType === "touch" || !dial) return;
+      const rect = dial.getBoundingClientRect();
+      pointerAngle = Math.atan2(event.clientX - rect.left - rect.width / 2, -(event.clientY - rect.top - rect.height / 2));
+    };
+    const leave = () => { pointerAngle = null; };
+    const focus = () => { pointerAngle = 0; };
+    dial?.addEventListener("pointermove", point);
+    dial?.addEventListener("pointerleave", leave);
+    dial?.addEventListener("focusin", focus);
+    dial?.addEventListener("focusout", leave);
     let radius = 1.44, rotationNow = 0, frame = 0, previous = 0, sampleStart = 0, samples = 0, sampled = false, time = 0;
     const resize = () => renderer.setSize(element.clientWidth, element.clientHeight);
     const observer = new ResizeObserver(resize); observer.observe(element); resize();
@@ -48,7 +73,7 @@ export default function WheelScene({ emotionId, inner, intensity, rotation, onUn
       const strength = target.current.inner ? (target.current.intensity === "low" ? .6 : target.current.intensity === "high" ? 1.4 : 1) : 1;
       current.amplitude += (next.amplitude * strength - current.amplitude) * blend;
       current.smoothness += (next.smoothness - current.smoothness) * blend;
-      material.color.lerp(color.set(next.color), blend);
+      material.color.lerp(color.set(next.color).multiplyScalar(barShade), blend);
       radius += ((target.current.inner ? 1.06 : 1.44) - radius) * blend;
       rotationNow += (target.current.rotation - rotationNow) * blend;
       for (let i = 0; i < 128; i++) {
@@ -58,8 +83,13 @@ export default function WheelScene({ emotionId, inner, intensity, rotation, onUn
         dummy.rotation.z = -position;
         dummy.scale.set(1, waveHeight(angle, time, current), 1);
         dummy.updateMatrix(); bars.setMatrixAt(i, dummy.matrix);
+        const distance = pointerAngle === null ? Math.PI : Math.abs(Math.atan2(Math.sin(position - pointerAngle), Math.cos(position - pointerAngle)));
+        // A soft local highlight preserves the single instanced draw call.
+        const highlight = Math.max(0, 1 - distance / .5) * .22;
+        bars.setColorAt(i, hoverColor.setRGB(1 + highlight, 1 + highlight, 1 + highlight));
       }
       bars.instanceMatrix.needsUpdate = true;
+      if (bars.instanceColor) bars.instanceColor.needsUpdate = true;
       renderer.render(scene, camera);
       frame = requestAnimationFrame(render);
     };
@@ -72,9 +102,13 @@ export default function WheelScene({ emotionId, inner, intensity, rotation, onUn
     renderer.domElement.addEventListener("webglcontextlost", lost);
     document.addEventListener("visibilitychange", visibility); visibility();
     return () => {
-      cancelAnimationFrame(frame); observer.disconnect();
+      cancelAnimationFrame(frame); observer.disconnect(); theme.disconnect();
       document.removeEventListener("visibilitychange", visibility);
       renderer.domElement.removeEventListener("webglcontextlost", lost);
+      dial?.removeEventListener("pointermove", point);
+      dial?.removeEventListener("pointerleave", leave);
+      dial?.removeEventListener("focusin", focus);
+      dial?.removeEventListener("focusout", leave);
       bars.dispose(); geometry.dispose(); material.dispose(); renderer.dispose(); renderer.forceContextLoss();
       renderer.domElement.remove();
     };

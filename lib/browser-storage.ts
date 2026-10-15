@@ -18,8 +18,11 @@ export function readBrowserPreferences(): Partial<Preferences> {
 }
 export function applyBrowserPreferences(preferences: Preferences) {
   const previous = readBrowserPreferences();
+  if (previous.theme !== preferences.theme) document.documentElement.dataset.themeSource = "stored";
   document.documentElement.dataset.theme = preferences.theme;
-  try { localStorage.setItem("verselight-theme", preferences.theme); } catch { /* The in-memory theme still works. */ }
+  try {
+    if (document.documentElement.dataset.themeSource !== "system") localStorage.setItem("verselight-theme", preferences.theme);
+  } catch { /* The in-memory theme still works. */ }
   if (previous.preferredTranslation !== preferences.preferredTranslation) {
     try { document.cookie = `translation=${preferences.preferredTranslation}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`; } catch { /* Cookie access can be blocked by browser privacy settings. */ }
     window.dispatchEvent(new Event("translation-change"));

@@ -1,5 +1,6 @@
 "use client";
 
+import { Bookmark } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { getPersonalStore, usePersonalStorage } from "@/lib/browser-storage";
@@ -17,8 +18,8 @@ export function SaveVerseButton(props: Omit<SavedVerse, "id" | "createdAt">) {
     setBusy(false);
   }
   return <div className="save-control">
-    <button type="button" className="compare-link" disabled={!snapshot.ready || busy || saved || snapshot.mode === "blocked" || snapshot.mode === "conflict"} onClick={save} aria-label={`${saved ? "Saved" : "Save"} ${props.reference} ${props.translationId.toUpperCase()}`}>
-      {saved ? "Saved to My Verses" : !snapshot.ready ? "Opening saved verses..." : busy ? "Saving..." : "Save verse"}
+    <button type="button" className="compare-link" data-tooltip={saved ? "Saved" : "Save"} disabled={!snapshot.ready || busy || saved || snapshot.mode === "blocked" || snapshot.mode === "conflict"} onClick={save} aria-label={`${saved ? "Saved" : "Save"} ${props.reference} ${props.translationId.toUpperCase()}`}>
+      <Bookmark size={17} aria-hidden="true" />{saved ? "Saved" : !snapshot.ready ? "Opening saved verses..." : busy ? "Saving..." : "Save"}
     </button>
     {saved && <Link className="quiet-link" href="/my-verses">View My Verses</Link>}
     {error && <p className="local-error" role="alert">{error}</p>}
