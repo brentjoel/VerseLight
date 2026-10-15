@@ -1,6 +1,6 @@
 # Progress
 
-Steps 1 to 6 are merged on main, as confirmed by the owner. Step 7 code is implemented on `step-7-launch-checks`, now incorporating the latest main. Its launch checkbox remains open for hosting and preview/accessibility verification. No new main merge or production deployment is authorized.
+Steps 1 to 7 are merged on main, with Step 7 verified on Vercel as confirmed by the owner on 2026-10-15. Steps 8 to 11 are PLANNED in [the wheel UI plan](wheel-ui-plan.md). No wheel implementation, new main merge or production deployment is authorized. Wait for the owner to say "start step 8".
 
 ## Checklist
 
@@ -52,15 +52,55 @@ Steps 1 to 6 are merged on main, as confirmed by the owner. Step 7 code is imple
 
 **Files likely touched:** Public share image route (proposed), `app/page.tsx`, daily verse helper, share controls, shared state components, `app/globals.css` where needed, tests, translation/design docs.
 
-### [ ] 7. Launch checks: privacy note and About page with translation credits, rate limit and quota handling for the NLT route, error monitoring basics, README
+### [x] 7. Launch checks: privacy note and About page with translation credits, rate limit and quota handling for the NLT route, error monitoring basics, README
 
 **Goal:** Verify licensing, privacy, resilience and hosting before launch.
 
-**Acceptance criteria (implementation ready; launch verification pending):** Plain privacy note explains browser-only records, deletion/eviction, backup safety and cookie/network exception; About page includes complete translation credits; existing NLT server passage request path handles abuse, timeout, Retry-After and provider quotas with best-effort per-instance guards; document and test the lack of shared memory across serverless instances. Owner explicitly declined Redis/shared quota infrastructure on 2026-10-15 and accepted this limitation, superseding the original deployment-wide requirement; preserve labeled WEB fallback; error monitoring excludes personal records, request cookies, secrets and credential-bearing URLs, with no analytics/tracking without approval; environment/deployment and local backup instructions current in README; preview and production configuration verified; security/licensing/accessibility review and required checks pass; user approval before main merge. A standalone NLT HTTP route is not currently built and is not implied by this label.
+**Acceptance criteria (merged and verified on Vercel per owner confirmation):** Plain privacy note explains browser-only records, deletion/eviction, backup safety and cookie/network exception; About page includes complete translation credits; existing NLT server passage request path handles abuse, timeout, Retry-After and provider quotas with best-effort per-instance guards; document and test the lack of shared memory across serverless instances. Owner explicitly declined Redis/shared quota infrastructure on 2026-10-15 and accepted this limitation, superseding the original deployment-wide requirement; preserve labeled WEB fallback; error monitoring excludes personal records, request cookies, secrets and credential-bearing URLs, with no analytics/tracking without approval; environment/deployment and local backup instructions current in README; preview and production configuration verified; security/licensing/accessibility review and required checks pass; user approval before main merge. A standalone NLT HTTP route is not currently built and is not implied by this label.
 
 **Files likely touched:** `app/about/`, privacy copy, `app/licenses/`, `lib/bible-api.ts`, `lib/verse-passage.ts`, provider tests, operational configuration if needed, `README.md`, docs.
 
+## Planned wheel UI steps
+
+These steps follow [docs/wheel-ui-plan.md](wheel-ui-plan.md). Each uses its own branch (`step-8-wheel-picker`, `step-9-dawn-reveal`, `step-10-night-sky`, `step-11-polish`), a Vercel preview and owner approval before merge. Do not begin Step 8 until the owner says "start step 8".
+
+**Acceptance criteria shared by Steps 8 to 11:** Preserve existing emotion data/routes, translation providers and NLT API logic, browser-only storage and all working features. No accounts, backend, tracking, audio, notifications or AI free-text. Verse text stays real, selectable DOM text from the existing translation layer, readable immediately without waiting for animation; no API verse text drawn into canvas/images. Generated images use public-domain text only, WEB by default and explicitly labeled when replacing an active NLT preference; Scripture UI quotes use WEB with a reference. Retain the existing picker and heatmap as accessible alternatives; reduced motion means no spinning/particles and instant verse display. Support keyboard arrows/Enter, screen-reader emotion lists/labels, AA contrast, visible focus and 44px touch targets. Lazy-load 3D so unrelated routes retain their JavaScript size; instance the bar ring into one draw call, cap DPR at 2, limit particles, pause hidden-tab rendering and dispose GPU resources. Target steady 60fps on mid-range Android and mobile Home Lighthouse Performance, Accessibility, Best Practices and SEO scores of at least 90. Put pure logic in lib/ with unit tests. Stored-data changes require a schema bump, migration, validation, older-backup compatibility and tests. Explain each dependency in one line; expected three, @react-three/fiber if React, and at most one small helper. Preserve calm dark/light styling, restrained colors, one warm accent and generous spacing; limit imagery to light, stars and wheels, without faces, angels, figures or denomination-specific symbols. Update docs/DESIGN.md tokens each phase. Typecheck, lint, build and tests pass; no new environment variables or unrelated restructuring. Stop after each phase with a summary under 10 lines and 3 to 5 screens for owner review.
+
+### [ ] 8. Wheel picker
+
+**Goal:** Add the wheel-within-a-wheel home picker while keeping existing emotion data and routes.
+
+**Acceptance criteria:** A large dark dial presents the eight broad emotions from data/emotions.json. Drag, touch, mouse wheel and arrow keys turn it with detents and supported light navigator.vibrate haptics. Thin vertical bars form an instanced radial waveform, with emotion-specific speed, amplitude, smoothness and light color in one config object and smooth morphing. Center press/tap or Enter locks the selection, collapses the outer ring and presents the existing sub-emotions in an inner wheel plus low/medium/high intensity. Persist intensity on mood entries only with the shared schema/migration/backup safeguards. Keep the original picker for unavailable WebGL, slow devices and reduced motion. Meet all shared criteria above.
+
+**Files likely touched:** `app/page.tsx`, `components/` wheel/scene and picker controls (proposed), `components/feeling-link.tsx`, `app/emotions/`, `app/globals.css`, `lib/` waveform/quality helpers and tests (proposed), `lib/storage-schema.ts`, `lib/storage-migrations.ts`, `lib/storage.ts`, `lib/browser-storage.ts` and storage/backup tests if persisting intensity, package files if needed, `docs/DESIGN.md`, `docs/PROGRESS.md`. Read `data/emotions.json` and `lib/emotions.ts` as the single emotion source.
+
+### [ ] 9. Dawn reveal
+
+**Goal:** Follow the final feeling selection with a quiet light reveal and emotion-linked verse atmosphere.
+
+**Acceptance criteria:** Start the scene dark after final selection, break light from the dial center and visually reveal words at a comfortable reading pace. Full verse text exists in the DOM from the start; animation never delays reading or injects Scripture word by word. Provide Skip animation and instant reduced-motion display. Add a quiet background atmosphere tied to the chosen emotion while preserving source wording, translation labels and attribution. Meet all shared criteria above without changing translation-provider or NLT API logic.
+
+**Files likely touched:** `app/emotions/[emotion]/[sub]/page.tsx`, `components/` dawn reveal/atmosphere and wheel scene (proposed), `app/globals.css`, reveal/atmosphere tests, `docs/DESIGN.md`, `docs/PROGRESS.md`.
+
+### [ ] 10. Night sky journal
+
+**Goal:** Offer a night sky view of private check-ins and streaks alongside the accessible calendar heatmap.
+
+**Acceptance criteria:** Each check-in becomes a mood-colored star; streaks connect stars into constellations. Tapping a star opens that day's verse and note. Grace days dim the glow rather than breaking the line; use the Lamentations 3:22-23 phrase in exact WEB wording with its reference. Read the existing journal browser store and preserve Export/Import. Keep the calendar heatmap with an accessible view toggle. Put constellation building in pure lib/ functions with tests; apply schema safeguards if stored shapes change. Meet all shared criteria above.
+
+**Files likely touched:** `app/journal/page.tsx`, `components/journal.tsx`, `components/` night sky/star detail/view toggle (proposed), `lib/` constellation helpers and tests (proposed), `app/globals.css`, journal/storage/backup tests as needed, `docs/DESIGN.md`, `docs/PROGRESS.md`.
+
+### [ ] 11. Polish and delight
+
+**Goal:** Add gentle discovery, a growing personal sky, local-time atmosphere, shareable sky cards and adaptive quality.
+
+**Acceptance criteria:** One item per commit. On first-ever load, slowly rotate the dial once with a faint Turn to begin hint that disappears on interaction; remember locally with storage safeguards. Blend dawn/day/dusk/night tint using local time while retaining AA contrast. Add depth, subtle twinkle and 7/30/100-check-in milestones with soft nebula glow/named constellations, never guilt or loss for time away. Show the daily verse as the brightest morning star at the sky's top, opening on tap. Render constellation plus verse into a PNG fully client-side with translation name/reference; use public-domain text only, WEB with an explicit label when NLT is active, and Web Share with download fallback. Measure frame time for the first two seconds, reduce particles/glow/DPR as needed or fall back to 2D. Test pure time blending, milestone and quality-tier logic in lib/. Meet all shared criteria above, including reduced-motion behavior and storage migrations for new persisted fields.
+
+**Files likely touched:** `components/` wheel/night sky/first-visit/sky-card controls (proposed), `components/daily-verse.tsx`, `lib/daily-verse.ts`, `lib/` time blending/milestone/quality/sky-card helpers and tests (proposed), storage schema/migrations/validation/backup tests if needed, `app/globals.css`, `docs/DESIGN.md`, `docs/PROGRESS.md`.
+
 ## Decisions log
+
+- 2026-10-15: Owner confirmed Step 7 is merged and verified on Vercel; its launch checkbox is now complete, superseding earlier pending launch records. Documentation-only branch docs-wheel-plan records planned Steps 8 to 11 and their shared constraints, with proposed file lists inferred from the plan and current folder layout. No wheel UI is implemented; wait for "start step 8". Checks passed: npx.cmd tsc --noEmit, npm.cmd run lint, npm.cmd run build (content validation and 60 generated pages). Review the documentation diff on docs-wheel-plan; no runtime behavior changed.
 
 - 2026-10-15: Combined Step 6/7 verification passed: npx.cmd tsc --noEmit, npm.cmd run lint, npm.cmd run build (content validation and 60 generated pages), all 13 provider/monitor/site-origin, 12 storage, 15 progress and 3 daily/share tests (43 total). Production HTTP checks passed Home, About, licenses and results; both credits pages include daily WEB/card wording, About retains its configured canonical/OG origin, results preserve labeled WEB fallback and card controls, WEB PNG returns a valid no-store image, and NLT card requests return 400. Test server used only a blank process key, without calling Tyndale or reading/editing .env.local directly. Main's Step 6 runtime files and accessibility CSS are preserved unchanged. Hosting and rendered/keyboard launch checks remain pending.
 
@@ -140,7 +180,7 @@ These records preserve completed work and past handoffs. Current decisions and s
 
 ## Open questions
 
-- Confirm the Vercel Git integration, first deployment status and branch preview URL; earlier implementation records only establish the deployment handoff.
-- Complete visual browser review of narrow/wide layouts, both themes, keyboard controls, cookie persistence and Step 4 save/collection/JSON file-picker interactions. Earlier records report no connected browser.
+- Step 7 launch verification is complete per owner confirmation; verify each future wheel branch preview before its merge approval.
+- Repeat responsive, theme, keyboard and accessibility review for each future wheel phase; earlier pending launch reviews are superseded by the owner-confirmed Step 7 verification.
 - Step 6 uses WEB-only cards after publisher review. Any future licensed-text artwork needs a separate terms/issued-key review and permission before implementation.
-- Step 7 owner-accepted limitation: NLT burst/quota/cooldown guards are best effort per instance, not account-wide; consider a shared operational store only if traffic grows. Finish the README manual hosting/accessibility checks before launch approval.
+- Step 7 owner-accepted limitation: NLT burst/quota/cooldown guards are best effort per instance, not account-wide; consider a shared operational store only if traffic grows. Step 7 launch verification is complete per owner confirmation.

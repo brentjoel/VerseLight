@@ -3,6 +3,7 @@
 Emotion-based Scripture, reflection, and prayer. Stack: Next.js App Router, strict TypeScript, Tailwind CSS, shadcn/ui, npm, Vercel. Everyone uses the app as a guest. Personal data stays in the visitor's browser with JSON Export and Import backups. No server persistence for personal data.
 
 Read `docs/SPEC.md` and `docs/PROGRESS.md` at the start of every task.
+Read docs/wheel-ui-plan.md before any wheel UI work.
 Read docs/ARCHITECTURE.md before changing structure or data flow. Read docs/DESIGN.md before any UI work and follow its checklist.
 
 ## Workflow

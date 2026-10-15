@@ -4,6 +4,8 @@ Inspected 2026-10-15. **DONE** means present in the repository. **PLANNED** mean
 
 ## Overview
 
+**PLANNED:** Wheel UI Steps 8 to 11 add the wheel picker, dawn reveal, night sky journal, and polish using existing emotion data, routes, translation rendering and browser storage, with accessible fallbacks. See [wheel UI plan](wheel-ui-plan.md); no wheel implementation is included yet.
+
 **DONE decision:** Everyone is a guest and every feature is available without an identity requirement. Verselight is strictly noncommercial, with no ads, payments, subscriptions, donations, or paid features. No server persistence will hold personal data.
 
 ```text
