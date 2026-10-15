@@ -1,60 +1,75 @@
-# Verselight
+﻿# Verselight
 
-An emotion-based Bible verse app. Choose a feeling, read Scripture with a reflection and prayer starter, and compare NLT, KJV, WEB, ASV, and BSB. NLT is the default; NIV is coming soon, pending licensed provider access. Verselight is a strictly noncommercial personal and portfolio project with no ads, subscriptions, donations, or paid features.
+Scripture, reflection, and prayer for the feeling you bring today. Everyone is a guest. Saved references, collections, journal notes, activity, streaks, and badges stay in the browser with local JSON backups. Strictly noncommercial: no ads, payments, subscriptions, donations, or paid features.
 
-## Run locally
-Use Node.js 24 and npm, including for the parser tests that import TypeScript directly.
+Owner-supplied live URL: [Verselight](https://verselight-pf16jt6xm-dev-e4cd.vercel.app/). Vercel project: `verselight`; GitHub: `brentjoel/verselight`. Hosting configuration and deployment health remain **pending manual verification**. Step 6 daily WEB passages, WEB share cards and accessibility polish are merged on main. Step 7 launch verification remains open.
+
+## Local setup
+
+Use Node.js 24 and npm. On PowerShell, use `npm.cmd` / `npx.cmd` if script launchers are blocked.
 
 ```sh
-npm install
+npm ci
+```
+
+Copy `.env.example` to ignored `.env.local`, then fill in values privately:
+
+| Variable | Purpose |
+| --- | --- |
+| `NLT_API_KEY` | Server-only Tyndale credential. Missing/invalid key uses labeled WEB fallback. `TEST` explicitly opts into the anonymous tier; do not use it for launch. |
+| `NEXT_PUBLIC_SITE_URL` | Public, build-time HTTPS origin used by About and metadata. Set to `https://verselight-pf16jt6xm-dev-e4cd.vercel.app` for the supplied live site, or the stable production origin once assigned. No path, query, fragment, or credentials. Defaults to `http://localhost:3000` when omitted locally. Rebuild after changing it. |
+
+```sh
 npm run dev
 ```
 
-Open http://localhost:3000, choose Anxious > Worried about the future, and change the header translation dropdown. Use Compare on a verse card to choose two to four translations. The header theme button switches light and dark mode. The daily verse remains a placeholder until Step 6.
+Open http://localhost:3000. Choose Anxious > Worried about the future, change translations, and Compare. Try Save verse, My Verses collections, and Journal notes. The theme button switches dark/light. Home selects a WEB passage by device-local day of year from a repeating curated cycle, independent of the reading translation. Download WEB card or Open card uses public WEB text and credits only. Cards never include notes, saved-record metadata or NLT text. Footer links open About/privacy and full translation credits. Never print or commit `.env.local`.
 
-On PowerShell with blocked script launchers, use `npm.cmd` and `npx.cmd`.
+## Checks
 
-## Verify
 ```sh
-npm run fetch:verses
-npm run validate:data
 npm run test:bible-api
 npm run test:storage
+npm run test:progress
+npm run test:daily-share
 npx tsc --noEmit
 npm run lint
 npm run build
 ```
 
-NLT uses the official Tyndale API, server-side only. Request a key and set `NLT_API_KEY` in `.env.local` and your hosting environment. `.env.example` lists it without a value. `NLT_API_KEY=TEST` explicitly enables the documented anonymous NLT tier for local testing. A missing key or provider failure shows WEB with a note. Never put secrets in tracked files. Full terms, exact notice locations, quotas, and setup: [translation licensing](docs/TRANSLATION-LICENSES.md).
+Build validates curated data offline; it does not request NLT text. `npm run fetch:verses` is only for intentionally updating public-domain reference data, not a build prerequisite. Provider tests use labeled synthetic fixtures and never consume live NLT quota.
 
-Read [the spec](docs/SPEC.md), [progress](docs/PROGRESS.md), and [rules](AGENTS.md) before each task. Read [architecture](docs/ARCHITECTURE.md) before structure/data flow changes and [design](docs/DESIGN.md) before UI work. Step 4 is implemented; Step 5 has not started. Everyone is a guest; saved verses and collections use browser storage with Export and Import; the journal is still planned, with no server persistence for personal data.
+## Privacy, deletion, and backups
 
-## My Verses and backups
+Export from My Verses regularly. Backups are unencrypted JSON and include private journal notes. Keep them safe; do not attach them to issues or logs. Import reads a file locally, validates it, previews counts, and asks before replacing all records. Export current data first. No upload or sync occurs. Schema 1 accepts the implemented journal/activity/badge records; unknown versions, unexpected fields, invalid relationships and files over 5 MiB are rejected without replacement.
 
-Choose a feeling and select Save verse beside a passage, then open My Verses from the navigation. Create/rename/delete collections and use each reference's checkboxes to organize it. Removing a save removes its collection memberships; deleting a collection keeps its verses. Saves contain references and the displayed translation id, never Scripture text. Read and compare opens the existing public passage view on demand.
+Remove saves/collections in My Verses and reflections in Journal. Reflection deletion retains historical activity and milestones. Clear this site's data in browser settings to erase all records and preferences; delete backups separately. Clearing data, eviction, private browsing, and device loss can remove records. Storage failures keep ordinary edits only in the current tab; Export before leaving. A failed persistent import keeps existing data. Conflicts require explicit reload; unreadable storage offers raw recovery before confirmed reset. Preview, localhost, and production have separate storage. To move records, Export then Import on the destination origin.
 
-Export downloads a local JSON file. To restore or move data, choose that file in another browser, review the counts, and confirm full replacement. Export current data first if you want to keep it. Version 1 is the first supported backup format; unsupported versions, fields, relationships, files over 5 MiB and future journal/progress records are rejected. Nothing is uploaded. Backups are unencrypted personal files, so keep them safe.
+The validated one-year translation cookie is the documented preference exception sent to the server. Normal hosting requests expose public page URLs and network metadata; never put personal records in requests, cookies, URLs, or logs. See `/about#privacy` and [architecture](docs/ARCHITECTURE.md).
 
-Clearing browser data, private browsing, or losing the device can remove saved data. When storage is unavailable or full, ordinary changes remain only in the current tab's session; Export before leaving. A failed persistent import leaves current records intact. Unreadable storage offers a raw recovery download before confirmed reset. Another tab's edits block writes until you explicitly reload saved data; Export your current tab first if needed. Browser Web Locks serialize cooperating tabs when supported; browsers without them use best-effort stored-value conflict checks. Preview and production origins have separate storage.
+## NLT resilience and credits
 
-## Verse data and licensing
+The existing server passage path, not a new standalone HTTP endpoint, uses **best-effort per-instance** limits: 20 upstream attempts per rolling minute, 500 (`TEST`) or 5,000 (registered key) per rolling 24 hours. Attempts reserve quota before fetch, including failures. 429/503 respect numeric or HTTP-date Retry-After with a 60-second minimum/default; 401/403 pause that instance for 24 hours. Cooldowns never shorten. Memory resets on restart; serverless instances/deployments **do not share counters or cooldowns**. This cannot guarantee an account-wide quota or prevent an attacker exhausting availability. Provider limits remain authoritative. A shared operational store is a future option if traffic grows. No Redis or new service is required.
 
-`npm run fetch:verses` downloads only the public-domain translations for references used by `data/emotions.json`, stores each under `data/verses/`, and resumes by skipping saved nonempty references. Run it when adding references, then commit the downloaded public-domain JSON. Normal builds validate the local data and never contact a Bible service. This downloader needs no API keys or additional dependencies. The runtime NLT HTML parser uses parse5 to extract text safely.
+NLT requests use the official server-side API, `no-store`, an eight-second timeout, no redirects, bounded streamed response size, exact passage validation, and labeled WEB fallback. No automatic upstream retries or persistent NLT caching: published API pages do not specify a safe storage TTL. Backups hold references and translation ids, never Scripture text. [Translation terms and setup](docs/TRANSLATION-LICENSES.md) include issued-key caveats.
 
-KJV, WEB, and ASV are downloaded from [bible-api.com](https://bible-api.com/), sequentially at no more than one request every 2.3 seconds, with retries and Retry-After handling. BSB comes from the publisher's [tab-separated text](https://bereanbible.com/bsb.txt). Every member of a range is verified before joining with a space. Only surrounding layout whitespace is removed; source wording and punctuation are preserved.
+KJV, WEB, and ASV static data come from [bible-api.com](https://bible-api.com/); BSB from [BereanBible.com](https://bereanbible.com/bsb.txt). KJV has special UK rights. WEB/ASV are public domain; BSB was dedicated to the public domain April 30, 2023. Full source links, NLT notice, and WEB trademark credit appear at `/about#credits` and `/licenses`. NIV stays disabled pending licensed access. Recheck terms before changing usage, display, sharing, caching, or noncommercial status.
 
-Licenses: [KJV](https://ebible.org/eng-kjv/copyright.htm) is public domain outside the UK, where special rights under letters patent apply; [WEB](https://ebible.org/engwebp/copyright.htm) and [ASV 1901](https://ebible.org/asv/copyright.htm) are public domain; [BSB](https://berean.bible/licensing.htm) was dedicated to the public domain on April 30, 2023. World English Bible is an eBible.org trademark. The site footer links to the same credits at `/licenses`.
+## Operational monitoring
 
-NLT is the default; WEB is the fallback. NLT text is requested at runtime without persistent caching or storage. The required publisher notices appear at `/licenses` with per-passage markers and links. NIV stays disabled until a licensed provider is configured. The `translation` cookie lasts one year, is validated against five active ids, and is read by Server Components for results and compare defaults. Existing valid preferences are preserved. The selector reads the cookie in the browser on static pages, so the home and feeling pages can remain static. Step 4 includes typed browser storage and local JSON backups; personal records stay on the device. The existing translation cookie remains the narrow preference exception for server passage rendering.
+Server logs emit only `[verselight] nlt_fallback` and `[verselight] server_error`, at most once per code per minute per instance. The error hook ignores error/request/context arguments; upstream errors are replaced with fixed messages without causes or credential-bearing URLs. Sampled warnings indicate a problem; they are not precise counts, alerts, or durable monitoring. There is no client error upload, analytics, or tracking. Do not add them without approval. Inspect warning codes in Vercel Runtime Logs; do not enable request-body/cookie capture or outgoing fetch tracing that could expose the NLT key. Hosting/framework access logs are outside this logger and require a separate retention/access review.
 
-## Branch previews and merging
+## Vercel manual launch checklist (pending)
 
-For a feature step, create `step-N-short-name`, do only the next unchecked step, meet its acceptance criteria, update progress and run the required checks. Commit small and push the branch. Step 4 uses `step-4-local-verses`.
+- [ ] In project `verselight`, confirm Git repository `brentjoel/verselight`, production branch `main`, Next.js preset, repository-root directory, Node.js 24, lockfile install, and `npm run build`.
+- [ ] Confirm Git previews are enabled and find the `step-7-launch-checks` deployment. Confirm its commit matches this branch. Keep production unchanged until approval.
+- [ ] In **both Preview and Production scopes**, confirm server-only `NLT_API_KEY`, the issued-key license, and `NEXT_PUBLIC_SITE_URL` for the intended public origin. Redeploy the preview after environment changes. Never expose the NLT key through a `NEXT_PUBLIC_` name.
+- [ ] Check Domains and deployment status: confirm whether the supplied URL is stable or deployment-specific; set the intended production origin in `NEXT_PUBLIC_SITE_URL`. Check HTTPS, About's site link, and its canonical/OG URL after a build. Preview About links intentionally use the configured origin.
+- [ ] On the preview, verify NLT text, attribution, cookie persistence, Compare, and WEB. With a deliberately absent/invalid **preview-only** key, verify labeled WEB fallback and fixed warnings; restore it and redeploy. Do not load-test Tyndale or alter the production key. Automated tests cover quota/timeout/Retry-After failures.
+- [ ] Review Runtime Logs, access settings and retention. Confirm warning codes contain no cookies, notes, backups, keys or full provider URLs. Leave Analytics, Speed Insights, session replay and external log drains disabled unless separately approved. Confirm fetch tracing does not reveal credential query strings.
+- [ ] In narrow/wide layouts and both themes, check the daily WEB passage, WEB card download/open controls, `/about`, `/licenses`, footer links, keyboard focus/skip link, headings, contrast, zoom/wrapping, and reduced motion. Verify Journal and My Verses Export/Import with disposable records; confirm no record/backup requests leave the browser in DevTools Network.
+- [ ] Review security/licensing, backup recovery, diff and preview. Obtain user approval before merging to `main`. After an approved merge, verify the production deployment and repeat the read/credits/privacy smoke check. A pushed branch is not proof of hosting verification.
 
-```sh
-git push -u origin step-4-local-verses
-```
+## Delivery workflow
 
-If the GitHub repository is connected to Vercel with Git previews enabled, open the branch deployment from the Vercel project Deployments tab or its GitHub deployment check. Set the server-only NLT key in the intended hosting environment; WEB fallback works when the key is absent. Preview origins have separate browser storage. The historical setup records do not verify a first live deployment; import the existing GitHub repository into Vercel with the Next.js preset if it is not connected yet.
-
-Open a pull request from `step-4-local-verses` to `main`, review the diff and preview, and wait for explicit user approval before merging. After approval and passing checks, merge through the pull request. A main-branch merge can trigger production deployment when Vercel is configured for it. Never commit `.env.local` or copy secrets into a pull request.
+Read [AGENTS.md](AGENTS.md), [spec](docs/SPEC.md), and [progress](docs/PROGRESS.md). Read architecture before data flow changes and design before UI work. This branch integrates the merged Step 6 work into Step 7 at the owner's request; Step 6 is checked and the Step 7 launch checkbox remains open. Commit and push `step-7-launch-checks` for a Vercel Git preview, then wait for approval before merging. No independent production deployment.

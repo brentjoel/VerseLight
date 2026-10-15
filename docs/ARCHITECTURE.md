@@ -1,6 +1,6 @@
 # Verselight architecture
 
-Inspected 2026-10-15. **DONE** means present in the repository. **PLANNED** means an unbuilt design, even when its shape is specified below. Steps 1 to 5 are merged on main. Step 6 implementation is on its preview branch; visual/keyboard acceptance and merge approval remain pending. See [SPEC](SPEC.md), [progress](PROGRESS.md), and [design](DESIGN.md).
+Inspected 2026-10-15. **DONE** means present in the repository. **PLANNED** means an unbuilt design. Steps 1 to 6 are merged on main as confirmed by the owner; Step 7 code is implemented on step-7-launch-checks with latest main integrated. Step 7 hosting and preview/accessibility verification remain pending. See [SPEC](SPEC.md), [progress](PROGRESS.md), and [design](DESIGN.md).
 
 ## Overview
 
@@ -29,7 +29,7 @@ Browser -> local mood journal, activity ledger -> pure streak/badge calculations
 No personal records flow to the Next.js server or any external service.
 ```
 
-**DONE:** Picker, four verses per feeling, prompts, translation preference, comparison and credits work. **DONE:** Reference-only saved verses, collections, My Verses and local backups. **DONE Step 5:** Journal, heatmap, streaks and badges. **IMPLEMENTED Step 6:** WEB share cards and a real local daily WEB passage, pending preview review.
+**DONE:** Picker, four verses per feeling, prompts, translation preference, comparison and credits work. **DONE:** Reference-only saved verses, collections, My Verses and local backups. **DONE Step 5:** Journal, heatmap, streaks and badges. **DONE Step 6:** WEB share cards and a real local daily WEB passage, merged into main per owner confirmation. Remaining manual review is tracked in the Step 7 launch checklist.
 
 ## Folder map
 
@@ -57,14 +57,14 @@ No personal records flow to the Next.js server or any external service.
 
 | Status | Route / behavior | Rendering and reason |
 | --- | --- | --- |
-| DONE | `/`, `/licenses` | Static local content, with client controls |
+| DONE | `/`, `/licenses`, `/about` | Static local content, with client controls |
 | DONE | `/emotions/[emotion]` | Eight prebuilt routes, generateStaticParams and ensureStatic="navigation" |
 | DONE | `/emotions/[emotion]/[sub]` | Known params generated; static shell, request-time passages inside Suspense because translation uses async cookies |
 | DONE | `/compare` | Static shell and request-time comparison inside Suspense for validated search params/cookie |
 | DONE | Results path proxy | Rejects unknown parent/feeling pairs before streaming to preserve HTTP 404 |
 | DONE | `/my-verses` | Static page shell; client reads browser storage after hydration, with loading/empty/error states |
 | DONE | Journal | Static shell and client-only personal history |
-| IMPLEMENTED Step 6 | `/share` and daily verse | WEB-only ImageResponse route with strict public inputs; client daily selection from public WEB data, no date or personal data requests |
+| DONE Step 6 | `/share` and daily verse | WEB-only ImageResponse route with strict public inputs; client daily selection from public WEB data, no date or personal data requests |
 
 **DONE:** Next.js 16.4 enables Cache Components and Partial Prefetching. Server Components are the default. Small client controls handle theme and translation. Static pages read the preference cookie in the browser; results and compare use server cookie reads behind Suspense. **DONE:** Personal records are outside server rendering, requests and shared caches. Static data has no artificial loading delay; dynamic passages already show loading notices.
 
@@ -76,9 +76,13 @@ No personal records flow to the Next.js server or any external service.
 
 **DONE:** The server-only service reads local JSON for static translations or calls the official Tyndale endpoint using `NLT_API_KEY`. NLT fetches use `cache: "no-store"`, an eight-second timeout and no redirects. Development HMR response caching is disabled. parse5 checks the returned reference and verse range, removes labels/notes, decodes entities and returns source text with `(NLT)`. Remote HTML is never injected. No NLT verse text is persisted to files, framework caches or the repository; runtime text lives only for request/display. Retain per-passage publisher links and the full notice at `/licenses#nlt`.
 
-**DONE:** The implementation caps curated ranges at 50 verses. Its rolling per-process request timestamp guard permits 500 requests for TEST or 5,000 for a key per 24 hours. It stores timestamps/cooldowns only. HTTP 429 applies Retry-After with at least a minute of cooldown. These are implementation guards, not global Vercel accounting. Missing key, timeout, HTTP/network error, malformed/empty passage, or quota failure returns WEB with an actual WEB tag and visible note. The service avoids logging errors and key-bearing URLs. Full publisher terms and issued-key caveats are in the licensing document; re-check them before changing display, caching, storage or sharing.
+**DONE Step 7:** The existing server passage path (no standalone NLT HTTP route) caps curated ranges at 50 verses. A per-instance guard admits at most 20 attempts per rolling minute and 500 TEST or 5,000 registered-key attempts per rolling 24 hours. Reservations happen synchronously before the first await, so concurrent calls in one instance cannot overspend that budget. Failed attempts remain counted. It stores bounded timestamps and cooldowns only, never IPs, cookies, references, visitor identifiers or Scripture. HTTP 429 and 503 honor seconds or HTTP-date Retry-After with a 60-second minimum/default; 401/403 pause requests for 24 hours. A later cooldown never shortens an existing one. No upstream retries. Streamed bodies are capped at 200,000 bytes, including when Content-Length is absent or wrong. Fetch/parse errors are replaced with fixed errors without causes or credential-bearing URLs.
 
-**DONE:** Backups and saved verses contain references and translation ids only, including for NLT. Do not cache licensed text in browser storage or exported JSON. Step 7 strengthens route abuse/quota handling without personal data collection or a server database.
+**Accepted limitation, owner decision 2026-10-15:** Rate limiting is best effort because serverless instances do not share memory. Every restart, instance and deployment has fresh counters/cooldowns; these limits do not enforce the account-wide quota or guarantee availability under abuse. Provider quotas remain authoritative. No Redis, shared quota service, personal-data service or new dependency is introduced. A shared operational store is a future option if traffic grows. Tests explicitly demonstrate a new instance bypassing an existing instance's cooldown. Missing key, guard rejection, timeout, HTTP/network error, invalid/oversized passage or provider quota failure preserves the actual WEB tag and explicit fallback note. Existing valid translation preference cookies remain unchanged. The owner explicitly accepted this limitation in place of the original deployment-wide Step 7 criterion.
+
+**Caching:** No persistent NLT response caching, request deduplication or licensed-text storage was added. API pages do not specify a safe cache TTL. Existing no-store, disabled HMR fetch caching, per-passage markers and full publisher notices remain. See translation terms and issued-key caveats.
+
+**DONE:** Backups and saved verses contain references and translation ids only, including for NLT. Do not cache licensed text in browser storage or exported JSON. Step 7 strengthens the existing request path with the explicitly accepted per-instance limitation above.
 
 ## Client storage design (DONE)
 
@@ -131,7 +135,7 @@ Everything here is **DONE** in Step 5. Keep functions pure in `lib/`; pass devic
 
 **DONE decision:** Never send personal records, notes, backups, activity, streaks or badges to any server. No analytics or tracking is present; ask before adding either. **DONE:** Personal data stays in this browser and origin; no cross-device synchronization. Clearing browser data, private browsing, device loss or eviction can lose it, so explain Export and Import. Backups are unencrypted local files; do not imply device-level secrecy.
 
-**DONE limitation:** The existing translation cookie goes to this site's server to select passages. Requests also expose normal network metadata; NLT requests send a curated passage reference and the server key, never personal records. This is the narrow documented preference exception to the local-only rule. Never put personal data in URLs, cookies, logs, share-image requests or monitoring reports. **IMPLEMENTED Step 6:** Share cards use public WEB reference/translation data; browser download fetches omit cookies and referrers. Private notes and mood history are excluded. Step 7's error monitoring must avoid personal payloads and tracking and require approval if adding analytics/tracking.
+**DONE limitation:** The existing translation cookie goes to this site's server to select passages. Requests also expose normal network metadata; NLT requests send a curated passage reference and the server key, never personal records. This is the narrow documented preference exception to the local-only rule. Never put personal data in URLs, cookies, logs, share-image requests or monitoring reports. **DONE Step 6:** Share cards use public WEB reference/translation data; browser download fetches omit cookies and referrers. Private notes and mood history are excluded. Step 7 adds only fixed operational server warnings; analytics or tracking still require approval.
 
 ## Daily verse and sharing (Step 6)
 
@@ -144,6 +148,7 @@ Home passes the existing public WEB reference/text map to a small client compone
 | Status | Environment name | Purpose |
 | --- | --- | --- |
 | DONE | `NLT_API_KEY` | Server-only official Tyndale credential |
+| DONE Step 7 | `NEXT_PUBLIC_SITE_URL` | Validated public build-time origin for About link and metadata; localhost default locally |
 
 **DONE:** `.env.example` lists the name; `.env.local` is ignored. Never commit or print values. Vercel is the Next.js deployment target and GitHub is the source remote. **PLANNED operational check:** Verify actual Vercel preview/production setup and environment scopes; an imported project with Git previews enabled creates a preview after a branch push. Use the branch deployment URL from Vercel or the GitHub deployment check, review it, and wait for explicit approval before merging to main. Branch storage is origin-specific and does not automatically share production records. No server data service is required.
 
@@ -157,9 +162,20 @@ Home passes the existing public WEB reference/text map to a small client compone
 | DONE | Preserve current CSS, controls, routes and working features in this documentation change |
 | DONE | Typed localStorage layer, schema-1 validation, migration runner and validated local JSON backups in Step 4 |
 | DONE | Pure local-date streaks, explicit weekly grace ledger and badge calculations in Step 5 |
-| IMPLEMENTED Step 6 | WEB share cards, daily verse and polish; rendered browser acceptance pending |
-| PLANNED Step 7 | Launch privacy, quota and operational checks |
+| DONE Step 6 | WEB share cards, daily verse and accessibility polish; merged into main per owner |
+| DONE Step 7 code | About/privacy, credits, per-instance NLT guards, fixed warnings and launch README |
+| Pending launch | Step 7 hosting and preview/accessibility verification |
 
 **DONE workflow:** Typecheck, lint and build are required before completion. Build includes data validation. Provider tests are available as `npm.cmd run test:bible-api`. **DONE:** `npm.cmd run test:storage` covers persistence, collection relationships, import validation, failure preservation, migrations, memory fallback and tab conflicts. **DONE:** `npm.cmd run test:progress` covers calendar/streak behavior, clock/timezone changes, DST, grace exhaustion, notes and progress imports. No new dependencies were added in Step 4. Visual browser review of both themes, responsive layouts and keyboard interaction is a preview handoff because the implementation session has no connected browser.
 
 Step 5 implementation details: `components/feeling-link.tsx` records a reflection during ordinary client navigation to a selected feeling, before navigating to the existing public verse route. Direct visits and modified/new-tab links remain reading actions. The journal edits/removes notes locally and filters a monthly heatmap by recorded dates. Removing a reflection retains activity and awards. `PersonalStore` accepts an injected local clock for deterministic tests, captures it once per transaction, and updates maximum observations at safe writes and minute/focus refreshes through the browser bridge. Backward time blocks new reflections and progress while allowing reference saves and existing-content edits. Recovery notices remain shared. Imported future clock metadata may conservatively pause accrual until the device catches up. No data requests, licensed-text changes or dependencies were added.
+
+## Step 7 operational review
+
+Licensed requests explicitly await Next.js connection() before quota clocks or provider work, excluding them from prerender/prefetch. Warning throttling uses performance.now rather than a wall clock.
+
+The static About page shares complete translation credits with /licenses and explains browser-only records, deletion/eviction, unencrypted backups, origin separation, translation-cookie exception and normal network/hosting exposure. NEXT_PUBLIC_SITE_URL supplies metadataBase, About canonical/OG URL and its site link. It must be an HTTPS origin (HTTP localhost allowed for development); credentials, path, query and fragment are rejected with a fixed error. The owner-supplied URL is in .env.example and README, not hardcoded in app code. Changing it requires a build. No personal metadata is generated.
+
+instrumentation.ts onRequestError accepts no arguments and emits only server_error. The passage fallback emits only nlt_fallback. The logger allows just those codes and emits at most once per code per minute per instance. No error message, stack, digest, request, cookie, URL, user input or personal record is accepted or sent to a monitoring service. No browser error upload, analytics or tracking. These are sampled operational warnings, not accurate traffic counts or durable alerts. Hosting/framework access logs and outgoing-fetch tracing are outside this logger: review retention/access, disable personal/body/cookie capture and credential-bearing fetch tracing by hand. Never log raw provider failures.
+
+README contains the exact pending Vercel checklist. Project verselight, repository brentjoel/verselight and the live URL are owner-reported, not independently verified. The owner requested hosting verification remain pending. Check Git preview wiring, branch/commit, Node/build settings, Preview and Production environment scopes, issued-key terms, domains/stable origin, fallback/credits, safe logs and accessibility before approval. No main merge or production deployment is authorized by this branch.

@@ -112,11 +112,11 @@ Step 6 source review covers every route below. New controls reuse theme variable
 | Compare | Native labeled fieldset, invalid-input recovery/reset, loading, actual translation/fallback, card controls | Narrow/wide, both themes, keyboard |
 | My Verses | Labeled forms, loading/empty/errors, recovery, explicit replacement/removal | Narrow/wide, both themes, keyboard/file picker |
 | Journal | Labeled notes/calendar, non-color descriptions, loading/empty/errors, recovery link | Narrow/wide, both themes, keyboard |
-| Licenses | Shared shell, heading, linked attribution, static content | Narrow/wide, both themes, keyboard |
+| About and licenses | Shared shell, semantic headings, linked attribution, daily WEB/share privacy copy, static content | Narrow/wide, both themes, keyboard |
 | 404 and error | Shared shell, h1, return link and error retry | Narrow/wide, both themes, keyboard/retry |
 | Share PNG | Strict inputs, exact WEB text/credits, variable height, 400/503 recovery | Shortest/longest PNG inspected; browser save pending |
 
-The existing reduced-motion rule disables animation/transitions and hover transforms across routes; Step 6 adds no motion. Computed foreground/muted/primary contrast against background/card has a minimum 7.44:1 dark and 5.17:1 light. Focus uses primary. Header wrapping below 381px prevents potential brand/control overlap. These are source and numeric checks, not a rendered audit. Browser inventory is empty, so rendered checks and Step 6 acceptance remain pending for preview approval.
+The existing reduced-motion rule disables animation/transitions and hover transforms across routes; Step 6 adds no motion. Computed foreground/muted/primary contrast against background/card has a minimum 7.44:1 dark and 5.17:1 light. Focus uses primary. Header wrapping below 381px prevents potential brand/control overlap. These are source and numeric checks, not a rendered audit. The implementation session had no connected browser. Step 6 is now merged per owner confirmation; remaining rendered-review checks are retained in the Step 7 launch checklist.
 
 - [ ] Dark default with working light mode through existing variables and theme control.
 - [ ] Mobile-first layout, no horizontal overflow, consistent shell, cards, typography and spacing.

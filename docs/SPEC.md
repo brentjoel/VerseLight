@@ -4,7 +4,7 @@
 
 Everyone is a guest. Choose a broad emotion, then a specific feeling, and read four curated passages in a preferred translation, each with a reflection question and prayer starter. This flow, translation selection, comparison and credits are DONE. All eventual features work for every visitor. Personal records stay in the visitor's browser with local JSON Export and Import backups, with no server persistence.
 
-DONE: Save a verse by reference, organize collections on My Verses, Export/Import local JSON backups, record moods with optional notes, view a calendar heatmap, grow streaks with a weekly grace day, and earn badges. Step 6 implementation adds public WEB image cards and a device-local daily WEB passage; visual/keyboard preview review remains pending. No personal data leaves the device. The existing non-sensitive translation preference cookie is the narrow exception used for server passage rendering.
+DONE: Save a verse by reference, organize collections on My Verses, Export/Import local JSON backups, record moods with optional notes, view a calendar heatmap, grow streaks with a weekly grace day, and earn badges. Step 6 adds public WEB image cards and a device-local daily WEB passage and is merged into main. Remaining manual review is tracked in Step 7 launch checks. No personal data leaves the device. The existing non-sensitive translation preference cookie is the narrow exception used for server passage rendering.
 
 ## Features and status
 
@@ -13,8 +13,8 @@ DONE: Save a verse by reference, organize collections on My Verses, Export/Impor
 - DONE: Validated translation cookie and remembered theme. Dark default with working light mode and mobile-first UI.
 - DONE Step 4: Typed browser storage, saved verses, collections, My Verses, and validated JSON Export and Import.
 - DONE Step 5: Mood journal with calendar heatmap, local-date streaks with one grace day per week, and badges. Preview visual/keyboard review remains pending.
-- IMPLEMENTED Step 6: WEB cards using Next.js ImageResponse, daily WEB passage by local day of year, responsive header polish and accessibility source review. Browser visual/keyboard acceptance remains pending.
-- PLANNED Step 7: Privacy note, About page and translation credits, stronger NLT rate/quota handling, error monitoring basics and README launch checks.
+- DONE Step 6: WEB cards using Next.js ImageResponse, daily WEB passage by local day of year, responsive header polish and accessibility source review. Merged into main as confirmed by the owner; remaining manual review is tracked in launch checks.
+- IMPLEMENTED Step 7 code: About/privacy with complete translation credits, best-effort per-instance NLT burst/quota/cooldown handling, fixed operational warning codes, configurable site origin and README launch checks. Owner explicitly declined a shared quota store and accepted the serverless limitation. Hosting and preview/accessibility verification remain pending.
 
 ## Emotions
 | Broad emotion | Specific feelings |

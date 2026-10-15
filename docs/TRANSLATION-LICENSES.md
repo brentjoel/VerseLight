@@ -1,6 +1,6 @@
 # Translation terms and setup
 
-Reviewed 2026-10-15 against the official pages below, including the Step 6 daily verse and sharing review.
+Reviewed 2026-10-15 against the official pages below, covering Step 6 daily WEB passages/share cards and Step 7 NLT limits and launch checks. No NLT artwork or persistent licensed-text caching is introduced.
 
 Verselight is a strictly noncommercial personal and portfolio project. No ads, subscriptions, donations, or paid features. Re-check the publisher terms before changing this, display behavior, sharing, or storage.
 
@@ -34,7 +34,7 @@ The share route accepts a single canonical curated reference and explicit `trans
 3. Restart `npm.cmd run dev` after changing key. For hosting, apply the environment variables to the intended environment and rebuild there when ready.
 4. New or invalid preferences resolve to NLT; existing valid cookies retain the user's choice. Missing key, timeouts, network errors, 429s, server errors, empty or malformed responses fall back to local WEB with a WEB tag and a note. A compare column retains the requested translation's heading so its fallback is understandable.
 5. Requests are server-only, use no-store, have an eight-second timeout, and never log provider errors or credential-bearing URLs. Development HMR response caching is disabled. Licensed verse text is not saved to the repository, database, files, or framework data cache. Only publisher notices are committed.
-6. Per-process timestamp guards enforce published request limits and Retry-After cooldowns; they store no Scripture. They are not a global quota counter across Vercel instances. Providers remain authoritative; quota responses trigger WEB fallback. A shared quota service would require separate infrastructure and is not introduced in Step 3.
+6. Step 7 per-instance guards bound attempts to 20 per rolling minute and 500 TEST / 5,000 keyed per rolling 24 hours. Attempts include failures. 429/503 respect seconds/date Retry-After (60-second minimum/default); 401/403 pause that instance for 24 hours. No automatic retry. Counters/cooldowns reset on restart and are not shared between serverless instances or deployments, so account-wide limits are not guaranteed. The owner explicitly accepted best-effort protection without Redis or another service. Provider quotas remain authoritative; failures use labeled WEB. A shared operational store is a future option if traffic grows. No personal identifiers or Scripture are stored by these guards.
 7. KJV, WEB, ASV, and BSB stay in the four existing JSON files. `fetch:verses` and `validate:data` operate on those only. KJV's UK rights exception is documented at `/licenses`.
 
 Verify with `npm.cmd run validate:data`, `npm.cmd run test:bible-api`, `npx.cmd tsc --noEmit`, `npm.cmd run lint`, and `npm.cmd run build`. Parser tests use unmistakably labeled synthetic data, not invented Bible wording. Check mobile layout, keyboard controls, and preference persistence by hand.
