@@ -9,7 +9,18 @@ import { DailyVerse } from "@/components/daily-verse";
 import web from "@/data/verses/web.json";
 import { WheelPicker } from "@/components/wheel-picker";
 
-export const metadata = { title: "Verselight | A moment of peace", description: "Choose a feeling and find a quiet moment with Scripture, reflection, and prayer." };
+export const metadata = {
+  title: "Verselight | A moment of peace",
+  description: "Choose a feeling and find a quiet moment with Scripture, reflection, and prayer.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    url: "/",
+    siteName: "Verselight",
+    title: "Verselight | A moment of peace",
+    description: "A quiet place for Scripture, reflection, and prayer.",
+    type: "website",
+  },
+};
 
 export default function Home() {
   const emotions = getAllEmotions();

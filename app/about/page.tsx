@@ -7,7 +7,8 @@ export const metadata = {
   title: "About and privacy | Verselight",
   description: "Learn about Verselight, browser-only personal records, local backups, privacy and Scripture translation credits.",
   alternates: { canonical: new URL("/about", siteUrl).href },
-  openGraph: { title: "About and privacy | Verselight", url: new URL("/about", siteUrl).href },
+  openGraph: { title: "About and privacy | Verselight", url: new URL("/about", siteUrl).href, images: [{ url: new URL("/opengraph-image", siteUrl).href, width: 1200, height: 630, alt: "Verselight | A moment of peace" }] },
+  twitter: { card: "summary_large_image", title: "About and privacy | Verselight", images: [new URL("/twitter-image", siteUrl).href] },
 };
 
 export default function AboutPage() {
