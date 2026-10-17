@@ -1,6 +1,6 @@
 # Progress
 
-Steps 1 to 9, motion polish and the security audit are DONE, merged on main and verified on the live site per owner confirmation on 2026-10-17. Steps 8 and 9 are checked below. Steps 10 and 11 are optional and not started; previously delivered presentation details do not start either optional step. Historical verification and handoff notes below record the state at the time and are superseded by this status. This documentation-only branch is `docs-v1`; no main merge or production deployment is authorized.
+Steps 1 to 9, motion polish and the security audit are DONE, merged on main and verified on the live site per owner confirmation on 2026-10-17. Steps 8 and 9 are checked below. Steps 10 and 11 are optional and not started; previously delivered presentation details do not start either optional step. Historical verification and handoff notes below record the state at the time and are superseded by this status. This documentation-only branch is `readme-polish`; no main merge or production deployment is authorized.
 
 ## Checklist
 
@@ -269,3 +269,13 @@ Verification: strict typecheck, lint, production build/content validation and al
 Owner-authorized whole-project audit on security-audit from freshly fetched origin/main a7b64a4; ordinary next-step and branch-name rules are superseded for this task. Findings were reported before fixes. Added global security headers, provider-level curated allowlist and regression coverage; cached public WEB PNGs and OFL font bytes so social metadata images prerender; disabled unused image optimization. Removed an unused Button scaffold and its two dependencies, moved required shadcn CSS/CLI to devDependencies and applied compatible Next/React/tooling maintenance updates. The environment example now leaves both values empty instead of including a real public preview origin. No new dependencies, personal-data service or NLT persistence.
 
 Full findings, NLT terms excerpts, seven initial production findings, nine remaining dev-tool findings, accepted per-instance quota/CSP limitations and key-leak response are in [SECURITY.md](SECURITY.md). Production npm audit now reports zero vulnerabilities. Typecheck, lint, build/content validation and all 57 tests pass; local HTTP/cache, fallback and final bundle checks are recorded there. No connected browser was available for this audit. Owner must review the Vercel preview, issued-key agreement and hosting privacy/cost settings. Commit/push the audit branch; await approval before main merge or production deployment. Other planned steps remain untouched.
+
+
+## README polish (2026-10-17)
+Owner requested docs-only work on `readme-polish` from latest main, superseding the numbered-step branch rule. Shortened README for recruiters, moved operating details to OPERATIONS, and consolidated exact upstream pauses and anonymous-tier details in SECURITY. Kept the supplied production-domain placeholder because no actual domain was provided; NEXT_PUBLIC_SITE_URL remains the configuration setting. Added screenshot paths and placement instructions, without fabricated images or application changes. Required checks are recorded after verification.
+Verification: npx.cmd tsc --noEmit, npm.cmd run lint, npm.cmd run build (65 generated pages and content validation), and git diff --check passed. README is 58 lines; edited overview/operations/licensing/security/screenshot documents contain no em dashes. Review README and OPERATIONS on the pushed branch; add the five PNGs directly under docs/screenshots/. No application code changed.
+
+
+## Production domain documentation (2026-10-17)
+Owner supplied https://verselight.vercel.app. Replaced the README and OPERATIONS placeholders with that stable origin on the existing readme-polish branch. NEXT_PUBLIC_SITE_URL remains the documented build-time setting; application code and environment values are unchanged.
+Verification: strict typecheck, lint, production build/content validation (65 pages), and git diff --check passed. Review the live link and NEXT_PUBLIC_SITE_URL instructions in README and OPERATIONS.

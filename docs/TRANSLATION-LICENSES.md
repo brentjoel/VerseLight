@@ -8,7 +8,7 @@ Verselight is a strictly noncommercial personal and portfolio project. No ads, s
 
 Sources: [official API terms](https://api.nlt.to/), [API documentation](https://api.nlt.to/Documentation), [publisher permissions and copyright notices](https://www.tyndale.com/permissions).
 
-- Anonymous/TEST: at most 50 verses per request and 500 requests per day.
+- Anonymous-tier details are recorded in [SECURITY.md](SECURITY.md#licensing-evidence).
 - Registered key: at most 500 verses per request and 5,000 requests per day under the published standard noncommercial terms. Your issued license may set different conditions; review it before use.
 - The API pages do not specify a cache TTL, stored-verse allowance, or a separate per-page display limit. Do not infer that these are unrestricted. Verselight makes short, curated passage requests with no persistent response caching or storage.
 - Tyndale's separate print/eBook quotation guidelines allow up to 500 verses, no complete book, and no more than 25% of the work. Those are not a substitute for the API's usage conditions.
@@ -38,11 +38,11 @@ Rechecked the [official NLT API terms](https://api.nlt.to/), [Tyndale permission
 ## Setup and behavior
 
 1. Request an [NLT key](https://api.nlt.to/Account/Register). Review the terms associated with your issued key.
-2. Put `NLT_API_KEY` in `.env.local` locally and in hosting environment secrets. `.env.example` lists it without a value. Never use a NEXT_PUBLIC name for this key. `NLT_API_KEY=TEST` explicitly opts into the official anonymous limits for local testing.
+2. Put `NLT_API_KEY` in `.env.local` locally and in hosting environment secrets. `.env.example` lists it without a value. Never use a NEXT_PUBLIC name for this key. Anonymous-tier configuration is documented only in [SECURITY.md](SECURITY.md#nlt-requests-inputs-and-errors).
 3. Restart `npm.cmd run dev` after changing key. For hosting, apply the environment variables to the intended environment and rebuild there when ready.
 4. New or invalid preferences resolve to NLT; existing valid cookies retain the user's choice. Missing key, timeouts, network errors, 429s, server errors, empty or malformed responses fall back to local WEB with a WEB tag and a note. A compare column retains the requested translation's heading so its fallback is understandable.
 5. Requests are server-only, use no-store, have an eight-second timeout, and never log provider errors or credential-bearing URLs. Development HMR response caching is disabled. Licensed verse text is not saved to the repository, database, files, or framework data cache. Only publisher notices are committed.
-6. Step 7 per-instance guards bound attempts to 20 per rolling minute and 500 TEST / 5,000 keyed per rolling 24 hours. Attempts include failures. 429/503 respect seconds/date Retry-After (60-second minimum/default); 401/403 pause that instance for 24 hours. No automatic retry. Counters/cooldowns reset on restart and are not shared between serverless instances or deployments, so account-wide limits are not guaranteed. The owner explicitly accepted best-effort protection without Redis or another service. Provider quotas remain authoritative; failures use labeled WEB. A shared operational store is a future option if traffic grows. No personal identifiers or Scripture are stored by these guards.
+6. Step 7 uses best-effort per-instance quotas and cooldowns, including failed attempts, with no automatic retry. Counters reset on restart and are not shared across instances or deployments. See [operations](OPERATIONS.md#nlt-resilience-and-credits) for resilience rules and [security](SECURITY.md#nlt-requests-inputs-and-errors) for exact upstream pauses and anonymous-tier details. No personal identifiers or Scripture are stored by these guards.
 7. KJV, WEB, ASV, and BSB stay in the four existing JSON files. `fetch:verses` and `validate:data` operate on those only. KJV's UK rights exception is documented at `/licenses`.
 
 Verify with `npm.cmd run validate:data`, `npm.cmd run test:bible-api`, `npx.cmd tsc --noEmit`, `npm.cmd run lint`, and `npm.cmd run build`. Parser tests use unmistakably labeled synthetic data, not invented Bible wording. Check mobile layout, keyboard controls, and preference persistence by hand.
