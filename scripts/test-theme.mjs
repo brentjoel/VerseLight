@@ -43,6 +43,12 @@ test('both palettes define matching scene tokens with distinct light colors', ()
   assert.ok(Number(palettes[1]['--scene-bar-shade']) < 1);
 });
 
+test('explicit light palette opts out of browser automatic darkening', () => {
+  const light = css.match(/:root\[data-theme="light"\] \{([^}]+)\}/)[1];
+  assert.match(light, /color-scheme:\s*only light\s*;/);
+  assert.equal(palettes[1]['--background'], '#faf6ee');
+});
+
 test('scene text, selected controls, borders and focus meet AA across the sky gradient', () => {
   for (const p of palettes) {
     for (let i = 0; i <= 100; i++) {

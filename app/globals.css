@@ -65,7 +65,8 @@
 }
 
 :root[data-theme="light"] {
-  color-scheme: light;
+  /* Preserve the chosen palette when mobile browsers auto-darken websites. */
+  color-scheme: only light;
   --background: #faf6ee;
   --foreground: #28251f;
   --card: #fffcf6;

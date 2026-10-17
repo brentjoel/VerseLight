@@ -17,7 +17,7 @@ Motion polish on merged Step 9, 2026-10-15. This replaces the earlier lavender/c
 | Hairline border | white 9% | ink 12% |
 | Active border | gold 35% | dark gold 35% |
 
-All page and scene tokens live in the two root theme blocks in `app/globals.css`. Transparent WebGL reads these same tokens and updates its existing material on theme changes. Dawn animation never retains captured ink after a switch. Saved preferences win, otherwise the system theme applies and live system changes update immediately. Do not add theme persistence or alter preference logic.
+All page and scene tokens live in the two root theme blocks in `app/globals.css`. Transparent WebGL reads these same tokens and updates its existing material on theme changes. Dawn animation never retains captured ink after a switch. Saved preferences win, otherwise the system theme applies and live system changes update immediately. Light mode declares `color-scheme: only light` so mobile browser automatic darkening cannot recolor the cream palette into brown. Do not add theme persistence or alter preference logic.
 
 Emotion hues stay in the existing wheel configuration and CSS `data-emotion` tokens. Use them only on the wheel and as a faint glow behind verses. Simple picker, Journal, controls and surfaces use neutral/gold styling.
 
