@@ -2,7 +2,27 @@
 
 Scripture, reflection, and prayer for the feeling you bring today. Everyone is a guest. Saved references, collections, journal notes, activity, streaks, and badges stay in the browser with local JSON backups. Strictly noncommercial: no ads, payments, subscriptions, donations, or paid features.
 
-Owner-supplied live URL: [Verselight](https://verselight-pf16jt6xm-dev-e4cd.vercel.app/). Vercel project: `verselight`; GitHub: `brentjoel/verselight`. Hosting configuration and deployment health remain **pending manual verification**. Step 6 daily WEB passages, WEB share cards and accessibility polish are merged on main. Step 7 launch verification remains open.
+Live site: [Verselight](https://verselight-pf16jt6xm-dev-e4cd.vercel.app/). Vercel project: `verselight`; GitHub: `brentjoel/verselight`. Steps 1 to 9, motion polish and the security audit are merged and verified on the live site per owner confirmation. Steps 10 and 11 are optional and not started.
+
+## Features
+
+- Wheel emotion picker with an accessible simple-picker fallback.
+- Dawn reveal with Skip and instant reduced-motion reading.
+- NLT by default, plus KJV, WEB, ASV and BSB, with side-by-side Compare.
+- Saved verses and collections, a mood journal, streaks and badges.
+- Daily WEB passages and downloadable WEB share cards.
+- Motion and design polish with dark and light themes.
+- Privacy-first local storage with validated JSON Export and Import backups.
+
+## Security and privacy
+
+Everyone uses the app as a guest. Personal records stay in the browser, with no account, server persistence, analytics or tracking. Backups are local, unencrypted files. The translation preference cookie is the sole preference sent to the server; ordinary page requests expose public URLs and network metadata to the host.
+
+NLT uses a server-only key, validated curated references, bounded requests and labeled WEB fallback. NLT text is never persisted in storage, backups, generated images or framework caches. Security headers restrict browser sources and embedding; logs emit only fixed operational warning codes. The merged audit recorded zero production dependency vulnerabilities, with nine high dev-tool findings remaining. Per-instance NLT quotas do not coordinate across servers, and the CSP retains inline script/style allowances for static rendering. See [the security audit](docs/SECURITY.md) for evidence and limitations.
+
+## Screenshots
+
+Screenshots coming soon: wheel picker, dawn reveal, Compare, My Verses and Journal in dark and light themes.
 
 ## Local setup
 
@@ -59,10 +79,12 @@ KJV, WEB, and ASV static data come from [bible-api.com](https://bible-api.com/);
 
 Server logs emit only `[verselight] nlt_fallback` and `[verselight] server_error`, at most once per code per minute per instance. The error hook ignores error/request/context arguments; upstream errors are replaced with fixed messages without causes or credential-bearing URLs. Sampled warnings indicate a problem; they are not precise counts, alerts, or durable monitoring. There is no client error upload, analytics, or tracking. Do not add them without approval. Inspect warning codes in Vercel Runtime Logs; do not enable request-body/cookie capture or outgoing fetch tracing that could expose the NLT key. Hosting/framework access logs are outside this logger and require a separate retention/access review.
 
-## Vercel manual launch checklist (pending)
+## Vercel verification reference
+
+Launch verification is complete per owner confirmation. Keep this checklist for future deployment reviews; the historical audit evidence is in [SECURITY.md](docs/SECURITY.md).
 
 - [ ] In project `verselight`, confirm Git repository `brentjoel/verselight`, production branch `main`, Next.js preset, repository-root directory, Node.js 24, lockfile install, and `npm run build`.
-- [ ] Confirm Git previews are enabled and find the `step-7-launch-checks` deployment. Confirm its commit matches this branch. Keep production unchanged until approval.
+- [ ] Confirm Git previews are enabled and find the branch deployment. Confirm its commit matches the branch under review. Keep production unchanged until approval.
 - [ ] In **both Preview and Production scopes**, confirm server-only `NLT_API_KEY`, the issued-key license, and `NEXT_PUBLIC_SITE_URL` for the intended public origin. Redeploy the preview after environment changes. Never expose the NLT key through a `NEXT_PUBLIC_` name.
 - [ ] Check Domains and deployment status: confirm whether the supplied URL is stable or deployment-specific; set the intended production origin in `NEXT_PUBLIC_SITE_URL`. Check HTTPS, About's site link, and its canonical/OG URL after a build. Preview About links intentionally use the configured origin.
 - [ ] On the preview, verify NLT text, attribution, cookie persistence, Compare, and WEB. With a deliberately absent/invalid **preview-only** key, verify labeled WEB fallback and fixed warnings; restore it and redeploy. Do not load-test Tyndale or alter the production key. Automated tests cover quota/timeout/Retry-After failures.
@@ -72,4 +94,4 @@ Server logs emit only `[verselight] nlt_fallback` and `[verselight] server_error
 
 ## Delivery workflow
 
-Read [AGENTS.md](AGENTS.md), [spec](docs/SPEC.md), and [progress](docs/PROGRESS.md). Read architecture before data flow changes and design before UI work. This branch integrates the merged Step 6 work into Step 7 at the owner's request; Step 6 is checked and the Step 7 launch checkbox remains open. Commit and push `step-7-launch-checks` for a Vercel Git preview, then wait for approval before merging. No independent production deployment.
+Read [AGENTS.md](AGENTS.md), [spec](docs/SPEC.md), and [progress](docs/PROGRESS.md). Read architecture before data flow changes and design before UI work. Steps 1 to 9 and the follow-up motion polish and security audit are complete. Optional Steps 10 and 11 require a separate owner request. Push each authorized branch for a Vercel Git preview, then wait for approval before merging. No independent production deployment.

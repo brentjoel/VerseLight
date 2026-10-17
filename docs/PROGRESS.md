@@ -1,6 +1,6 @@
 # Progress
 
-Steps 1 to 9 are merged on main per owner confirmation. The presentation-only motion-polish branch implements the three explicitly requested parts below. Step 10 night-sky journal and other unrequested Step 11 features remain planned in [the wheel UI plan](wheel-ui-plan.md). Preview approval is required before merging motion-polish; no main merge or production deployment is authorized.
+Steps 1 to 9, motion polish and the security audit are DONE, merged on main and verified on the live site per owner confirmation on 2026-10-17. Steps 8 and 9 are checked below. Steps 10 and 11 are optional and not started; previously delivered presentation details do not start either optional step. Historical verification and handoff notes below record the state at the time and are superseded by this status. This documentation-only branch is `docs-v1`; no main merge or production deployment is authorized.
 
 ## Checklist
 
@@ -60,13 +60,13 @@ Steps 1 to 9 are merged on main per owner confirmation. The presentation-only mo
 
 **Files likely touched:** `app/about/`, privacy copy, `app/licenses/`, `lib/bible-api.ts`, `lib/verse-passage.ts`, provider tests, operational configuration if needed, `README.md`, docs.
 
-## Planned wheel UI steps
+## Wheel UI steps
 
-These steps follow [docs/wheel-ui-plan.md](wheel-ui-plan.md). Each uses its own branch (`step-8-wheel-picker`, `step-9-dawn-reveal`, `step-10-night-sky`, `step-11-polish`), a Vercel preview and owner approval before merge. Do not begin Step 8 until the owner says "start step 8".
+These steps follow [docs/wheel-ui-plan.md](wheel-ui-plan.md). Steps 8 and 9 are DONE, merged and live-verified per owner confirmation. Steps 10 and 11 are optional and not started. Begin either only on a separate owner request, using its own branch, Vercel preview and owner approval before merge.
 
 **Acceptance criteria shared by Steps 8 to 11:** Preserve existing emotion data/routes, translation providers and NLT API logic, browser-only storage and all working features. No accounts, backend, tracking, audio, notifications or AI free-text. Verse text stays real, selectable DOM text from the existing translation layer, readable immediately without waiting for animation; no API verse text drawn into canvas/images. Generated images use public-domain text only, WEB by default and explicitly labeled when replacing an active NLT preference; Scripture UI quotes use WEB with a reference. Retain the existing picker and heatmap as accessible alternatives; reduced motion means no spinning/particles and instant verse display. Support keyboard arrows/Enter, screen-reader emotion lists/labels, AA contrast, visible focus and 44px touch targets. Lazy-load 3D so unrelated routes retain their JavaScript size; instance the bar ring into one draw call, cap DPR at 2, limit particles, pause hidden-tab rendering and dispose GPU resources. Target steady 60fps on mid-range Android and mobile Home Lighthouse Performance, Accessibility, Best Practices and SEO scores of at least 90. Put pure logic in lib/ with unit tests. Stored-data changes require a schema bump, migration, validation, older-backup compatibility and tests. Explain each dependency in one line; expected three, @react-three/fiber if React, and at most one small helper. Preserve calm dark/light styling, restrained colors, one warm accent and generous spacing; limit imagery to light, stars and wheels, without faces, angels, figures or denomination-specific symbols. Update docs/DESIGN.md tokens each phase. Typecheck, lint, build and tests pass; no new environment variables or unrelated restructuring. Stop after each phase with a summary under 10 lines and 3 to 5 screens for owner review.
 
-### [x] 8. Wheel picker (merged on main)
+### [x] 8. Wheel picker (DONE, merged and live-verified)
 
 **Goal:** Add the wheel-within-a-wheel home picker while keeping existing emotion data and routes.
 
@@ -80,7 +80,7 @@ These steps follow [docs/wheel-ui-plan.md](wheel-ui-plan.md). Each uses its own 
 
 **Verification:** Typecheck, lint, production build/content validation and all 46 tests passed (3 wheel, 12 storage, 15 progress, 3 daily/share, 13 provider). Local Home, broad emotion and Journal HTTP checks returned 200; Home includes the original fallback in server HTML. `npm.cmd run dev` found the existing localhost:3000 server, used without stopping it. Browser inventory is empty, so rendered AA/focus, touch/drag, real-device 60fps and mobile Lighthouse >=90 are pending and not claimed. Review Home broad dial, Home inner wheel/intensity, simple/reduced-motion picker, results then Journal, and light-mode Home at mobile/desktop widths before merge. No licensed-text/provider changes, personal requests, tracking or environment variables. `.env.local` was not read or edited.
 
-### [x] 9. Dawn reveal (merged on main)
+### [x] 9. Dawn reveal (DONE, merged and live-verified)
 
 **Goal:** Follow the final feeling selection with a quiet light reveal and emotion-linked verse atmosphere.
 
@@ -104,7 +104,7 @@ Results now progressively enhance the same four server-rendered passages into a 
 
 **Verification:** Final typecheck, lint and production build/content validation passed (60 generated pages). All 54 existing tests pass, with expanded theme tests checking both unboxed/background and card surfaces, all eight emotion washes through 9%, 101 dawn ink stages and selected-wheel ink. Production HTTP smoke checks passed Home, simple feeling page, results, Compare, My Verses, Journal, About, Licenses and expected 404. Results HTML retains four full passages and four Reflect disclosures before hydration. A CSS AST check verified all 18 hover rules are gated by both fine-pointer conditions. The existing dev server at localhost:3000 was used without stopping it; production smoke used localhost:3100. Browser inventory is empty and opening the in-app browser reports unavailable, so rendered mobile/desktop, toggle/system changes, touch/swipe, screen-reader, dialog focus, device performance and Lighthouse review remain pending; source and numeric checks are not a rendered audit. Review five screens in both themes: Home (wheel, morning star, simple fallback), Results (dawn/Skip, carousel/list, Reflect/Share), Compare, My Verses and Journal. Also spot-check About, Licenses and 404. No main merge or production deployment. `.env.local` was not read or edited directly.
 
-### [ ] 10. Night sky journal
+### [ ] 10. Night sky journal (optional, not started)
 
 **Goal:** Offer a night sky view of private check-ins and streaks alongside the accessible calendar heatmap.
 
@@ -112,7 +112,7 @@ Results now progressively enhance the same four server-rendered passages into a 
 
 **Files likely touched:** `app/journal/page.tsx`, `components/journal.tsx`, `components/` night sky/star detail/view toggle (proposed), `lib/` constellation helpers and tests (proposed), `app/globals.css`, journal/storage/backup tests as needed, `docs/DESIGN.md`, `docs/PROGRESS.md`.
 
-### [ ] 11. Polish and delight
+### [ ] 11. Polish and delight (optional, not started)
 
 **Goal:** Add gentle discovery, a growing personal sky, local-time atmosphere, shareable sky cards and adaptive quality.
 
@@ -121,6 +121,10 @@ Results now progressively enhance the same four server-rendered passages into a 
 **Files likely touched:** `components/` wheel/night sky/first-visit/sky-card controls (proposed), `components/daily-verse.tsx`, `lib/daily-verse.ts`, `lib/` time blending/milestone/quality/sky-card helpers and tests (proposed), storage schema/migrations/validation/backup tests if needed, `app/globals.css`, `docs/DESIGN.md`, `docs/PROGRESS.md`.
 
 ## Decisions log
+
+- 2026-10-17: Owner confirms motion polish and the security audit are merged and verified on the live site. On the explicitly requested `docs-v1` branch, retain checked Steps 8 and 9, mark Steps 10 and 11 optional and not started, refresh README features/security/privacy/screenshots, and reconcile architecture status. No runtime, dependency, licensing or data-flow changes. Historical pending-review notes are superseded by this confirmation.
+
+- 2026-10-17: `docs-v1` verification passed: `npx.cmd tsc --noEmit`, `npm.cmd run lint`, `npm.cmd run build` (content validation and 65 generated pages), and `git diff --check`. Review README and the progress/architecture status tables on the branch; no application behavior changed.
 
 - 2026-10-17: Continue the existing motion-polish preview branch for its mobile light-theme bug fix. Opt the explicit light palette out of browser automatic darkening using `color-scheme: only light`; preserve existing theme selection, storage and system-preference behavior.
 
