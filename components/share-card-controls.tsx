@@ -17,7 +17,7 @@ export function ShareCardControls({ reference }: { reference: string }) {
     setBusy(true); setMessage(""); setFailed(false);
     try {
       // Only the public reference and fixed translation leave the browser.
-      const response = await fetch(url, { credentials: "omit", referrerPolicy: "no-referrer", cache: "no-store", redirect: "error", signal: AbortSignal.timeout(20_000) });
+      const response = await fetch(url, { credentials: "omit", referrerPolicy: "no-referrer", redirect: "error", signal: AbortSignal.timeout(20_000) });
       if (!response.ok || !response.headers.get("content-type")?.startsWith("image/png")) throw new Error("Card unavailable.");
       const blob = await response.blob();
       const objectUrl = URL.createObjectURL(blob);

@@ -50,3 +50,9 @@ Verify with `npm.cmd run validate:data`, `npm.cmd run test:bible-api`, `npx.cmd 
 
 ## Motion polish display review
 Rechecked the official [NLT API terms](https://api.nlt.to/), [Tyndale permissions](https://www.tyndale.com/permissions) and [WEB copyright statement](https://ebible.org/engwebp/copyright.htm) on 2026-10-15. All four result passages now receive DOM-only emphasis on every activation, with exact text, whitespace, attribution and immediate selection preserved. NLT remains excluded from artwork, browser records, backups and persistent caches. Restyled share cards retain only existing WEB text and credits with identical input validation/no-store behavior. Social previews contain brand copy only. No translation support, provider request, license scope or storage behavior changes.
+
+
+## Security audit review (2026-10-17)
+Official API, publisher permissions, WEB/ASV/KJV and BSB terms rechecked; exact excerpts and links are in [SECURITY.md](SECURITY.md). Standard NLT quotas and the absence of a published cache TTL are unchanged. NLT still uses no-store and is excluded from storage, backups, imagery and persistent caches, with the full existing mixed-translation notice at every passage. The issued-key agreement still requires owner verification.
+
+The owner requested public image caching for cost control. This supersedes earlier share-route no-store decisions for **successful public WEB cards only**: canonical-reference framework caching plus one-day browser/30-day shared caching and one-day stale-while-revalidate. Invalid/error responses remain no-store; no private fields or NLT enter the cache. Branding-only social images now prerender using cached OFL font bytes. No translation/license scope, Scripture wording or attribution changes.

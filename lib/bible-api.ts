@@ -1,5 +1,8 @@
 import { parse, parseFragment, type DefaultTreeAdapterMap } from "parse5";
 import { instanceQuota, retryAfterMilliseconds, type NltQuota } from "./nlt-quota";
+import emotions from "../data/emotions.json" with { type: "json" };
+
+const curatedReferences = new Set(emotions.flatMap(emotion => emotion.specifics.flatMap(specific => specific.references)));
 
 type Node = DefaultTreeAdapterMap["node"];
 type Element = DefaultTreeAdapterMap["element"];
@@ -53,6 +56,7 @@ export function parseNlt(html: string, reference: string): string {
 }
 
 export async function requestLicensedPassage(reference: string, id: LicensedTranslationId, key: string, fetcher: typeof fetch = fetch, quota?: NltQuota): Promise<string> {
+  if (!curatedReferences.has(reference)) throw new Error("Unknown verse reference.");
   referenceParts(reference);
   if (id !== "nlt" || !key.trim()) throw new Error("Invalid Bible provider configuration.");
   const guard = quota ?? instanceQuota;

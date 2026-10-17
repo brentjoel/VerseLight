@@ -32,6 +32,13 @@ test("NLT requests use the official origin, private credentials, no-store, and a
   assert.ok((await requestLicensedPassage("Philippians 4:6-7", "nlt", "TEST_KEY", mock, createLocalQuota())).endsWith("(NLT)"));
 });
 
+test("non-curated or malformed references never reserve quota or reach the provider", async () => {
+  const unexpected = () => { assert.fail("Invalid input reached quota or network"); };
+  for (const reference of ["John 1:1", "Genesis 1", "Philippians 4:6-7\n", "Philippians 4:6-99", "https://example.com", "__proto__", ""]) {
+    await assert.rejects(requestLicensedPassage(reference, "nlt", "TEST_KEY", unexpected, { reserve: unexpected, block: unexpected }), /Unknown verse reference/);
+  }
+});
+
 test("network, HTTP, empty, and malformed responses fail for the caller to use WEB", async () => {
   const providers = [
     async () => { throw new Error("TEST_NETWORK_FAILURE"); },
