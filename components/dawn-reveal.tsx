@@ -1,28 +1,29 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
-import { consumeDawn, wordDelay } from "@/lib/dawn";
+import { useContext, useEffect, useRef, type ReactNode } from "react";
+import { createDawnRun, wordDelay } from "@/lib/dawn";
+import { ActiveVerseContext } from "@/components/verse-carousel";
 
 export function DawnReveal({ path, children }: { path: string; children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
   const stop = useRef<() => void>(() => {});
+  const active = useContext(ActiveVerseContext);
 
   useEffect(() => {
     const element = root.current;
-    if (!element) return;
+    if (!element || !active) return;
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
-    let animations: Animation[] = [];
+    const run = createDawnRun();
     let timer: ReturnType<typeof setTimeout> | undefined;
     const finish = () => {
-      animations.forEach(animation => animation.cancel());
-      animations = [];
+      run.cancel();
       clearTimeout(timer);
       element.dataset.animating = "false";
     };
     stop.current = finish;
-    // Defer consumption so Strict Mode's setup/cleanup rehearsal keeps the intent.
+    // Each active passage owns its effects, including Strict Mode rehearsals.
     const frame = requestAnimationFrame(() => {
-      if (!consumeDawn(path) || motion.matches || document.hidden || !element.animate) return;
+      if (!run.running || motion.matches || document.hidden || !element.animate) return;
       const words = element.querySelectorAll<HTMLElement>("[data-dawn-word]");
       if (!words.length) return;
       element.dataset.animating = "true";
@@ -30,19 +31,18 @@ export function DawnReveal({ path, children }: { path: string; children: ReactNo
       try {
         words.forEach((word, index) => {
           // Both colors remain readable. Animation adds emphasis without hiding text.
-          animations.push(word.animate([
-            { color: style.getPropertyValue("--muted-foreground"), textShadow: "none" },
-            { color: style.getPropertyValue("--foreground"), textShadow: style.getPropertyValue("--scene-word-glow") },
-            { color: style.getPropertyValue("--foreground"), textShadow: "none" },
+          run.add(word.animate([
+            { color: style.getPropertyValue("--muted-foreground") },
+            { color: style.getPropertyValue("--foreground") },
           ], { delay: wordDelay(index), duration: 600, fill: "backwards", easing: "ease-out" }));
         });
         const light = element.querySelector<HTMLElement>(".dawn-light");
-        if (light) animations.push(light.animate([
+        if (light) run.add(light.animate([
           { opacity: 0, transform: "scale(.08)" },
           { opacity: .9, offset: .35 },
           { opacity: .18, transform: "scale(1)" },
         ], { duration: 2400, easing: "ease-out" }));
-        timer = setTimeout(finish, wordDelay(words.length - 1) + 600);
+        timer = setTimeout(finish, Math.max(2400, wordDelay(words.length - 1) + 600));
       } catch { finish(); } // Unsupported animation features keep instant reading.
     });
     const visibility = () => { if (document.hidden) finish(); };
@@ -59,7 +59,7 @@ export function DawnReveal({ path, children }: { path: string; children: ReactNo
       motion.removeEventListener("change", preference);
       theme.disconnect();
     };
-  }, [path]);
+  }, [path, active]);
 
   return <div ref={root} className="dawn-reveal">
     <div className="dawn-controls">

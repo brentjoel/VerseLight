@@ -1,6 +1,6 @@
 # Progress
 
-Steps 1 to 8 are merged on main (Step 8 merge commit `5564b95`). Step 9 is implemented on `step-9-dawn-reveal`; rendered/device/Lighthouse review and merge approval remain pending. Steps 10 and 11 remain PLANNED in [the wheel UI plan](wheel-ui-plan.md). No main merge or production deployment is authorized.
+Steps 1 to 9 are merged on main per owner confirmation. The presentation-only motion-polish branch implements the three explicitly requested parts below. Step 10 night-sky journal and other unrequested Step 11 features remain planned in [the wheel UI plan](wheel-ui-plan.md). Preview approval is required before merging motion-polish; no main merge or production deployment is authorized.
 
 ## Checklist
 
@@ -66,7 +66,7 @@ These steps follow [docs/wheel-ui-plan.md](wheel-ui-plan.md). Each uses its own 
 
 **Acceptance criteria shared by Steps 8 to 11:** Preserve existing emotion data/routes, translation providers and NLT API logic, browser-only storage and all working features. No accounts, backend, tracking, audio, notifications or AI free-text. Verse text stays real, selectable DOM text from the existing translation layer, readable immediately without waiting for animation; no API verse text drawn into canvas/images. Generated images use public-domain text only, WEB by default and explicitly labeled when replacing an active NLT preference; Scripture UI quotes use WEB with a reference. Retain the existing picker and heatmap as accessible alternatives; reduced motion means no spinning/particles and instant verse display. Support keyboard arrows/Enter, screen-reader emotion lists/labels, AA contrast, visible focus and 44px touch targets. Lazy-load 3D so unrelated routes retain their JavaScript size; instance the bar ring into one draw call, cap DPR at 2, limit particles, pause hidden-tab rendering and dispose GPU resources. Target steady 60fps on mid-range Android and mobile Home Lighthouse Performance, Accessibility, Best Practices and SEO scores of at least 90. Put pure logic in lib/ with unit tests. Stored-data changes require a schema bump, migration, validation, older-backup compatibility and tests. Explain each dependency in one line; expected three, @react-three/fiber if React, and at most one small helper. Preserve calm dark/light styling, restrained colors, one warm accent and generous spacing; limit imagery to light, stars and wheels, without faces, angels, figures or denomination-specific symbols. Update docs/DESIGN.md tokens each phase. Typecheck, lint, build and tests pass; no new environment variables or unrelated restructuring. Stop after each phase with a summary under 10 lines and 3 to 5 screens for owner review.
 
-### [x] 8. Wheel picker (implemented; preview review pending)
+### [x] 8. Wheel picker (merged on main)
 
 **Goal:** Add the wheel-within-a-wheel home picker while keeping existing emotion data and routes.
 
@@ -80,7 +80,7 @@ These steps follow [docs/wheel-ui-plan.md](wheel-ui-plan.md). Each uses its own 
 
 **Verification:** Typecheck, lint, production build/content validation and all 46 tests passed (3 wheel, 12 storage, 15 progress, 3 daily/share, 13 provider). Local Home, broad emotion and Journal HTTP checks returned 200; Home includes the original fallback in server HTML. `npm.cmd run dev` found the existing localhost:3000 server, used without stopping it. Browser inventory is empty, so rendered AA/focus, touch/drag, real-device 60fps and mobile Lighthouse >=90 are pending and not claimed. Review Home broad dial, Home inner wheel/intensity, simple/reduced-motion picker, results then Journal, and light-mode Home at mobile/desktop widths before merge. No licensed-text/provider changes, personal requests, tracking or environment variables. `.env.local` was not read or edited.
 
-### [x] 9. Dawn reveal (implemented; preview review pending)
+### [x] 9. Dawn reveal (merged on main)
 
 **Goal:** Follow the final feeling selection with a quiet light reveal and emotion-linked verse atmosphere.
 
@@ -121,6 +121,10 @@ Results now progressively enhance the same four server-rendered passages into a 
 **Files likely touched:** `components/` wheel/night sky/first-visit/sky-card controls (proposed), `components/daily-verse.tsx`, `lib/daily-verse.ts`, `lib/` time blending/milestone/quality/sky-card helpers and tests (proposed), storage schema/migrations/validation/backup tests if needed, `app/globals.css`, `docs/DESIGN.md`, `docs/PROGRESS.md`.
 
 ## Decisions log
+
+- 2026-10-17: Continue the existing motion-polish preview branch for its mobile light-theme bug fix. Opt the explicit light palette out of browser automatic darkening using `color-scheme: only light`; preserve existing theme selection, storage and system-preference behavior.
+
+- 2026-10-15: Owner confirms Step 9 merged and authorizes the three-part motion-polish branch, overriding numbered-step branch restrictions for this task only. Use transient per-verse runs, native React ViewTransition with CSS fallback and existing tooling; preserve all data, storage, translation and application-route behavior. No new dependencies or features. WEB-only image support stays unchanged. Native Reflect uses visual opacity/transform rather than animated layout; existing unsave remains in My Verses. Public OFL Lora is bundled only for image rendering.
 
 - 2026-10-15: Owner confirmed Step 7 is merged and verified on Vercel; its launch checkbox is now complete, superseding earlier pending launch records. Documentation-only branch docs-wheel-plan records planned Steps 8 to 11 and their shared constraints, with proposed file lists inferred from the plan and current folder layout. No wheel UI is implemented; wait for "start step 8". Checks passed: npx.cmd tsc --noEmit, npm.cmd run lint, npm.cmd run build (content validation and 60 generated pages). Review the documentation diff on docs-wheel-plan; no runtime behavior changed.
 
@@ -206,3 +210,52 @@ These records preserve completed work and past handoffs. Current decisions and s
 - Repeat responsive, theme, keyboard and accessibility review for each future wheel phase; earlier pending launch reviews are superseded by the owner-confirmed Step 7 verification.
 - Step 6 uses WEB-only cards after publisher review. Any future licensed-text artwork needs a separate terms/issued-key review and permission before implementation.
 - Step 7 owner-accepted limitation: NLT burst/quota/cooldown guards are best effort per instance, not account-wide; consider a shared operational store only if traffic grows. Step 7 launch verification is complete per owner confirmation.
+
+## Motion polish: Part 1 (2026-10-15)
+Owner confirms Step 9 merged into main and authorizes motion-polish from latest main, superseding the numbered-branch/next-step restriction for this presentation-only task. Every passage now has exact server-rendered word spans and an active-verse context. Each activation and translation remount starts a full 600ms lead / 260ms cadence with 2.4s dawn light. Cleanup cancels frames, timers and effects; Skip is scoped to the current run. Full DOM text, whitespace, attribution, atmosphere and polite verse count stay intact. Direct visits also animate as requested; reduced motion stays instant. No dependency, provider, persistence or route changes. Publisher NLT API/permissions and WEB copyright pages rechecked for DOM-only display; sharing remains WEB only.
+Part 1 verification: dawn tests (4), strict typecheck, lint and production build passed. Translation refresh keeps the selected carousel index and restarts its reveal. Rendered/device checks are pending.
+
+## Motion polish: Part 2 (2026-10-15)
+Added Motion rules to DESIGN before implementation. CSS tokens unify duration/easing, press/focus/hover feedback, transformed pill dots, pointer/focus wheel light, transform-based orbit/labels, opacity-only twinkle, native disclosure/dialog transitions, skeleton shimmer and bounded list/compare/home staggers. React 19.3 ViewTransition follows the installed Next.js 16.4 guide, with directional verse snapshots, route arrival and CSS fallback; no experimental flag or dependency. Native dialogs retain focus/Escape. Text is never removed for reveals. Skip, live reduced motion and rapid navigation retain run cleanup.
+
+Calendar tooltip copy is also an accessible label and visible selected-date status for touch. Save keeps its existing one-way control and My Verses removal, adding filled bookmark, sparkle and polite transient feedback. A removal button only delays existing actions for a 150ms opacity/transform exit and cancels on unmount; validation, confirmation, storage and failure messages stay with existing handlers. Reflect uses native layout plus visual opacity/transform instead of animated height, honoring the no-layout-animation rule. Wheel theme changes interpolate the existing material. No new features, dependencies, data/schema/provider changes or analytics.
+
+Verification: strict typecheck, lint and production build passed. Connected browser inventory is empty; attempted Chrome launch reports Browser is not available. Rendered responsive/device/keyboard and mobile Lighthouse checks remain to be completed with an available browser.
+
+Part 2 follow-up verification: mobile Lighthouse 13.5 on the local production build with headless Edge scored Performance 94, Accessibility 100, Best Practices 100 and SEO 100. Initial Performance was 84; letting the fully usable DOM wheel paint twice and schedule its decorative WebGL load in an idle callback improved startup without changing its controls or dawn timing. Pending frames/idle callbacks cancel on unmount. A synchronous transient target index preserves every rapid carousel input while React schedules visual transitions. No production deployment.
+
+
+## Motion polish: Part 3 (2026-10-15)
+Added Finishing details to DESIGN before implementation. CSS-only night vignette/grain/five twinkling points and morning haze stay behind readable content; emotion tints use existing tokens. Balanced verse wrapping, optical serif sizing, tabular dates/counts, star dividers, consistent Lucide stroke, spacing/radius tokens, gold selection and subtle scrollbars finish the shared shell. Empty states and 404 use decorative constellation SVGs and existing recovery links. Header tooltips align inward to avoid 360px overflow. Native Reflect uses opacity and transform instead of animated height, preserving layout and semantics.
+
+Shared star-and-wheel branding supplies inline header SVG, 16/32/48 favicon, SVG, Apple 180 and manifest 192/512 icons; no service worker or PWA reminders. ImageResponse Open Graph/Twitter contain only brand name/tagline/glow. All page types have metadata and keep the existing validated site origin. Share cards stay exact WEB-only, with source credit and unchanged input validation/no-store response, now in night/gold and the matching serif. An official static Lora 400 TTF (47KB, OFL license included) fixes ImageResponse variable-font incompatibility, without runtime font requests or a dependency. Sources: Google Fonts Lora repository and fonts.googleapis.com static stylesheet. A short WEB card and the longest WEB card and social preview returned 200 and were visually checked.
+
+Final motion refinements keep word emphasis to color-only animation at its unchanged full cadence; View all verses shows instant text without four simultaneous runs, and returning to single view starts a fresh full reveal. Theme-color metadata follows the actual selected theme; hidden-tab decoration pauses. No data, schema, storage, translation logic, existing application routes, accounts, tracking or analytics changed. New endpoints are only explicitly requested metadata assets.
+
+
+### Final motion-polish verification and handoff
+Strict typecheck, ESLint, production build/content validation (65 generated pages) and all 55 tests pass. Dawn lifecycle tests cover fresh runs after skip, rapid cancellation, late-effect cancellation and unchanged cadence; all 336 static passages reconstruct exactly. Icon regeneration is deterministic. HTTP checks cover all nine page types, expected 404 status, titles/descriptions, icon/manifest assets and both social images. A short WEB card and the longest WEB share image return 200, preserve exact source text/credit and were visually reviewed. NLT was excluded from responsive screenshot runs.
+
+Headless Edge/Lighthouse 13.5 checked Home, a broad picker, results, Compare, My Verses, Journal, About, Licenses and 404 in both themes at 360/768/1024/1440/1920px: 90 width/theme checks pass with no document overflow. Screenshot montages were reviewed at every width/theme. An inward-aligned header tooltip fixes a 360px overflow. Empty local records were used; populated lists, physical touch, real-device 60fps and assistive-technology review remain owner preview checks. Initial connected browser inventory was empty; purpose-built headless audit tooling supplied these automated/rendered checks without adding package dependencies.
+
+Local production mobile Lighthouse scores (Performance / Accessibility / Best Practices / SEO):
+| Page type | Scores |
+| --- | --- |
+| Home | 94 / 100 / 100 / 100 |
+| Broad picker | 95 / 100 / 100 / 100 |
+| Results | 94 / 100 / 100 / 100 |
+| Compare | 96 / 100 / 100 / 100 |
+| My Verses | 95 / 100 / 100 / 100 |
+| Journal | 94 / 100 / 100 / 100 |
+| About | 97 / 100 / 100 / 100 |
+| Licenses | 95 / 100 / 100 / 100 |
+
+My Verses/Journal initially scored 82/83 because the footer shifted during local hydration. CSS reserves reading space during loading; reruns measured zero CLS and restored the scores above. Scores are local emulated mobile measurements, not a production or physical-device guarantee. The intentional 404 was checked for responsive layout separately. All reports/screenshots are temporary local QA artifacts, not repository assets. No production deployment or main merge.
+
+Try the Vercel branch preview after push, or run npm.cmd run dev and open the existing localhost:3000 server. Review these eight first in both themes: (1) Home outer/inner wheel and morning star; (2) next/previous/swipe/keyboard/dot dawn; (3) translation refresh, Skip, rapid changes and reduced motion; (4) Reflect, Save feedback and focus; (5) daily/share dialogs and WEB download; (6) Compare columns; (7) My Verses collections/removal/backups; (8) Journal calendar/tooltips/empty states plus the 404 recovery link. Await owner approval before merging.
+
+
+## Mobile light-theme correction (2026-10-17)
+Reproduced the reported brown light theme in headless mobile Edge at 390px with CDP automatic darkening enabled: the app/root selected light and computed body background was cream, but the browser rendered dark brown. The earlier responsive checks did not enable browser automatic darkening. Set only the light root's color-scheme to `only light`, the [documented Chrome opt-out](https://developer.chrome.com/blog/auto-dark-theme). This is a browser paint correction, not a new palette or preference mechanism. No storage, data, provider, routes or dependencies change. Added a regression guard to the existing theme tests; rendered forced-dark verification and required checks are recorded below.
+
+Verification: strict typecheck, lint, production build/content validation and all 56 tests pass. The build initially could not reach its existing Google Fonts in the network-restricted sandbox; rerunning with network access passed without changing fonts or dependencies. A 390px headless mobile check with automatic darkening still enabled reproduced the brown rendering before the fix (background sample RGB 37/34/27) and verified the real theme toggle renders cream after the fix (250/246/237). The root reports light-only color scheme and no document overflow. Screenshots contain only the public Home UI and remain temporary QA artifacts. Physical-device review is still the owner's final confirmation. Commit/push this correction on motion-polish; no main merge or production deployment.

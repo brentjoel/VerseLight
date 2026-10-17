@@ -46,3 +46,7 @@ Rechecked the [official NLT API terms](https://api.nlt.to/), [Tyndale permission
 7. KJV, WEB, ASV, and BSB stay in the four existing JSON files. `fetch:verses` and `validate:data` operate on those only. KJV's UK rights exception is documented at `/licenses`.
 
 Verify with `npm.cmd run validate:data`, `npm.cmd run test:bible-api`, `npx.cmd tsc --noEmit`, `npm.cmd run lint`, and `npm.cmd run build`. Parser tests use unmistakably labeled synthetic data, not invented Bible wording. Check mobile layout, keyboard controls, and preference persistence by hand.
+
+
+## Motion polish display review
+Rechecked the official [NLT API terms](https://api.nlt.to/), [Tyndale permissions](https://www.tyndale.com/permissions) and [WEB copyright statement](https://ebible.org/engwebp/copyright.htm) on 2026-10-15. All four result passages now receive DOM-only emphasis on every activation, with exact text, whitespace, attribution and immediate selection preserved. NLT remains excluded from artwork, browser records, backups and persistent caches. Restyled share cards retain only existing WEB text and credits with identical input validation/no-store behavior. Social previews contain brand copy only. No translation support, provider request, license scope or storage behavior changes.

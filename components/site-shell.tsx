@@ -1,7 +1,7 @@
-import { Suspense } from "react";
+import { Suspense, ViewTransition } from "react";
 import { SiteNav } from "@/components/site-nav";
 import Link from "next/link";
-import { Sparkle } from "lucide-react";
+import { BrandMark } from "@/components/brand-mark";
 import { StorageNotice } from "@/components/storage-notice";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TranslationSelector } from "@/components/translation-selector";
@@ -11,14 +11,14 @@ export function SiteShell({ children, translationControl }: Readonly<{ children:
     <div className="site-shell">
       <header className="site-header">
         <Link href="/" aria-label="Verselight home" className="brand">
-          <Sparkle size={21} strokeWidth={1.25} aria-hidden="true" />
+          <BrandMark />
           <span>Verselight<span className="text-primary">.</span></span>
         </Link>
         <div className="header-controls">{translationControl ?? <TranslationSelector />}<ThemeToggle /></div>
       </header>
       <Suspense><SiteNav /></Suspense>
       <StorageNotice />
-      <main id="main-content" className="site-main">{children}</main>
+      <ViewTransition default="none" enter="page-arrival" exit="page-arrival"><main id="main-content" className="site-main">{children}</main></ViewTransition>
       <footer className="site-footer">
         <span>Come as you are. Take your time.</span>
         <p className="translation-credits">Scripture: NLT via Tyndale. KJV, WEB, ASV via bible-api.com; BSB via BereanBible.com. This is a noncommercial project. <Link href="/about">About and privacy</Link>. <a href="/licenses">Sources and copyright notices</a></p>

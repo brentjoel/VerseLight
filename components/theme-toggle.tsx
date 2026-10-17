@@ -8,6 +8,18 @@ import { resolveTheme } from "@/lib/theme";
 export function ThemeToggle() {
   const storage = usePersonalStorage();
   useEffect(() => {
+    const syncPresentation = () => {
+      const color = document.documentElement.dataset.theme === "light" ? "#faf6ee" : "#0a0c10";
+      document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach(meta => { meta.content = color; });
+    };
+    const visibility = () => { document.documentElement.dataset.pageHidden = String(document.hidden); };
+    const observer = new MutationObserver(syncPresentation);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    document.addEventListener("visibilitychange", visibility);
+    syncPresentation(); visibility();
+    return () => { observer.disconnect(); document.removeEventListener("visibilitychange", visibility); };
+  }, []);
+  useEffect(() => {
     const system = matchMedia("(prefers-color-scheme: light)");
     const sync = () => {
       if (document.documentElement.dataset.themeSource !== "system") return;

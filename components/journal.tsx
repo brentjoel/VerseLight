@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { RemovalButton } from "@/components/removal-button";
+import { Constellation } from "@/components/constellation";
 import { useState } from "react";
 import emotions from "@/data/emotions.json";
 import { BADGES } from "@/lib/badges";
@@ -22,7 +24,7 @@ function Reflection({ mood, disabled, run }: { mood: MoodEntry; disabled: boolea
       <p id={`limit-${mood.id}`} className="local-help">{note.length} of {MAX_NOTE_LENGTH} characters. Included in local backups.</p>
       <button className="compare-link" disabled={disabled || note === (mood.note ?? "")}>Save note</button>
     </form>
-    {confirm ? <div className="inline-confirm"><p>Remove this reflection and its note? Your activity day and earned milestones will stay.</p><button className="compare-link" disabled={disabled} onClick={() => void run(() => getPersonalStore().removeMood(mood.id))}>Remove reflection</button><button className="compare-link" onClick={() => setConfirm(false)}>Keep reflection</button></div> : <button className="quiet-link" disabled={disabled} onClick={() => setConfirm(true)}>Remove reflection</button>}
+    {confirm ? <div className="inline-confirm"><p>Remove this reflection and its note? Your activity day and earned milestones will stay.</p><RemovalButton className="compare-link" disabled={disabled} onRemove={() => void run(() => getPersonalStore().removeMood(mood.id))}>Remove reflection</RemovalButton><button className="compare-link" onClick={() => setConfirm(false)}>Keep reflection</button></div> : <button className="quiet-link" disabled={disabled} onClick={() => setConfirm(true)}>Remove reflection</button>}
   </li>;
 }
 
@@ -40,7 +42,7 @@ export function Journal() {
     catch { setError("We could not save that change. Please try again."); }
     finally { setBusy(false); }
   }
-  if (!snapshot.ready) return <p className="content-notice" role="status">Opening your journal...</p>;
+  if (!snapshot.ready) return <p className="content-notice skeleton" role="status">Opening your journal...</p>;
   if (snapshot.mode === "blocked") return <p className="content-notice">Your saved data needs care. <Link href="/my-verses#backups">Open backup and recovery</Link> to keep a copy and choose your next step.</p>;
   const { moodEntries, activityDays, streakState, badges } = snapshot.envelope.data;
   const disabled = busy || snapshot.mode === "conflict";
@@ -72,13 +74,14 @@ export function Journal() {
         const active = activityDays.some(day => day.localDate === date);
         const grace = streakState.graceDates.includes(date);
         const description = `${date}: ${count} reflections, ${active ? "active day" : grace ? "grace day" : "no activity"}`;
-        return <td key={date}><button className="calendar-day" data-level={count > 1 ? 3 : count ? 2 : active ? 1 : 0} aria-pressed={selected === date} aria-label={description} title={description} onClick={() => { setSelected(date); setLimit(20); }}>{Number(date.slice(8))}<span className="calendar-mark" aria-hidden="true">{count ? `${count}r` : active ? "•" : grace ? "G" : "\u00a0"}</span></button></td>;
+        return <td key={date}><button className="calendar-day" data-tooltip={description} data-level={count > 1 ? 3 : count ? 2 : active ? 1 : 0} aria-pressed={selected === date} aria-label={description} onClick={() => { setSelected(date); setLimit(20); }}>{Number(date.slice(8))}<span className="calendar-mark" aria-hidden="true">{count ? `${count}r` : active ? "•" : grace ? "G" : "\u00a0"}</span></button></td>;
       })}</tr>)}</tbody></table></div>
+      {selected && <p className="local-help" role="status">{selected}: {moodEntries.filter(mood => mood.localDate === selected).length} reflections, {activityDays.some(day => day.localDate === selected) ? "active day" : streakState.graceDates.includes(selected) ? "grace day" : "no activity"}.</p>}
     </section>
     <section className="library-section" aria-labelledby="reflections-heading"><div className="section-heading"><h2 id="reflections-heading">{selected ? `Reflections on ${selected}` : "Your reflections"}</h2></div>
       {selected && <button className="compare-link" onClick={() => setSelected("")}>Show all reflections</button>}
       <p className="local-help">Choose a specific feeling to add a reflection. Notes are optional. Removing a reflection keeps its historical activity day.</p>
-      {entries.length ? <ul className="verse-list">{entries.slice(0, limit).map(mood => <Reflection key={`${mood.id}:${mood.note ?? ""}`} mood={mood} disabled={disabled} run={run} />)}</ul> : <p className="content-notice">No reflections here yet. <Link href="/">Choose a feeling</Link> when you are ready.</p>}
+      {entries.length ? <ul className="verse-list">{entries.slice(0, limit).map(mood => <Reflection key={`${mood.id}:${mood.note ?? ""}`} mood={mood} disabled={disabled} run={run} />)}</ul> : <div className="content-notice"><Constellation /><p>No reflections here yet. <Link href="/">Choose a feeling</Link> when you are ready.</p></div>}
       {entries.length > limit && <button className="compare-link" onClick={() => setLimit(limit + 20)}>Show more reflections</button>}
       <p className="local-help"><Link href="/my-verses#backups">Export or import your journal with a local backup.</Link> Backups include notes and are unencrypted.</p>
     </section>

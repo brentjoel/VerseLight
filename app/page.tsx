@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Link from "next/link";
+import { EmotionIcon } from "@/components/emotion-icon";
 import { ArrowUpRight } from "lucide-react";
 import { SiteShell } from "@/components/site-shell";
 import { ContentNotice } from "@/components/content-notice";
@@ -7,6 +8,8 @@ import { getAllEmotions } from "@/lib/emotions";
 import { DailyVerse } from "@/components/daily-verse";
 import web from "@/data/verses/web.json";
 import { WheelPicker } from "@/components/wheel-picker";
+
+export const metadata = { title: "Verselight | A moment of peace", description: "Choose a feeling and find a quiet moment with Scripture, reflection, and prayer." };
 
 export default function Home() {
   const emotions = getAllEmotions();
@@ -28,7 +31,7 @@ export default function Home() {
               <Link href={`/emotions/${emotion.id}`} data-emotion={emotion.id} className="emotion-link emotion-tile">
                 <Card className="emotion-card">
                   <CardHeader className="emotion-card-header">
-                    <span className="flex items-center justify-between"><span aria-hidden="true" className="emotion-icon">{emotion.emoji}</span><ArrowUpRight size={15} className="card-arrow" aria-hidden="true" /></span>
+                    <span className="flex items-center justify-between"><span aria-hidden="true" className="emotion-icon"><EmotionIcon emotionId={emotion.id} /></span><ArrowUpRight size={15} className="card-arrow" aria-hidden="true" /></span>
                     <h3 className="emotion-name"><span className="emotion-dot" />{emotion.name}</h3>
                   </CardHeader>
                   <CardContent className="emotion-card-content"><p title={emotion.description}>{emotion.description}</p></CardContent>
