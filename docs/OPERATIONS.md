@@ -15,7 +15,7 @@ Copy `.env.example` to ignored `.env.local`, then fill in values privately:
 | Variable | Purpose |
 | --- | --- |
 | `NLT_API_KEY` | Server-only Tyndale credential. Missing/invalid key uses labeled WEB fallback. |
-| `NEXT_PUBLIC_SITE_URL` | Public, build-time HTTPS origin used by About and metadata. Set to `<PASTE YOUR PRODUCTION DOMAIN HERE>` using the stable production HTTPS origin, not a deployment-specific URL. Keep this in configuration rather than hardcoding it in application code. No path, query, fragment, or credentials. Defaults to `http://localhost:3000` when omitted locally. Rebuild after changing it. |
+| `NEXT_PUBLIC_SITE_URL` | Public, build-time HTTPS origin used by About and metadata. Set to `https://verselight.vercel.app` using the stable production HTTPS origin, not a deployment-specific URL. Keep this in configuration rather than hardcoding it in application code. No path, query, fragment, or credentials. Defaults to `http://localhost:3000` when omitted locally. Rebuild after changing it. |
 
 ```sh
 npm run dev

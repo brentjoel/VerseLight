@@ -274,3 +274,8 @@ Full findings, NLT terms excerpts, seven initial production findings, nine remai
 ## README polish (2026-10-17)
 Owner requested docs-only work on `readme-polish` from latest main, superseding the numbered-step branch rule. Shortened README for recruiters, moved operating details to OPERATIONS, and consolidated exact upstream pauses and anonymous-tier details in SECURITY. Kept the supplied production-domain placeholder because no actual domain was provided; NEXT_PUBLIC_SITE_URL remains the configuration setting. Added screenshot paths and placement instructions, without fabricated images or application changes. Required checks are recorded after verification.
 Verification: npx.cmd tsc --noEmit, npm.cmd run lint, npm.cmd run build (65 generated pages and content validation), and git diff --check passed. README is 58 lines; edited overview/operations/licensing/security/screenshot documents contain no em dashes. Review README and OPERATIONS on the pushed branch; add the five PNGs directly under docs/screenshots/. No application code changed.
+
+
+## Production domain documentation (2026-10-17)
+Owner supplied https://verselight.vercel.app. Replaced the README and OPERATIONS placeholders with that stable origin on the existing readme-polish branch. NEXT_PUBLIC_SITE_URL remains the documented build-time setting; application code and environment values are unchanged.
+Verification: strict typecheck, lint, production build/content validation (65 pages), and git diff --check passed. Review the live link and NEXT_PUBLIC_SITE_URL instructions in README and OPERATIONS.
